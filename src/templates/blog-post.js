@@ -23,20 +23,17 @@ class BlogPostTemplate extends React.Component {
     )
     const plainTextBody = documentToPlainTextString(JSON.parse(post.body.raw))
     const { minutes: timeToRead } = readingTime(plainTextBody)
-    
+
     const options = {
       renderNode: {
         [BLOCKS.EMBEDDED_ASSET]: (node) => {
-        const { gatsbyImage, description } = node.data.target
-        return (
-           <GatsbyImage
-              image={getImage(gatsbyImage)}
-              alt={description}
-           />
-         )
+          const { gatsbyImageData, description } = node.data.target
+          return (
+            <GatsbyImage image={getImage(gatsbyImageData)} alt={description} />
+          )
         },
       },
-    };
+    }
 
     return (
       <Layout location={this.props.location}>
@@ -112,7 +109,14 @@ export const pageQuery = graphql`
       }
       body {
         raw
-        
+        references {
+          ... on ContentfulAsset {
+            contentful_id
+            __typename
+            gatsbyImageData
+            description
+          }
+        }
       }
       tags
       description {
