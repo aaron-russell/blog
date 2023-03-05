@@ -14,6 +14,11 @@ name: Deploy to Cloudflare pages on merge
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      CONTENTFUL_ACCESS_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CONTENTFUL_DELIVERY_ACCESS_TOKEN: ${{ secrets.CONTENTFUL_DELIVERY_ACCESS_TOKEN }}
+      CONTENTFUL_PREVIEW_ACCESS_TOKEN: ${{ secrets.CONTENTFUL_PREVIEW_ACCESS_TOKEN }}
+      CONTENTFUL_SPACE_ID: ${{ secrets.CONTENTFUL_SPACE_ID }}
     steps:
       - uses: actions/checkout@v2
       - run: npm ci --force && npm run build
