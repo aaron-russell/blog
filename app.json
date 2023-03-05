@@ -1,13 +1,8 @@
 {
-  "name": "Contentful Gatsby Starter",
-  "description": "Gatsby starter for a Contentful project.",
-  "keywords": [
-    "contentful",
-    "gatsby",
-    "static",
-    "ssg"
-  ],
-  "repository": "https://github.com/contentful-userland/gatsby-contentful-starter",
+  "name": "Aaron Russell's Development Blog",
+  "description": "A blog about web and app development as well as personal development.",
+  "keywords": ["web development", "app development"],
+  "repository": "https://github.com/aaron-russell/blog",
   "success_url": "/",
   "buildpacks": [
     {
