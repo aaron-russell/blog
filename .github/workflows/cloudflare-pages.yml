@@ -6,8 +6,7 @@ name: Deploy to Cloudflare pages on merge
   push:
     branches:
       - master
-      workflow_dispatch:
-
+  workflow_dispatch:
   # Allows external webhook trigger
   repository_dispatch:
     types:
@@ -45,5 +44,3 @@ jobs:
           directory: public
           # Optional: Enable this if you want to have GitHub Deployments triggered
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-
-
