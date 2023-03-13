@@ -37,7 +37,7 @@ jobs:
             ${{ runner.os }}-node-
       - run: npm ci
       - run: npm run build
-      - run: cp _headers public/_headers
+      - run: cp ./_headers ./public/_headers
 
       # Run a build step here if your project requires
       - name: Publish to Cloudflare Pages
