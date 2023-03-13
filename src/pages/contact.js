@@ -22,7 +22,7 @@ class ContactIndex extends React.Component {
             <br />
             <a href="tel:+447411693644">07411693644</a>
           </address>
-          <form className={styles.form} data-static-form-name="contact">
+          <form className={styles.form} method="POST">
             <label>
               Email address{' '}
               <input
@@ -38,6 +38,7 @@ class ContactIndex extends React.Component {
                 name="message"
               />
             </label>
+            <input type="hidden" name="static-form-name" value="contact" />
             <button type="Submit">Submit</button>
           </form>
         </div>
