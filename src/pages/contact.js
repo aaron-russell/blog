@@ -4,8 +4,11 @@ import get from 'lodash/get'
 
 import Layout from '../components/layout'
 import Hero from '../components/hero'
-import * as styles from '../templates/blog-post.module.css'
+import * as styles from './contact.module.css'
 
+import * as cfStatic from '@cloudflare/pages-plugin-static-forms'
+
+cfStatic
 class ContactIndex extends React.Component {
   render() {
     const [author] = get(this, 'props.data.allContentfulPerson.nodes')
@@ -22,14 +25,23 @@ class ContactIndex extends React.Component {
             <br />
             <a href="tel:+447411693644">07411693644</a>
           </address>
-          <form data-static-form-name="sales">
+          <form className={styles.form} data-static-form-name="contact">
             <label>
-              Email address <input type="email" name="email" />
+              Email address{' '}
+              <input
+                placeholder="aaron@russell-tech.co.uk"
+                type="email"
+                name="email"
+              />
             </label>
             <label>
-              Message <textarea name="message"></textarea>
+              Message{' '}
+              <textarea
+                placeholder="I want to know more about..."
+                name="message"
+              />
             </label>
-            <button type="Submit" />
+            <button type="Submit">Submit</button>
           </form>
         </div>
       </Layout>
