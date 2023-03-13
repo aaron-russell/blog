@@ -1,0 +1,15 @@
+/
+    X-Frame-Options: SAMEORIGIN
+    X-Content-Type-Options: nosniff
+    X-XSS-Protection: 1; mode=block
+    Referrer-Policy: no-referrer
+    Feature-Policy: document-domain 'none'
+    Permissions-Policy: document-domain=()
+    Content-Security-Policy: script-src 'self'; frame-ancestors 'none';
+/*.js
+    Cache-Control: public, max-age=31536000
+/fonts
+    Cache-Control: public, max-age=31536000
+/_gatsby
+    Cache-Control: public, max-age=31536000
+    Access-Control-Allow-Origin: *
