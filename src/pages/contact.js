@@ -6,9 +6,6 @@ import Layout from '../components/layout'
 import Hero from '../components/hero'
 import * as styles from './contact.module.css'
 
-import * as cfStatic from '@cloudflare/pages-plugin-static-forms'
-
-cfStatic
 class ContactIndex extends React.Component {
   render() {
     const [author] = get(this, 'props.data.allContentfulPerson.nodes')
