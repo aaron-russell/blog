@@ -22,7 +22,7 @@ export const onRequest: PagesFunction<Env> = (context) =>
       )
 
       return Response.redirect(
-        'https://beta.aaron-russell.co.uk/contact?submitted=true'
+        'https://aaron-russell.co.uk/contact?submitted=true'
       )
     },
   })(context)
