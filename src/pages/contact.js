@@ -24,11 +24,21 @@ class ContactIndex extends React.Component {
           </address>
           <form className={styles.form} method="POST">
             <label>
+              Name{' '}
+              <input
+                placeholder="Aaron Russell"
+                type="text"
+                name="name"
+                autocorrect="name"
+              />
+            </label>
+            <label>
               Email address{' '}
               <input
                 placeholder="aaron@russell-tech.co.uk"
                 type="email"
                 name="email"
+                autocorrect="email"
               />
             </label>
             <label>
