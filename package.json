@@ -20,11 +20,11 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-helmet": "^6.1.0",
-    "reading-time": "^2.0.0-1"
+    "reading-time": "^2.0.0-1",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20230307.0",
-    "@types/node": "^18.15.2",
     "contentful-import": "^8.5.34",
     "gatsby-provision-contentful": "^0.0.5",
     "wrangler": "^2.12.3"

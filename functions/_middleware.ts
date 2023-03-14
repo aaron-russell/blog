@@ -1,5 +1,5 @@
 import staticFormsPlugin from '@cloudflare/pages-plugin-static-forms'
-import { randomBytes } from 'crypto'
+import { v6 as uuidv6 } from 'uuid'
 
 interface Env {
   NAMESPACE: KVNamespace
@@ -8,13 +8,11 @@ interface Env {
 export const onRequest: PagesFunction<Env> = (context) =>
   staticFormsPlugin({
     respondWith: async ({ formData, name }) => {
-      const key = randomBytes(16).toString('hex')
-
       const email = formData.get('email')
       const message = formData.get('message')
       const nameOnForm = formData.get('name')
 
-      await context.env.NAMESPACE.put(key, {
+      await context.env.NAMESPACE.put(uuidv6(), {
         name: nameOnForm,
         email,
         message,
