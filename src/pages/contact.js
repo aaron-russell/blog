@@ -10,7 +10,9 @@ class ContactIndex extends React.Component {
   render() {
     const [author] = get(this, 'props.data.allContentfulPerson.nodes')
 
-    const submitted = window.location.search.includes('submitted=true')
+    const submitted =
+      typeof window !== 'undefined' &&
+      window.location.search.includes('submitted=true')
 
     return (
       <Layout location={this.props.location}>
