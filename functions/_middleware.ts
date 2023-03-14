@@ -1,5 +1,5 @@
 import staticFormsPlugin from '@cloudflare/pages-plugin-static-forms'
-import { v6 as uuidv6 } from 'uuid'
+import { v4 as uuidv4 } from 'uuid'
 
 interface Env {
   NAMESPACE: KVNamespace
@@ -12,7 +12,7 @@ export const onRequest: PagesFunction<Env> = (context) =>
       const message = formData.get('message')
       const nameOnForm = formData.get('name')
 
-      await context.env.NAMESPACE.put(uuidv6(), {
+      await context.env.NAMESPACE.put(uuidv4(), {
         name: nameOnForm,
         email,
         message,
