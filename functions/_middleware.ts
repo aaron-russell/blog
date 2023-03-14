@@ -12,11 +12,14 @@ export const onRequest: PagesFunction<Env> = (context) =>
       const message = formData.get('message')
       const nameOnForm = formData.get('name')
 
-      await context.env.NAMESPACE.put(uuidv4(), {
-        name: nameOnForm,
-        email,
-        message,
-      })
+      await context.env.NAMESPACE.put(
+        uuidv4(),
+        JSON.stringify({
+          name: nameOnForm,
+          email,
+          message,
+        })
+      )
 
       return Response.redirect('/contact?submitted=true')
     },
