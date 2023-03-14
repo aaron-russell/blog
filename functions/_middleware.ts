@@ -21,6 +21,8 @@ export const onRequest: PagesFunction<Env> = (context) =>
         })
       )
 
-      return Response.redirect('/contact?submitted=true')
+      return Response.redirect(
+        'https://beta.aaron-russell.co.uk/contact?submitted=true'
+      )
     },
   })(context)
