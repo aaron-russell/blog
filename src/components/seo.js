@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { Helmet } from 'react-helmet'
 import { useStaticQuery, graphql } from 'gatsby'
+import { globalHistory } from '@reach/router'
 
 const Seo = ({ description = '', lang = 'en', meta = [], title, image }) => {
   const { site } = useStaticQuery(
@@ -18,6 +19,13 @@ const Seo = ({ description = '', lang = 'en', meta = [], title, image }) => {
 
   const metaDescription = description || site.siteMetadata.description
   const defaultTitle = site.siteMetadata?.title
+
+  globalHistory.listen(({ action }) => {
+    if (action === 'PUSH') {
+      // eslint-disable-next-line no-undef, no-unused-expressions -- zaraz is defined in the HTML
+      typeof zaraz !== 'undefined' ? zaraz.track('Pageview') : null
+    }
+  })
 
   return (
     <>
