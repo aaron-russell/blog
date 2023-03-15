@@ -81,6 +81,10 @@ const Seo = ({
             content: image,
           },
           {
+            property: `og:url`,
+            content: canonical,
+          },
+          {
             name: `twitter:card`,
             content: `summary_large_image`,
           },
