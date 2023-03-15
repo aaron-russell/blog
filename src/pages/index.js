@@ -65,7 +65,7 @@ class RootIndex extends React.Component {
     return (
       <Layout location={this.props.location}>
         <Seo
-          image={`${author.website}${author.heroImage.gatsbyImage}`}
+          image={`${author.website}${author.heroImage.resize.src}`}
           alt={author.heroImage.description}
           canonical={author.website}
         >
@@ -154,6 +154,9 @@ export const pageQuery = graphql`
         github
         heroImage: image {
           gatsbyImage(layout: CONSTRAINED, placeholder: BLURRED, width: 1180)
+          resize(height: 630, width: 1200) {
+            src
+          }
           description
         }
       }

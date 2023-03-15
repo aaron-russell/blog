@@ -15,7 +15,7 @@ class BlogIndex extends React.Component {
     return (
       <Layout location={this.props.location}>
         <Seo
-          image={`${author.website}${author.heroImage.gatsbyImage}`}
+          image={`${author.website}${author.heroImage.resize.src}`}
           alt={author.heroImage.description}
           canonical={`${author.website}/contact`}
           title="Blog"
@@ -37,7 +37,9 @@ export const pageQuery = graphql`
       nodes {
         website
         heroImage: image {
-          gatsbyImage(layout: CONSTRAINED, placeholder: BLURRED, width: 1180)
+          resize(height: 630, width: 1200) {
+            src
+          }
           description
         }
       }
