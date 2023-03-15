@@ -97,6 +97,7 @@ export const pageQuery = graphql`
             width: 424
             height: 212
           )
+          description
         }
         description {
           raw
