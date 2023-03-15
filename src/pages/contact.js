@@ -87,6 +87,7 @@ export const pageQuery = graphql`
         title
         heroImage: image {
           gatsbyImage(layout: CONSTRAINED, placeholder: BLURRED, width: 1180)
+          description
         }
         website
       }

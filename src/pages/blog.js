@@ -36,6 +36,10 @@ export const pageQuery = graphql`
     ) {
       nodes {
         website
+        heroImage: image {
+          gatsbyImage(layout: CONSTRAINED, placeholder: BLURRED, width: 1180)
+          description
+        }
       }
     }
     allContentfulBlogPost(sort: { publishDate: DESC }) {
