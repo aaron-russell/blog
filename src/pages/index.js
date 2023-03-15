@@ -64,7 +64,11 @@ class RootIndex extends React.Component {
     console.log(this.props.location)
     return (
       <Layout location={this.props.location}>
-        <Seo canonical={author.website}>
+        <Seo
+          image={`${author.website}${author.heroImage.gatsbyImage}`}
+          alt={author.heroImage.description}
+          canonical={author.website}
+        >
           <script type="application/ld+json">
             {JSON.stringify(personJsonLd)}
           </script>

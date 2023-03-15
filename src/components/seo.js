@@ -97,6 +97,18 @@ const Seo = ({
             content: title,
           },
           {
+            property: `twitter:image`,
+            content: image,
+          },
+          {
+            property: `twitter:image:alt`,
+            content: image,
+          },
+          {
+            name: `twitter:site`,
+            content: site.siteMetadata.siteUrl,
+          },
+          {
             name: `twitter:description`,
             content: metaDescription,
           },

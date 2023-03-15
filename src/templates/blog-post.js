@@ -74,6 +74,7 @@ class BlogPostTemplate extends React.Component {
           title={post.title}
           description={plainTextDescription}
           image={`${author.website}${post.heroImage.resize.src}`}
+          alt={post.heroImage.description}
           canonical={post.canonical}
         >
           <script type="application/ld+json">{JSON.stringify(ldJson)}</script>

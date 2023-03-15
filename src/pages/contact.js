@@ -17,7 +17,12 @@ class ContactIndex extends React.Component {
 
     return (
       <Layout location={this.props.location}>
-        <Seo canonical={`${author.website}/contact`} title="Contact me" />
+        <Seo
+          image={`${author.website}${author.heroImage.gatsbyImage}`}
+          alt={author.heroImage.description}
+          canonical={`${author.website}/contact`}
+          title="Contact me"
+        />
         <Hero image={author.heroImage.gatsbyImage} title={'Contact me'} />
         <div className={styles.container}>
           <h2>Email and phone</h2>

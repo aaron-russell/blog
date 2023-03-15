@@ -14,7 +14,12 @@ class BlogIndex extends React.Component {
 
     return (
       <Layout location={this.props.location}>
-        <Seo canonical={`${author.website}/contact`} title="Blog" />
+        <Seo
+          image={`${author.website}${author.heroImage.gatsbyImage}`}
+          alt={author.heroImage.description}
+          canonical={`${author.website}/contact`}
+          title="Blog"
+        />
         <Hero title="Blog" />
         <ArticlePreview posts={posts} />
       </Layout>
