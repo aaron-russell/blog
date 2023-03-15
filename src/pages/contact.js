@@ -17,7 +17,7 @@ class ContactIndex extends React.Component {
 
     return (
       <Layout location={this.props.location}>
-        <Seo title="Contact me" />
+        <Seo canonical={`${author.website}/contact`} title="Contact me" />
         <Hero image={author.heroImage.gatsbyImage} title={'Contact me'} />
         <div className={styles.container}>
           <h2>Email and phone</h2>
@@ -83,6 +83,7 @@ export const pageQuery = graphql`
         heroImage: image {
           gatsbyImage(layout: CONSTRAINED, placeholder: BLURRED, width: 1180)
         }
+        website
       }
     }
   }

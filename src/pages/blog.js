@@ -10,10 +10,11 @@ import ArticlePreview from '../components/article-preview'
 class BlogIndex extends React.Component {
   render() {
     const posts = get(this, 'props.data.allContentfulBlogPost.nodes')
+    const [author] = get(this, 'props.data.allContentfulPerson.nodes')
 
     return (
       <Layout location={this.props.location}>
-        <Seo title="Blog" />
+        <Seo canonical={`${author.website}/contact`} title="Blog" />
         <Hero title="Blog" />
         <ArticlePreview posts={posts} />
       </Layout>
@@ -25,6 +26,13 @@ export default BlogIndex
 
 export const pageQuery = graphql`
   query BlogIndexQuery {
+    allContentfulPerson(
+      filter: { contentful_id: { eq: "4Ff1pPPUTdU7JI822TLc7O" } }
+    ) {
+      nodes {
+        website
+      }
+    }
     allContentfulBlogPost(sort: { publishDate: DESC }) {
       nodes {
         title
