@@ -35,13 +35,50 @@ class BlogPostTemplate extends React.Component {
       },
     }
 
+    console.log(post)
+    const ldJson = {
+      '@context': 'http://schema.org',
+      '@type': 'BlogPosting',
+      image: post.heroImage.resize.src,
+      url: `${this.props.location.href}`,
+      headline: post.title,
+      datePublished: post.rawDate,
+      inLanguage: 'en-GB',
+      isFamilyFriendly: 'true',
+      copyrightYear: new Date().getFullYear(),
+      copyrightHolder: post.author.name,
+      accountablePerson: {
+        '@type': 'Person',
+        name: post.author.name,
+        url: post.author.website,
+      },
+      author: {
+        '@type': 'Person',
+        name: post.author.name,
+        url: post.author.website,
+      },
+      creator: {
+        '@type': 'Person',
+        name: post.author.name,
+        url: post.author.website,
+      },
+      mainEntityOfPage: 'True',
+      keywords: post.tags,
+      genre: post.category,
+    }
+
+    console.log(ldJson)
+
     return (
       <Layout location={this.props.location}>
         <Seo
           title={post.title}
           description={plainTextDescription}
           image={`http:${post.heroImage.resize.src}`}
-        />
+          canonical={post.canonical}
+        >
+          <script type="application/ld+json">{JSON.stringify(ldJson)}</script>
+        </Seo>
         <Hero
           image={post.heroImage?.gatsbyImage}
           title={post.title}
@@ -96,8 +133,11 @@ export const pageQuery = graphql`
     contentfulBlogPost(slug: { eq: $slug }) {
       slug
       title
+      canonical
+      category
       author {
         name
+        website
       }
       publishDate(formatString: "MMMM Do, YYYY")
       rawDate: publishDate

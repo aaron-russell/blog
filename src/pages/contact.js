@@ -5,6 +5,7 @@ import get from 'lodash/get'
 import Layout from '../components/layout'
 import Hero from '../components/hero'
 import * as styles from './contact.module.css'
+import Seo from '../components/seo'
 
 class ContactIndex extends React.Component {
   render() {
@@ -16,6 +17,7 @@ class ContactIndex extends React.Component {
 
     return (
       <Layout location={this.props.location}>
+        <Seo title="Contact me" />
         <Hero image={author.heroImage.gatsbyImage} title={'Contact me'} />
         <div className={styles.container}>
           <h2>Email and phone</h2>

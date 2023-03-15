@@ -3,7 +3,15 @@ import { Helmet } from 'react-helmet'
 import { useStaticQuery, graphql } from 'gatsby'
 import { globalHistory } from '@reach/router'
 
-const Seo = ({ description = '', lang = 'en', meta = [], title, image }) => {
+const Seo = ({
+  description = '',
+  lang = 'en',
+  meta = [],
+  title,
+  image,
+  canonical,
+  children,
+}) => {
   const { site } = useStaticQuery(
     graphql`
       query {
@@ -11,6 +19,10 @@ const Seo = ({ description = '', lang = 'en', meta = [], title, image }) => {
           siteMetadata {
             title
             description
+            social {
+              twitter
+            }
+            siteUrl
           }
         }
       }
@@ -26,6 +38,13 @@ const Seo = ({ description = '', lang = 'en', meta = [], title, image }) => {
       typeof zaraz !== 'undefined' ? zaraz.track('Pageview') : null
     }
   })
+  console.log(site)
+  const websiteLdJson = {
+    '@context': 'http://schema.org',
+    '@type': 'WebSite',
+    name: defaultTitle,
+    url: site.siteMetadata.siteUrl,
+  }
 
   return (
     <>
@@ -77,13 +96,22 @@ const Seo = ({ description = '', lang = 'en', meta = [], title, image }) => {
             name: `twitter:description`,
             content: metaDescription,
           },
+          {
+            name: 'canonical',
+            content: canonical,
+          },
         ].concat(meta)}
-      />
-      <script
-        defer
-        src="https://static.cloudflareinsights.com/beacon.min.js"
-        data-cf-beacon='{"token": "4950be0a138f41edbbc64222fe737302"}'
-      ></script>
+      >
+        <script
+          defer
+          src="https://static.cloudflareinsights.com/beacon.min.js"
+          data-cf-beacon='{"token": "4950be0a138f41edbbc64222fe737302"}'
+        ></script>
+        {children}
+        <script type="application/ld+json">
+          {JSON.stringify(websiteLdJson)}
+        </script>
+      </Helmet>
     </>
   )
 }

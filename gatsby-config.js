@@ -4,10 +4,13 @@ require('dotenv').config({
 
 module.exports = {
   siteMetadata: {
+    siteUrl: 'https://aaron-russell.co.uk',
     title: "Aaron Russell's Development Blog",
     description:
       'A blog about web and app development as well as personal development',
-    siteUrl: `https://aaron-russell.co.uk`,
+    social: {
+      twitter: '@thisperson',
+    },
   },
   plugins: [
     'gatsby-transformer-sharp',
