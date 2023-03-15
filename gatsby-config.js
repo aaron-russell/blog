@@ -7,12 +7,14 @@ module.exports = {
     title: "Aaron Russell's Development Blog",
     description:
       'A blog about web and app development as well as personal development',
+    siteUrl: `https://aaron-russell.co.uk`,
   },
   plugins: [
     'gatsby-transformer-sharp',
     'gatsby-plugin-react-helmet',
     'gatsby-plugin-sharp',
     'gatsby-plugin-image',
+    'gatsby-plugin-sitemap',
     {
       resolve: 'gatsby-source-contentful',
       options: {
