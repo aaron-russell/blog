@@ -18,6 +18,8 @@ class BlogPostTemplate extends React.Component {
     const post = get(this.props, 'data.contentfulBlogPost')
     const previous = get(this.props, 'data.previous')
     const next = get(this.props, 'data.next')
+    const [author] = get(this, 'props.data.allContentfulPerson.nodes')
+
     const plainTextDescription = documentToPlainTextString(
       JSON.parse(post.description.raw)
     )
@@ -35,7 +37,6 @@ class BlogPostTemplate extends React.Component {
       },
     }
 
-    console.log(post)
     const ldJson = {
       '@context': 'http://schema.org',
       '@type': 'BlogPosting',
@@ -67,14 +68,12 @@ class BlogPostTemplate extends React.Component {
       genre: post.category,
     }
 
-    console.log(ldJson)
-
     return (
       <Layout location={this.props.location}>
         <Seo
           title={post.title}
           description={plainTextDescription}
-          image={`http:${post.heroImage.resize.src}`}
+          image={`${author.website}${post.heroImage.resize.src}`}
           canonical={post.canonical}
         >
           <script type="application/ld+json">{JSON.stringify(ldJson)}</script>
@@ -130,6 +129,13 @@ export const pageQuery = graphql`
     $previousPostSlug: String
     $nextPostSlug: String
   ) {
+    allContentfulPerson(
+      filter: { contentful_id: { eq: "4Ff1pPPUTdU7JI822TLc7O" } }
+    ) {
+      nodes {
+        website
+      }
+    }
     contentfulBlogPost(slug: { eq: $slug }) {
       slug
       title
