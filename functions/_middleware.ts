@@ -1,15 +1,25 @@
 import staticFormsPlugin from '@cloudflare/pages-plugin-static-forms'
 import { v4 as uuidv4 } from 'uuid'
 import { AkismetClient, Comment } from 'akismet-api'
+import * as Sentry from '@sentry/node'
 
 interface Env {
   NAMESPACE: KVNamespace
   AKISMET_KEY: string
+  SENTRY_DSN: string
 }
 
 export const onRequest: PagesFunction<Env> = (context) =>
   staticFormsPlugin({
     respondWith: async ({ formData, name }) => {
+      Sentry.init({
+        dsn: context.env.SENTRY_DSN,
+        tracesSampleRate: 1.0,
+      })
+      const transaction = Sentry.startTransaction({
+        op: 'contact-form',
+        name: 'Contact Form',
+      })
       try {
         const email = formData.get('email')
         const content = formData.get('message')
@@ -37,7 +47,9 @@ export const onRequest: PagesFunction<Env> = (context) =>
           'https://aaron-russell.co.uk/contact?submitted=true'
         )
       } catch (error) {
-        console.log(error)
+        Sentry.captureException(error)
+      } finally {
+        transaction.finish()
       }
     },
   })(context)
