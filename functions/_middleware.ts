@@ -24,7 +24,11 @@ export const onRequest: PagesFunction<Env> = (context) =>
 
         const key = context.env.AKISMET_KEY
         const blog = 'https://aaron-russell.co.uk'
-        const client = new AkismetClient({ key, blog })
+        const client = new AkismetClient({
+          key,
+          blog,
+          userAgent: `Node.js/16 | Akismet-api/6.0.0 | Cloudflare Pages`,
+        })
 
         const comment: Comment = {
           user_ip: context.request.headers.get('CF-Connecting-IP') || '',
