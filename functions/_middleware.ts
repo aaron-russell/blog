@@ -30,8 +30,8 @@ export const onRequest: PagesFunction<Env> = (context) =>
           body: turnstileFormData,
           method: 'POST',
         })
-        const outcome = await result.json()
-        if (outcome['success']) {
+        const outcome: { success: boolean } = await result.json()
+        if (outcome.success) {
           const email = formData.get('email')
           const content = formData.get('message')
           const nameOnForm = formData.get('name')
@@ -45,10 +45,7 @@ export const onRequest: PagesFunction<Env> = (context) =>
             date: new Date().toISOString(),
           }
 
-          await context.env.NAMESPACE.put(
-            uuidv4(),
-            JSON.stringify({ ...comment })
-          )
+          await context.env.NAMESPACE.put(uuidv4(), JSON.stringify(comment))
         }
         return Response.redirect(
           'https://aaron-russell.co.uk/contact?submitted=true'

@@ -71,7 +71,6 @@ class ContactIndex extends React.Component {
               <div
                 class="cf-turnstile"
                 data-sitekey="0x4AAAAAAADUKX7Xm2l9yHju"
-                data-callback="javascriptCallback"
               ></div>
               <input type="hidden" name="static-form-name" value="contact" />
               <button type="Submit">Submit</button>
