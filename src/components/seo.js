@@ -38,7 +38,6 @@ const Seo = ({
       typeof zaraz !== 'undefined' ? zaraz.track('Pageview') : null
     }
   })
-  console.log(site)
   const websiteLdJson = {
     '@context': 'http://schema.org',
     '@type': 'WebSite',
