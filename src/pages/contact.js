@@ -22,7 +22,13 @@ class ContactIndex extends React.Component {
           alt={author.heroImage.description}
           canonical={`${author.website}/contact`}
           title="Contact me"
-        />
+        >
+          <script
+            src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+            async
+            defer
+          ></script>
+        </Seo>
         <Hero image={author.heroImage.gatsbyImage} title={'Contact me'} />
         <div className={styles.container}>
           <h2>Email and phone</h2>
@@ -62,6 +68,11 @@ class ContactIndex extends React.Component {
                   name="message"
                 />
               </label>
+              <div
+                class="cf-turnstile"
+                data-sitekey="0x4AAAAAAADUKX7Xm2l9yHju"
+                data-callback="javascriptCallback"
+              ></div>
               <input type="hidden" name="static-form-name" value="contact" />
               <button type="Submit">Submit</button>
             </form>
