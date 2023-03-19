@@ -10,8 +10,7 @@
   "dependencies": {
     "@cloudflare/pages-plugin-static-forms": "^1.0.1",
     "@contentful/rich-text-plain-text-renderer": "^16.0.2",
-    "@sentry/node": "^7.43.0",
-    "@sentry/tracing": "^7.43.0",
+    "@sentry/serverless": "^7.43.0",
     "akismet-api": "^6.0.0",
     "gatsby": "^5.7.0",
     "gatsby-plugin-image": "^3.7.0",
@@ -31,6 +30,7 @@
     "@cloudflare/workers-types": "^4.20230307.0",
     "contentful-import": "^8.5.34",
     "gatsby-provision-contentful": "^0.0.5",
+    "toucan-js": "^3.1.0",
     "wrangler": "^2.12.3"
   },
   "engines": {
