@@ -69,7 +69,7 @@ class ContactIndex extends React.Component {
                 />
               </label>
               <div
-                class="cf-turnstile"
+                className="cf-turnstile"
                 data-sitekey="0x4AAAAAAADUKX7Xm2l9yHju"
               ></div>
               <input type="hidden" name="static-form-name" value="contact" />
