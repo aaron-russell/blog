@@ -155,6 +155,11 @@ const Seo = ({
           src="https://static.cloudflareinsights.com/beacon.min.js"
           data-cf-beacon='{"token": "4950be0a138f41edbbc64222fe737302"}'
         ></script>
+        <script
+          defer
+          data-domain="aaron-russell.co.uk"
+          src="https://plausible.io/js/script.js"
+        ></script>
         {children}
         <script type="application/ld+json">
           {JSON.stringify(websiteLdJson)}
