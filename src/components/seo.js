@@ -158,7 +158,7 @@ const Seo = ({
         <script
           defer
           data-domain="aaron-russell.co.uk"
-          src="https://plausible.io/js/script.hash.outbound-links.tagged-events.js"
+          src="https://plausible.io/js/script.outbound-links.tagged-events.js"
         ></script>
         {children}
         <script type="application/ld+json">
