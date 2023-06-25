@@ -26,5 +26,11 @@ module.exports = {
         host: process.env.CONTENTFUL_HOST,
       },
     },
+    {
+      resolve: `gatsby-plugin-plausible`,
+      options: {
+        domain: `aaron-russell.co.uk`,
+      },
+    },
   ],
 }
