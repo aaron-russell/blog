@@ -27,9 +27,12 @@ module.exports = {
       },
     },
     {
-      resolve: `gatsby-plugin-plausible`,
+      resolve: `gatsby-plugin-posthog`,
       options: {
-        domain: `aaron-russell.co.uk`,
+        apiKey: 'phc_Tx60pBXpFuImoXXYIXUsSbdhQG02IqyouPF8EH0NZqW',
+        apiHost: 'https://eu.posthog.com',
+        head: true,
+        isEnabledDevMode: true,
       },
     },
   ],
