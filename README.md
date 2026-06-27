@@ -85,3 +85,13 @@ GitHub Actions runs:
 - `npm run typecheck`
 
 Production deployment additionally runs `npm run build:contentful` when the Contentful secrets are available.
+
+## Image strategy
+
+Contentful-backed UI images are optimized at request time via Contentful's Images API rather than downloaded and reprocessed during the Astro build. This keeps Cloudflare Pages builds simple while still shipping responsive image markup.
+
+- `src/components/ResponsiveImage.astro` emits `<picture>` markup with AVIF and WebP sources plus a progressive JPEG fallback.
+- `src/lib/contentful-images.ts` centralizes HTTPS normalization, width clamping, responsive `srcset` generation, intrinsic dimensions, and social image transforms.
+- Hero images should use `priority` and must not be lazy-loaded.
+- Card and rich-text images should stay lazy-loaded and declare explicit `sizes`, `width`, and `height`.
+- Social and structured-data images stay on a stable 1200x630 progressive JPEG path for crawler compatibility.

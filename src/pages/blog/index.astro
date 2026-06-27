@@ -3,18 +3,12 @@ import ArticlePreview from '../../components/ArticlePreview.astro'
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import { getAllBlogPosts, getAuthor } from '../../lib/contentful'
 import { getTopTags } from '../../lib/blog'
-import { buildContentfulImageUrl } from '../../lib/contentful-images'
+import { buildContentfulSocialImageUrl } from '../../lib/contentful-images'
 import styles from './index.module.css'
 
 const [author, posts] = await Promise.all([getAuthor(), getAllBlogPosts()])
 const topTags = getTopTags(posts, 8)
-const seoImage = buildContentfulImageUrl(author.heroImage?.url, {
-  fit: 'fill',
-  fm: 'jpg',
-  h: 630,
-  q: 80,
-  w: 1200,
-})
+const seoImage = buildContentfulSocialImageUrl(author.heroImage?.url)
 ---
 
 <BaseLayout

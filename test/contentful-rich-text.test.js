@@ -154,3 +154,45 @@ test('rich text renderer falls back safely for unsupported languages', async () 
   assert.match(html, /&lt;section&gt;Hello&lt;\/section&gt;/)
   assert.match(html, /data-language="unsupported-lang"/)
 })
+
+test('rich text renderer emits responsive picture markup for embedded assets', async () => {
+  const { default: richText } = await import('../src/lib/contentful-rich-text.ts')
+
+  const document = {
+    nodeType: 'document',
+    data: {},
+    content: [
+      {
+        nodeType: 'embedded-asset-block',
+        data: {
+          target: {
+            fields: {
+              description: 'Embedded example',
+              file: {
+                url: '//images.ctfassets.net/demo/embedded.jpg',
+                details: {
+                  image: {
+                    width: 1600,
+                    height: 900,
+                  },
+                },
+              },
+              title: 'Embedded example',
+            },
+          },
+        },
+        content: [],
+      },
+    ],
+  }
+
+  const html = await richText.renderRichText(document)
+
+  assert.match(html, /<picture>/)
+  assert.match(html, /<source type="image\/avif"/)
+  assert.match(html, /<source type="image\/webp"/)
+  assert.match(html, /loading="lazy"/)
+  assert.match(html, /width="1280"/)
+  assert.match(html, /height="720"/)
+  assert.match(html, /alt="Embedded example"/)
+})

@@ -4,20 +4,14 @@ import Container from '../components/Container.astro'
 import BaseLayout from '../layouts/BaseLayout.astro'
 import { getAuthor, getHomePagePosts } from '../lib/contentful'
 import { getTopTags } from '../lib/blog'
-import { buildContentfulImageUrl } from '../lib/contentful-images'
+import { buildContentfulImageUrl, buildContentfulSocialImageUrl } from '../lib/contentful-images'
 import { homeConfig } from '../lib/site-config'
 import { absoluteUrl, buildPersonJsonLd } from '../utils/structured-data'
 import styles from './index.module.css'
 
 const [author, posts] = await Promise.all([getAuthor(), getHomePagePosts()])
 const topTags = getTopTags(posts, 4)
-const seoImage = buildContentfulImageUrl(author.heroImage?.url, {
-  fit: 'fill',
-  fm: 'jpg',
-  h: 630,
-  q: 80,
-  w: 1200,
-})
+const seoImage = buildContentfulSocialImageUrl(author.heroImage?.url)
 const profileImage = author.profilePhoto?.url
   ? absoluteUrl(
       author.website,

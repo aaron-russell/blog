@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro'
 import Hero from '../components/Hero.astro'
 import { getAuthor } from '../lib/contentful'
-import { buildContentfulImageUrl } from '../lib/contentful-images'
+import { buildContentfulSocialImageUrl } from '../lib/contentful-images'
 import styles from './contact.module.css'
 
 const CONTACT_MESSAGES = {
@@ -15,13 +15,7 @@ const CONTACT_MESSAGES = {
 }
 
 const author = await getAuthor()
-const seoImage = buildContentfulImageUrl(author.heroImage?.url, {
-  fit: 'fill',
-  fm: 'jpg',
-  h: 630,
-  q: 80,
-  w: 1200,
-})
+const seoImage = buildContentfulSocialImageUrl(author.heroImage?.url)
 const successClass = styles.statusSuccess
 const errorClass = styles.statusError
 ---
