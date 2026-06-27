@@ -48,13 +48,14 @@ const websiteLdJson = buildWebsiteJsonLd(siteMetadata)
 <link rel="manifest" href="/site.webmanifest" />
 <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
 {metaTags.map((entry) => <meta {...entry} />)}
-<script type="application/ld+json" set:html={JSON.stringify(websiteLdJson)} />
+<script is:inline type="application/ld+json" set:html={JSON.stringify(websiteLdJson)} />
 {structuredData.map((entry) => (
-  <script type="application/ld+json" set:html={JSON.stringify(entry)} />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(entry)} />
 ))}
 {
   turnstile ? (
     <script
+      is:inline
       src="https://challenges.cloudflare.com/turnstile/v0/api.js"
       async
       defer
