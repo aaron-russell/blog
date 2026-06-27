@@ -35,10 +35,11 @@ const { linkTagsToFilter = true, posts = [], wholeCardLink = false } = Astro.pro
                   asset={post.heroImage}
                   alt={post.heroImage?.description || post.title}
                   class={styles.image}
+                  fallbackAlt={post.title}
                   loading="lazy"
                   sizes="(min-width: 1140px) 424px, (min-width: 720px) 45vw, 100vw"
-                  transform={{ fit: 'fill', fm: 'jpg', h: 240, q: 80 }}
-                  widths={[424, 848]}
+                  transform={{ fit: 'fill', h: 240, q: 72, w: 424 }}
+                  widths={[320, 424, 640, 848]}
                 />
                 <div class={styles.heading}>
                   <p class={styles.kicker}>Latest writing</p>

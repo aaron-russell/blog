@@ -6,7 +6,11 @@ import {
   normalizeCodeBlockEntry,
   renderCodeBlock,
 } from './code-blocks'
-import { buildContentfulImageUrl, createContentfulImage } from './contentful-images'
+import {
+  buildResponsiveContentfulImage,
+  createContentfulImage,
+  resolveContentfulAltText,
+} from './contentful-images'
 
 const escapeHtml = (value: string) =>
   value
@@ -93,16 +97,34 @@ export const renderRichText = async (document: any) => {
           return ''
         }
 
-        const src = buildContentfulImageUrl(image.url, {
-          fm: 'jpg',
-          q: 80,
-          w: Math.min(image.width || 1280, 1280),
+        const responsiveImage = buildResponsiveContentfulImage(image, {
+          fallbackFormat: 'jpg',
+          formats: ['avif', 'webp'],
+          transform: {
+            q: 72,
+          },
+          widths: [480, 720, 960, 1280],
         })
-        const alt = escapeHtml(image.description || image.title || '')
+        const alt = escapeHtml(resolveContentfulAltText(image))
 
-        return `<img src="${src}" alt="${alt}" loading="lazy" decoding="async"${
-          image.width ? ` width="${image.width}"` : ''
-        }${image.height ? ` height="${image.height}"` : ''} />`
+        if (!responsiveImage.fallbackSrc) {
+          return ''
+        }
+
+        const sourceMarkup = responsiveImage.sources
+          .map(
+            (source) =>
+              `<source type="${source.type}" sizes="(min-width: 960px) 960px, 100vw" srcset="${source.srcSet}" />`
+          )
+          .join('')
+
+        return `<picture>${sourceMarkup}<img src="${responsiveImage.fallbackSrc}" srcset="${
+          responsiveImage.fallbackSrcSet || ''
+        }" sizes="(min-width: 960px) 960px, 100vw" alt="${alt}" loading="lazy" decoding="async"${
+          responsiveImage.fallbackWidth ? ` width="${responsiveImage.fallbackWidth}"` : ''
+        }${
+          responsiveImage.fallbackHeight ? ` height="${responsiveImage.fallbackHeight}"` : ''
+        } /></picture>`
       },
     },
   })
