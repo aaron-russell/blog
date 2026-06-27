@@ -8,7 +8,7 @@ Personal blog built with Astro, Contentful, and Cloudflare Pages.
 - npm `10+`
 - A Contentful space with delivery credentials for local content builds
 
-This repository pins Node in [.nvmrc](/Users/aaronrussell/.codex/worktrees/9f11/blog/.nvmrc:1). The expected verification baseline is:
+This repository pins Node in [.nvmrc](.nvmrc). The expected verification baseline is:
 
 ```sh
 npm ci
@@ -60,16 +60,16 @@ To bootstrap a fresh Contentful space with the bundled content model and sample 
 npm run setup
 ```
 
-The setup script writes `.env.development` and `.env.production` for you and imports [contentful/export.json](/Users/aaronrussell/.codex/worktrees/9f11/blog/contentful/export.json:1) into the target space.
+The setup script writes `.env.development` and `.env.production` for you and imports [contentful/export.json](contentful/export.json) into the target space.
 
 ## Cloudflare Pages
 
 This repo includes:
 
 - Astro static output for the main site
-- [functions/_middleware.ts](/Users/aaronrussell/.codex/worktrees/34fa/blog/functions/_middleware.ts:1) for contact form validation, Turnstile verification, and KV-backed rate limiting
-- build-time Open Graph image generation under [src/pages/og](/Users/aaronrussell/.codex/worktrees/34fa/blog/src/pages/og/site.png.ts:1), rendered by [src/lib/og.ts](/Users/aaronrussell/.codex/worktrees/34fa/blog/src/lib/og.ts:1)
-- [static/_headers](/Users/aaronrussell/.codex/worktrees/34fa/blog/static/_headers:1) and [static/_redirects](/Users/aaronrussell/.codex/worktrees/34fa/blog/static/_redirects:1) for Pages routing and security policies
+- [functions/_middleware.ts](functions/_middleware.ts) for contact form validation, Turnstile verification, and KV-backed rate limiting
+- build-time Open Graph image generation under [src/pages/og](src/pages/og), rendered by [src/lib/og.ts](src/lib/og.ts)
+- [static/_headers](static/_headers) and [static/_redirects](static/_redirects) for Pages routing and security policies
 
 Required Cloudflare bindings and secrets:
 
@@ -92,7 +92,7 @@ This is intentionally build-time rather than request-time:
 - Cloudflare Pages can serve the generated PNGs as immutable static assets
 - social crawlers avoid worker cold starts and runtime Contentful fetches
 
-The metadata layer in [src/components/SeoHead.astro](/Users/aaronrussell/.codex/worktrees/34fa/blog/src/components/SeoHead.astro:1) now also emits `og:image:width`, `og:image:height`, and `og:image:type` alongside the Open Graph and Twitter image URLs.
+The metadata layer in [src/components/SeoHead.astro](src/components/SeoHead.astro) now also emits `og:image:width`, `og:image:height`, and `og:image:type` alongside the Open Graph and Twitter image URLs.
 
 ## CI
 

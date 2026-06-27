@@ -71,7 +71,19 @@ test('seo data helpers produce stable metadata for social and canonical tags', a
   assert.ok(
     tags.some(
       (tag) =>
+        tag.property === 'og:image:height' && tag.content === '630'
+    )
+  )
+  assert.ok(
+    tags.some(
+      (tag) =>
         tag.property === 'og:image:type' && tag.content === 'image/png'
+    )
+  )
+  assert.ok(
+    tags.some(
+      (tag) =>
+        tag.name === 'twitter:image:type' && tag.content === 'image/png'
     )
   )
 })
