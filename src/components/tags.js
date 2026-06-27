@@ -1,5 +1,3 @@
-import React from 'react'
-
 import * as styles from './tags.module.css'
 
 const Tags = ({ tags }) =>

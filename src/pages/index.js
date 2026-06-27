@@ -61,7 +61,6 @@ class RootIndex extends React.Component {
       sameAs,
     }
 
-    console.log(this.props.location)
     return (
       <Layout location={this.props.location}>
         <Seo

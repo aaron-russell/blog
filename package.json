@@ -8,33 +8,33 @@
     "url": "https://github.com/contentful/starter-gatsby-blog/issues"
   },
   "dependencies": {
-    "@cloudflare/pages-plugin-static-forms": "^1.0.1",
-    "@contentful/rich-text-plain-text-renderer": "^16.0.2",
-    "@sentry/serverless": "^7.43.0",
-    "gatsby": "^5.11.0",
-    "gatsby-plugin-image": "^3.7.0",
-    "gatsby-plugin-posthog": "^1.0.1",
-    "gatsby-plugin-react-helmet": "^6.7.0",
-    "gatsby-plugin-sharp": "^5.7.0",
-    "gatsby-plugin-sitemap": "^6.7.0",
-    "gatsby-source-contentful": "^8.7.0",
-    "gatsby-transformer-sharp": "^5.7.0",
-    "lodash": "^4.17.21",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "@cloudflare/pages-plugin-static-forms": "^1.0.3",
+    "@contentful/rich-text-plain-text-renderer": "^16.2.10",
+    "gatsby": "^5.16.1",
+    "gatsby-plugin-image": "^3.16.0",
+    "gatsby-plugin-react-helmet": "^6.16.0",
+    "gatsby-plugin-sharp": "^5.16.0",
+    "gatsby-plugin-sitemap": "^6.16.0",
+    "gatsby-source-contentful": "^8.17.0",
+    "gatsby-transformer-sharp": "^5.16.0",
+    "lodash": "^4.18.1",
+    "posthog-js": "^1.395.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "react-helmet": "^6.1.0",
-    "reading-time": "^2.0.0-1",
-    "uuid": "^9.0.0"
+    "reading-time": "^2.0.0-1"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20230307.0",
-    "contentful-import": "^8.5.34",
+    "@cloudflare/workers-types": "^4.20260627.1",
+    "contentful-import": "^10.0.11",
+    "eslint": "^8.57.1",
     "gatsby-provision-contentful": "^0.0.5",
-    "toucan-js": "^3.1.0",
-    "wrangler": "^2.12.3"
+    "toucan-js": "^4.1.1",
+    "typescript": "^6.0.3",
+    "wrangler": "^4.105.0"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=24.18.0 <26"
   },
   "homepage": "https://github.com/contentful/starter-gatsby-blog#readme",
   "keywords": [
@@ -52,8 +52,11 @@
     "dev": "gatsby develop",
     "build": "gatsby build",
     "serve": "gatsby serve",
+    "lint": "eslint bin src test gatsby-browser.js gatsby-config.js gatsby-node.js",
     "postinstall": "node ./bin/hello.js",
     "setup": "node ./bin/setup.js",
+    "test": "node --test",
+    "typecheck": "tsc --noEmit",
     "gatsby-provision": "gatsby-provision-contentful --contentful-data-path='./contentful/export.json' --space-id=$CONTENTFUL_SPACE_ID --management-token=$CONTENTFUL_MANAGEMENT_TOKEN"
   }
 }

@@ -22,6 +22,7 @@ See our [official Contentful getting started guide](https://www.contentful.com/d
 
 ```
 $ git clone https://github.com/contentful/starter-gatsby-blog.git
+$ nvm use
 $ npm install
 ```
 
@@ -57,6 +58,20 @@ Run the project locally with live reload in development mode.
 ### `npm run build`
 
 Run a production build into `./public`. The result is ready to be put on any static hosting you prefer.
+
+This project currently targets Node `24.18.0` via [`.nvmrc`](./.nvmrc) and supports stable Gatsby on Node `<26`.
+
+### `npm run lint`
+
+Run the repository lint checks.
+
+### `npm test`
+
+Run the lightweight repository smoke tests.
+
+### `npm run typecheck`
+
+Typecheck the Cloudflare Pages function entrypoint.
 
 ### `npm run serve`
 

@@ -1,5 +1,4 @@
 import staticFormsPlugin from '@cloudflare/pages-plugin-static-forms'
-import { v4 as uuidv4 } from 'uuid'
 import { Toucan } from 'toucan-js'
 
 interface Env {
@@ -10,7 +9,7 @@ interface Env {
 
 export const onRequest: PagesFunction<Env> = (context) =>
   staticFormsPlugin({
-    respondWith: async ({ formData, name }) => {
+    respondWith: async ({ formData }) => {
       const sentry = new Toucan({
         dsn: context.env.SENTRY_DSN,
         context,
@@ -18,11 +17,11 @@ export const onRequest: PagesFunction<Env> = (context) =>
       })
       try {
         const token = formData.get('cf-turnstile-response')
-        const ip = context.request.headers.get('CF-Connecting-IP')
+        const ip = context.request.headers.get('CF-Connecting-IP') || ''
 
-        let turnstileFormData = new FormData()
+        const turnstileFormData = new FormData()
         turnstileFormData.append('secret', context.env.TURNSTILE_SECRET)
-        turnstileFormData.append('response', token)
+        turnstileFormData.append('response', typeof token === 'string' ? token : '')
         turnstileFormData.append('remoteip', ip)
 
         const url = 'https://challenges.cloudflare.com/turnstile/v0/siteverify'
@@ -36,22 +35,28 @@ export const onRequest: PagesFunction<Env> = (context) =>
           const content = formData.get('message')
           const nameOnForm = formData.get('name')
 
-          const comment: any = {
-            user_ip: ip || '',
+          const comment = {
+            user_ip: ip,
             user_agent: context.request.headers.get('User-Agent') || '',
-            name: nameOnForm,
-            email,
-            content,
+            name: typeof nameOnForm === 'string' ? nameOnForm : '',
+            email: typeof email === 'string' ? email : '',
+            content: typeof content === 'string' ? content : '',
             date: new Date().toISOString(),
           }
 
-          await context.env.NAMESPACE.put(uuidv4(), JSON.stringify(comment))
+          await context.env.NAMESPACE.put(
+            crypto.randomUUID(),
+            JSON.stringify(comment)
+          )
         }
         return Response.redirect(
           'https://aaron-russell.co.uk/contact?submitted=true'
         )
       } catch (error) {
         sentry.captureException(error)
+        return Response.redirect(
+          'https://aaron-russell.co.uk/contact?submitted=true'
+        )
       }
     },
   })(context)

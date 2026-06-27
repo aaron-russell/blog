@@ -1,14 +1,13 @@
-name: Deploy to Cloudflare Pages
+name: CI
 
 on:
+  pull_request:
   push:
-    branches:
+    branches-ignore:
       - master
-  workflow_dispatch:
 
 permissions:
   contents: read
-  deployments: write
 
 jobs:
   verify:
@@ -42,6 +41,7 @@ jobs:
       CONTENTFUL_ACCESS_TOKEN: ${{ secrets.CONTENTFUL_ACCESS_TOKEN }}
       CONTENTFUL_SPACE_ID: ${{ secrets.CONTENTFUL_SPACE_ID }}
       CONTENTFUL_HOST: ${{ secrets.CONTENTFUL_HOST }}
+    if: ${{ env.CONTENTFUL_ACCESS_TOKEN != '' && env.CONTENTFUL_SPACE_ID != '' }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -57,28 +57,3 @@ jobs:
 
       - name: Build
         run: npm run build
-
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: site-public
-          path: public
-          if-no-files-found: error
-
-  deploy:
-    runs-on: ubuntu-latest
-    needs: build
-    environment: production
-    steps:
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: site-public
-          path: public
-
-      - name: Deploy to Cloudflare Pages
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy public --project-name=${{ secrets.CLOUDFLARE_PROJECT_NAME }}
