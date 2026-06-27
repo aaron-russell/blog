@@ -1,0 +1,30 @@
+<script>
+  import posthog from 'posthog-js'
+
+  const posthogApiKey = 'phc_Tx60pBXpFuImoXXYIXUsSbdhQG02IqyouPF8EH0NZqW'
+
+  const shouldTrack = () => {
+    if (!posthogApiKey) {
+      return false
+    }
+
+    const doNotTrack =
+      window.navigator?.doNotTrack || (window as Window & { doNotTrack?: string }).doNotTrack
+    const isLocalhost = ['localhost', '127.0.0.1'].includes(window.location.hostname)
+
+    return doNotTrack !== '1' && !isLocalhost
+  }
+
+  if (shouldTrack()) {
+    posthog.init(posthogApiKey, {
+      api_host: 'https://eu.i.posthog.com',
+      autocapture: false,
+      capture_pageleave: false,
+      capture_pageview: false,
+    })
+
+    posthog.capture('$pageview', {
+      path: window.location.pathname,
+    })
+  }
+</script>

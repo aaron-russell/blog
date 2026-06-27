@@ -1,0 +1,32 @@
+---
+import styles from './navigation.module.css'
+
+const pathname = Astro.url.pathname
+
+const isActive = (href: string) => {
+  if (href === '/') {
+    return pathname === '/'
+  }
+
+  return pathname === href || pathname.startsWith(href)
+}
+---
+
+<nav role="navigation" class={styles.container} aria-label="Main">
+  <a href="/" class={styles.logoLink}>
+    <span class={styles.navigationItem}>
+      Aaron Russell&apos;s Development Blog
+    </span>
+  </a>
+  <ul class={styles.navigation}>
+    <li class={styles.navigationItem}>
+      <a href="/" class:list={{ active: isActive('/') }}>Home</a>
+    </li>
+    <li class={styles.navigationItem}>
+      <a href="/blog/" class:list={{ active: isActive('/blog/') }}>Blog</a>
+    </li>
+    <li class={styles.navigationItem}>
+      <a href="/contact/" class:list={{ active: isActive('/contact/') }}>Contact</a>
+    </li>
+  </ul>
+</nav>

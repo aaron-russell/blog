@@ -1,0 +1,15 @@
+---
+import styles from './tags.module.css'
+
+const { tags = [] } = Astro.props
+---
+
+{
+  tags.length > 0 ? (
+    <ul class={styles.tags} aria-label="Tags">
+      {tags.map((tag: string) => (
+        <li class={styles.tag}>{tag}</li>
+      ))}
+    </ul>
+  ) : null
+}

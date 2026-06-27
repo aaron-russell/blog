@@ -1,0 +1,31 @@
+---
+import ResponsiveImage from './ResponsiveImage.astro'
+import styles from './hero.module.css'
+
+type Props = {
+  contentHtml?: string
+  image?: any
+  title: string
+}
+
+const { contentHtml, image, title } = Astro.props as Props
+---
+
+<div class={styles.hero}>
+  {
+    image ? (
+      <ResponsiveImage
+        asset={image}
+        alt={title}
+        class={styles.image}
+        loading="eager"
+        sizes="(min-width: 1024px) 68vw, 100vw"
+        widths={[640, 960, 1280, 1600]}
+      />
+    ) : null
+  }
+  <div class={styles.details}>
+    <h1 class={styles.title}>{title}</h1>
+    {contentHtml ? <div class={styles.content} set:html={contentHtml} /> : null}
+  </div>
+</div>

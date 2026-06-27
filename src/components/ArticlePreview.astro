@@ -1,0 +1,37 @@
+---
+import Container from './Container.astro'
+import ResponsiveImage from './ResponsiveImage.astro'
+import Tags from './Tags.astro'
+import styles from './article-preview.module.css'
+
+const { posts = [] } = Astro.props
+---
+
+{
+  Array.isArray(posts) && posts.length > 0 ? (
+    <Container>
+      <ul class={styles['article-list']}>
+        {posts.map((post: any) => (
+          <li>
+            <a href={`/blog/${post.slug}/`} class={styles.link}>
+              <ResponsiveImage
+                asset={post.heroImage}
+                alt={post.heroImage?.description || post.title}
+                loading="lazy"
+                sizes="(min-width: 1140px) 424px, (min-width: 720px) 45vw, 100vw"
+                transform={{ fit: 'fill', fm: 'jpg', h: 212, q: 80 }}
+                widths={[424, 848]}
+              />
+              <h2 class={styles.title}>{post.title}</h2>
+            </a>
+            {post.descriptionHtml ? <div set:html={post.descriptionHtml} /> : null}
+            <div class={styles.meta}>
+              <small class="meta">{post.publishDate}</small>
+              <Tags tags={post.tags} />
+            </div>
+          </li>
+        ))}
+      </ul>
+    </Container>
+  ) : null
+}

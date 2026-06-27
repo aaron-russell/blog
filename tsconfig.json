@@ -1,9 +1,10 @@
 {
+  "extends": "astro/tsconfigs/strict",
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "CommonJS",
-    "lib": ["ES2020"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "strict": true,
     "types": ["@cloudflare/workers-types"]
-  }
+  },
+  "include": ["src", "functions", "astro.config.mjs"]
 }

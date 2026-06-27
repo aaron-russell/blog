@@ -1,0 +1,36 @@
+---
+import ArticlePreview from '../components/ArticlePreview.astro'
+import Hero from '../components/Hero.astro'
+import BaseLayout from '../layouts/BaseLayout.astro'
+import { getAuthor, getHomePagePosts } from '../lib/contentful'
+import { buildContentfulImageUrl } from '../lib/contentful-images'
+import { absoluteUrl, buildPersonJsonLd } from '../utils/structured-data'
+
+const [author, posts] = await Promise.all([getAuthor(), getHomePagePosts()])
+const seoImage = buildContentfulImageUrl(author.heroImage?.url, {
+  fit: 'fill',
+  fm: 'jpg',
+  h: 630,
+  q: 80,
+  w: 1200,
+})
+const profileImage = author.profilePhoto?.url
+  ? absoluteUrl(
+      author.website,
+      buildContentfulImageUrl(author.profilePhoto.url, { fm: 'jpg', q: 80, w: 1180 })
+    )
+  : undefined
+const personJsonLd = buildPersonJsonLd(author, profileImage)
+---
+
+<BaseLayout
+  seo={{
+    alt: author.heroImage?.description,
+    canonical: author.website,
+    image: seoImage,
+    structuredData: [personJsonLd],
+  }}
+>
+  <Hero image={author.heroImage} title={author.name} contentHtml={author.shortBioHtml} />
+  <ArticlePreview posts={posts} />
+</BaseLayout>

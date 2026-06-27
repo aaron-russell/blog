@@ -57,10 +57,12 @@ typings/
 # dotenv environment variables file
 .env*
 
-# Gatsby build folder
+# Build output
+dist
 public
 
-# Gatsby cache folder
+# Framework caches
+.astro
 .cache
 
 # Contentful config file

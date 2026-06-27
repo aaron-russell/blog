@@ -1,17 +1,20 @@
+const tsParser = require('@typescript-eslint/parser')
+
 module.exports = [
   {
-    ignores: ['node_modules/**', 'public/**', '.cache/**'],
+    ignores: ['node_modules/**', 'dist/**', 'public/**', '.astro/**', '.cache/**'],
   },
   {
-    files: ['bin/**/*.js', 'src/**/*.js', 'test/**/*.js', 'gatsby-*.js'],
+    files: [
+      'astro.config.mjs',
+      'bin/**/*.js',
+      'functions/**/*.js',
+      'src/**/*.{js,mjs}',
+      'test/**/*.js',
+    ],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
-      parserOptions: {
-        ecmaFeatures: {
-          jsx: true,
-        },
-      },
       globals: {
         URL: 'readonly',
         URLSearchParams: 'readonly',
@@ -33,13 +36,36 @@ module.exports = [
     },
   },
   {
-    files: ['src/**/*.js'],
+    files: ['functions/**/*.ts', 'src/**/*.ts'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      parser: tsParser,
+      parserOptions: {
+        sourceType: 'module',
+      },
+      sourceType: 'module',
+      globals: {
+        URL: 'readonly',
+        URLSearchParams: 'readonly',
+        console: 'readonly',
+        crypto: 'readonly',
+        document: 'readonly',
+        fetch: 'readonly',
+        FormData: 'readonly',
+        process: 'readonly',
+        Request: 'readonly',
+        Response: 'readonly',
+        window: 'readonly',
+      },
+    },
     rules: {
+      'no-console': 'off',
+      'no-undef': 'off',
       'no-unused-vars': 'off',
     },
   },
   {
-    files: ['bin/**/*.js', 'gatsby-*.js', 'test/**/*.js'],
+    files: ['bin/**/*.js', 'test/**/*.js'],
     languageOptions: {
       sourceType: 'commonjs',
       globals: {

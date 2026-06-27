@@ -1,0 +1,66 @@
+---
+import {
+  buildContentfulImageUrl,
+  buildSrcSet,
+  type ContentfulImage,
+} from '../lib/contentful-images'
+
+type Transform = {
+  fit?: string
+  fm?: string
+  h?: number
+  q?: number
+}
+
+type Props = {
+  alt?: string
+  asset?: ContentfulImage
+  class?: string
+  loading?: 'eager' | 'lazy'
+  sizes?: string
+  transform?: Transform
+  widths?: number[]
+}
+
+const {
+  alt,
+  asset,
+  class: className,
+  loading = 'lazy',
+  sizes = '100vw',
+  transform = { fm: 'jpg', q: 80 },
+  widths = [],
+} = Astro.props as Props
+
+const fallbackWidth = widths[widths.length - 1] || asset?.width || 1200
+const baseWidth = transform.w || widths[0] || fallbackWidth
+const height = transform.h
+  ? Math.round((transform.h * fallbackWidth) / baseWidth)
+  : asset?.height
+const src = buildContentfulImageUrl(asset?.url, {
+  ...transform,
+  h: height,
+  w: fallbackWidth,
+})
+const srcSet = buildSrcSet(asset, widths, transform, {
+  baseHeight: transform.h,
+  baseWidth,
+})
+const imageAlt = alt || asset?.description || asset?.title || ''
+---
+
+{
+  asset && src ? (
+    <img
+      alt={imageAlt}
+      class={className}
+      decoding="async"
+      height={height}
+      loading={loading}
+      sizes={srcSet ? sizes : undefined}
+      src={src}
+      srcset={srcSet}
+      width={fallbackWidth}
+    />
+  ) : null
+}

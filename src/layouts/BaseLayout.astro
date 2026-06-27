@@ -1,0 +1,25 @@
+---
+import '../components/variables.css'
+import '../components/global.css'
+import Analytics from '../components/Analytics.astro'
+import Footer from '../components/Footer.astro'
+import Navigation from '../components/Navigation.astro'
+import SeoHead from '../components/SeoHead.astro'
+
+const { seo = {} } = Astro.props
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <SeoHead {...seo} />
+    <Analytics />
+  </head>
+  <body>
+    <Navigation />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

@@ -91,3 +91,9 @@ export const buildSeoMetaTags = ({
     },
     ...meta,
   ].filter(Boolean)
+
+export default {
+  buildPageTitle,
+  buildSeoMetaTags,
+  buildWebsiteJsonLd,
+}

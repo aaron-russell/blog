@@ -95,3 +95,8 @@ export const onRequest: PagesFunction<Env> = (context) =>
   staticFormsPlugin({
     respondWith: ({ formData }) => handleContactFormSubmission(context, formData),
   })(context)
+
+export default {
+  handleContactFormSubmission,
+  onRequest,
+}

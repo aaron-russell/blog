@@ -1,0 +1,63 @@
+---
+import { siteMetadata } from '../lib/site-config'
+import { buildPageTitle, buildSeoMetaTags, buildWebsiteJsonLd } from '../utils/seo-data'
+
+type Props = {
+  alt?: string
+  canonical?: string
+  description?: string
+  image?: string
+  structuredData?: Array<Record<string, unknown>>
+  title?: string
+  turnstile?: boolean
+  type?: string
+}
+
+const {
+  alt,
+  canonical,
+  description = '',
+  image,
+  structuredData = [],
+  title,
+  turnstile = false,
+  type = 'website',
+} = Astro.props as Props
+
+const pageTitle = buildPageTitle(title, siteMetadata.title)
+const metaTags = buildSeoMetaTags({
+  canonical,
+  description,
+  image,
+  imageAlt: alt,
+  siteMetadata,
+  title,
+  type,
+})
+const websiteLdJson = buildWebsiteJsonLd(siteMetadata)
+---
+
+<title>{pageTitle}</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+{canonical ? <link rel="canonical" href={canonical} /> : null}
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+<link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png" />
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+<link rel="manifest" href="/site.webmanifest" />
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
+{metaTags.map((entry) => <meta {...entry} />)}
+<script type="application/ld+json" set:html={JSON.stringify(websiteLdJson)} />
+{structuredData.map((entry) => (
+  <script type="application/ld+json" set:html={JSON.stringify(entry)} />
+))}
+{
+  turnstile ? (
+    <script
+      src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+      async
+      defer
+    ></script>
+  ) : null
+}

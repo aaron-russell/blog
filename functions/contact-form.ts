@@ -63,3 +63,10 @@ export const buildRedirectUrl = (
 
   return redirectUrl.toString()
 }
+
+export default {
+  buildContactSubmission,
+  buildRedirectUrl,
+  sanitizeContactFields,
+  validateContactSubmission,
+}

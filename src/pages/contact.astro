@@ -1,0 +1,138 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import Hero from '../components/Hero.astro'
+import { getAuthor } from '../lib/contentful'
+import { buildContentfulImageUrl } from '../lib/contentful-images'
+import styles from './contact.module.css'
+
+const CONTACT_MESSAGES = {
+  blocked:
+    'Your message could not be sent. Please email me directly if the issue continues.',
+  invalid: 'Please complete the required fields and try again.',
+  rate_limited: 'Please wait a few minutes before sending another message.',
+  success: 'Thank you for your message. I will get back to you soon.',
+  verification: 'Please complete the Turnstile check before sending your message.',
+}
+
+const author = await getAuthor()
+const seoImage = buildContentfulImageUrl(author.heroImage?.url, {
+  fit: 'fill',
+  fm: 'jpg',
+  h: 630,
+  q: 80,
+  w: 1200,
+})
+const successClass = styles.statusSuccess
+const errorClass = styles.statusError
+---
+
+<BaseLayout
+  seo={{
+    alt: author.heroImage?.description,
+    canonical: `${author.website}/contact/`,
+    image: seoImage,
+    title: 'Contact me',
+    turnstile: true,
+  }}
+>
+  <Hero image={author.heroImage} title="Contact me" />
+  <div class={styles.container}>
+    <h2>Email and phone</h2>
+    <address>
+      <a href="mailto:aaron@russell-tech.co.uk">aaron@russell-tech.co.uk</a>
+      <br />
+      <a href="tel:+447411693644">07411693644</a>
+    </address>
+    <p
+      id="contact-status"
+      class={styles.statusError}
+      role="status"
+      aria-live="polite"
+      hidden
+    ></p>
+    <form class={styles.form} method="POST">
+      <label for="name">
+        Name <span aria-hidden="true">*</span>
+      </label>
+      <input
+        id="name"
+        placeholder="Aaron Russell"
+        type="text"
+        name="name"
+        autocomplete="name"
+        required
+        minlength="2"
+        maxlength="120"
+      />
+
+      <label for="email">
+        Email address <span aria-hidden="true">*</span>
+      </label>
+      <input
+        id="email"
+        placeholder="aaron@russell-tech.co.uk"
+        type="email"
+        name="email"
+        autocomplete="email"
+        required
+        maxlength="200"
+      />
+
+      <label for="message">
+        Message <span aria-hidden="true">*</span>
+      </label>
+      <textarea
+        id="message"
+        placeholder="I want to know more about..."
+        name="message"
+        required
+        minlength="10"
+        maxlength="4000"
+      ></textarea>
+
+      <div class={styles.honeypotField} aria-hidden="true">
+        <label for="company">Company</label>
+        <input
+          id="company"
+          name="company"
+          type="text"
+          autocomplete="off"
+          tabindex="-1"
+        />
+      </div>
+
+      <div
+        class="cf-turnstile"
+        data-sitekey="0x4AAAAAAADUKX7Xm2l9yHju"
+        data-theme="light"
+      ></div>
+      <input type="hidden" name="static-form-name" value="contact" />
+      <button type="submit">Send message</button>
+    </form>
+  </div>
+  <script
+    define:vars={{ contactMessages: CONTACT_MESSAGES, errorClass, successClass }}
+    is:inline
+  >
+    const params = new URLSearchParams(window.location.search)
+    const submitted = params.get('submitted')
+    const error = params.get('error')
+    const statusNode = document.getElementById('contact-status')
+
+    if (statusNode) {
+      const message =
+        submitted === 'success'
+          ? contactMessages.success
+          : error
+            ? contactMessages[error]
+            : ''
+
+      if (message) {
+        statusNode.hidden = false
+        statusNode.textContent = message
+        statusNode.className =
+          submitted === 'success' ? successClass : errorClass
+      }
+    }
+  </script>
+</BaseLayout>

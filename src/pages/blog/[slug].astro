@@ -1,0 +1,85 @@
+---
+import readingTime from 'reading-time'
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import Hero from '../../components/Hero.astro'
+import Tags from '../../components/Tags.astro'
+import { getAllBlogPosts, getAuthor } from '../../lib/contentful'
+import { buildContentfulImageUrl } from '../../lib/contentful-images'
+import { absoluteUrl, buildBlogPostingJsonLd } from '../../utils/structured-data'
+import styles from '../../templates/blog-post.module.css'
+
+export async function getStaticPaths() {
+  const [author, posts] = await Promise.all([getAuthor(), getAllBlogPosts()])
+
+  return posts.map((post, index) => ({
+    params: { slug: post.slug },
+    props: {
+      author,
+      next: index === posts.length - 1 ? null : posts[index + 1],
+      post,
+      previous: index === 0 ? null : posts[index - 1],
+    },
+  }))
+}
+
+const { author, next, post, previous } = Astro.props
+const timeToRead = readingTime(post.bodyPlainText || '').minutes
+const canonicalUrl = post.canonical || `${author.website}/blog/${post.slug}/`
+const seoImage = absoluteUrl(
+  author.website,
+  buildContentfulImageUrl(post.heroImage?.url, {
+    fit: 'fill',
+    fm: 'jpg',
+    h: 630,
+    q: 80,
+    w: 1200,
+  })
+)
+const blogPostingJsonLd = buildBlogPostingJsonLd(post, canonicalUrl, seoImage)
+---
+
+<BaseLayout
+  seo={{
+    alt: post.heroImage?.description,
+    canonical: canonicalUrl,
+    description: post.descriptionPlainText,
+    image: seoImage,
+    structuredData: [blogPostingJsonLd],
+    title: post.title,
+    type: 'article',
+  }}
+>
+  <Hero image={post.heroImage} title={post.title} contentHtml={post.descriptionHtml} />
+  <div class={styles.container}>
+    <span class={styles.meta}>
+      {post.author?.name} &middot; <time datetime={post.rawDate}>{post.publishDate}</time> -
+      {' '}{timeToRead.toFixed(0)} minute read
+    </span>
+    <div class={styles.article}>
+      <div class={styles.body} set:html={post.bodyHtml} />
+      <Tags tags={post.tags} />
+      {
+        previous || next ? (
+          <nav aria-label="Post navigation">
+            <ul class={styles.articleNavigation}>
+              {previous ? (
+                <li>
+                  <a href={`/blog/${previous.slug}/`} rel="prev">
+                    ← {previous.title}
+                  </a>
+                </li>
+              ) : null}
+              {next ? (
+                <li>
+                  <a href={`/blog/${next.slug}/`} rel="next">
+                    {next.title} →
+                  </a>
+                </li>
+              ) : null}
+            </ul>
+          </nav>
+        ) : null
+      }
+    </div>
+  </div>
+</BaseLayout>

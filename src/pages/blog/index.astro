@@ -1,0 +1,28 @@
+---
+import ArticlePreview from '../../components/ArticlePreview.astro'
+import Hero from '../../components/Hero.astro'
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import { getAllBlogPosts, getAuthor } from '../../lib/contentful'
+import { buildContentfulImageUrl } from '../../lib/contentful-images'
+
+const [author, posts] = await Promise.all([getAuthor(), getAllBlogPosts()])
+const seoImage = buildContentfulImageUrl(author.heroImage?.url, {
+  fit: 'fill',
+  fm: 'jpg',
+  h: 630,
+  q: 80,
+  w: 1200,
+})
+---
+
+<BaseLayout
+  seo={{
+    alt: author.heroImage?.description,
+    canonical: `${author.website}/blog/`,
+    image: seoImage,
+    title: 'Blog',
+  }}
+>
+  <Hero title="Blog" />
+  <ArticlePreview posts={posts} />
+</BaseLayout>

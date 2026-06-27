@@ -88,3 +88,11 @@ export const buildBlogPostingJsonLd = (post, locationHref, imageUrl) => ({
   keywords: post.tags,
   genre: post.category,
 })
+
+export default {
+  CONTENTFUL_PERSON_ID,
+  absoluteUrl,
+  buildBlogPostingJsonLd,
+  buildPersonJsonLd,
+  getPersonSameAs,
+}
