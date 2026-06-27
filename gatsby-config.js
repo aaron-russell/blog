@@ -26,14 +26,5 @@ module.exports = {
         host: process.env.CONTENTFUL_HOST,
       },
     },
-    {
-      resolve: `gatsby-plugin-posthog`,
-      options: {
-        apiKey: 'phc_Tx60pBXpFuImoXXYIXUsSbdhQG02IqyouPF8EH0NZqW',
-        apiHost: 'https://eu.posthog.com',
-        head: true,
-        isEnabledDevMode: true,
-      },
-    },
   ],
 }

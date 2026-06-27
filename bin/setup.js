@@ -99,7 +99,7 @@ inquirer
   .then(({ spaceId, managementToken }) =>
     spaceImport({ spaceId, managementToken, content: exportFile })
   )
-  .then((_, error) => {
+  .then(() => {
     console.log(
       `All set! You can now run ${chalk.yellow(
         "npm run dev"
