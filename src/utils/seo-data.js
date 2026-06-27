@@ -4,6 +4,7 @@ export const buildPageTitle = (title, siteTitle) =>
 export const buildWebsiteJsonLd = (siteMetadata) => ({
   '@context': 'https://schema.org',
   '@type': 'WebSite',
+  ...(siteMetadata.description ? { description: siteMetadata.description } : {}),
   name: siteMetadata.title,
   url: siteMetadata.siteUrl,
 })
@@ -40,6 +41,10 @@ export const buildSeoMetaTags = ({
     {
       property: 'og:type',
       content: type,
+    },
+    {
+      property: 'og:site_name',
+      content: siteMetadata.title,
     },
     image
       ? {
@@ -84,10 +89,6 @@ export const buildSeoMetaTags = ({
     {
       name: 'twitter:description',
       content: description || siteMetadata.description,
-    },
-    {
-      name: 'theme-color',
-      content: '#ffffff',
     },
     ...meta,
   ].filter(Boolean)

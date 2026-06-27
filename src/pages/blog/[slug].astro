@@ -2,8 +2,10 @@
 import readingTime from 'reading-time'
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import Hero from '../../components/Hero.astro'
+import ArticlePreview from '../../components/ArticlePreview.astro'
 import Tags from '../../components/Tags.astro'
 import { getAllBlogPosts, getAuthor } from '../../lib/contentful'
+import { annotateArticleHtml, getRelatedPosts } from '../../lib/blog'
 import { buildContentfulImageUrl } from '../../lib/contentful-images'
 import { absoluteUrl, buildBlogPostingJsonLd } from '../../utils/structured-data'
 import styles from '../../templates/blog-post.module.css'
@@ -16,14 +18,17 @@ export async function getStaticPaths() {
     props: {
       author,
       next: index === posts.length - 1 ? null : posts[index + 1],
+      posts,
       post,
       previous: index === 0 ? null : posts[index - 1],
     },
   }))
 }
 
-const { author, next, post, previous } = Astro.props
+const { author, next, post, posts, previous } = Astro.props
 const timeToRead = readingTime(post.bodyPlainText || '').minutes
+const { headings, html: articleHtml } = annotateArticleHtml(post.bodyHtml || '')
+const relatedPosts = getRelatedPosts(post, posts, 3)
 const canonicalUrl = post.canonical || `${author.website}/blog/${post.slug}/`
 const seoImage = absoluteUrl(
   author.website,
@@ -49,30 +54,80 @@ const blogPostingJsonLd = buildBlogPostingJsonLd(post, canonicalUrl, seoImage)
     type: 'article',
   }}
 >
-  <Hero image={post.heroImage} title={post.title} contentHtml={post.descriptionHtml} />
+  <div class={styles.progress} aria-hidden="true">
+    <div class={styles.progressBar} data-reading-progress></div>
+  </div>
+  <Hero
+    eyebrow={post.category || 'Article'}
+    image={post.heroImage}
+    title={post.title}
+    contentHtml={post.descriptionHtml}
+  />
   <div class={styles.container}>
-    <span class={styles.meta}>
-      {post.author?.name} &middot; <time datetime={post.rawDate}>{post.publishDate}</time> -
-      {' '}{timeToRead.toFixed(0)} minute read
-    </span>
+    <div class={`${styles.metaPanel} surface`}>
+      <div class={styles.metaGroup}>
+        <span class={styles.metaLabel}>Written by</span>
+        <span>{post.author?.name}</span>
+      </div>
+      <div class={styles.metaGroup}>
+        <span class={styles.metaLabel}>Published</span>
+        <time datetime={post.rawDate}>{post.publishDate}</time>
+      </div>
+      {
+        post.updatedDate ? (
+          <div class={styles.metaGroup}>
+            <span class={styles.metaLabel}>Updated</span>
+            <time datetime={post.rawUpdatedDate}>{post.updatedDate}</time>
+          </div>
+        ) : null
+      }
+      <div class={styles.metaGroup}>
+        <span class={styles.metaLabel}>Reading time</span>
+        <span>{timeToRead.toFixed(0)} minute read</span>
+      </div>
+      <div class={styles.metaTags}>
+        <Tags linkToFilter tags={post.tags} />
+      </div>
+    </div>
     <div class={styles.article}>
-      <div class={styles.body} set:html={post.bodyHtml} />
-      <Tags tags={post.tags} />
+      {
+        headings.length >= 3 ? (
+          <aside class={`${styles.toc} surface`}>
+            <p class={styles.tocTitle}>On this page</p>
+            <ol>
+              {headings.map((heading) => (
+                <li>
+                  <a
+                    class:list={{ [styles.tocSubItem]: heading.depth > 2 }}
+                    data-toc-link
+                    href={`#${heading.id}`}
+                  >
+                    {heading.text}
+                  </a>
+                </li>
+              ))}
+            </ol>
+          </aside>
+        ) : null
+      }
+      <div class={styles.body} data-article-body set:html={articleHtml} />
       {
         previous || next ? (
-          <nav aria-label="Post navigation">
+          <nav aria-label="Post navigation" class={styles.postNav}>
             <ul class={styles.articleNavigation}>
               {previous ? (
                 <li>
-                  <a href={`/blog/${previous.slug}/`} rel="prev">
-                    ← {previous.title}
+                  <a class={`${styles.navCard} surface`} href={`/blog/${previous.slug}/`} rel="prev">
+                    <span class={styles.navLabel}>Previous article</span>
+                    <strong>← {previous.title}</strong>
                   </a>
                 </li>
               ) : null}
               {next ? (
                 <li>
-                  <a href={`/blog/${next.slug}/`} rel="next">
-                    {next.title} →
+                  <a class={`${styles.navCard} surface`} href={`/blog/${next.slug}/`} rel="next">
+                    <span class={styles.navLabel}>Next article</span>
+                    <strong>{next.title} →</strong>
                   </a>
                 </li>
               ) : null}
@@ -82,4 +137,83 @@ const blogPostingJsonLd = buildBlogPostingJsonLd(post, canonicalUrl, seoImage)
       }
     </div>
   </div>
+  {
+    relatedPosts.length > 0 ? (
+      <section class={styles.relatedSection}>
+        <div class={styles.relatedHeader}>
+          <span class="eyebrow">Related posts</span>
+          <h2>Keep reading</h2>
+        </div>
+        <ArticlePreview posts={relatedPosts} />
+      </section>
+    ) : null
+  }
+  <script is:inline>
+    const progressBar = document.querySelector('[data-reading-progress]')
+    const articleBody = document.querySelector('[data-article-body]')
+    const tocLinks = Array.from(document.querySelectorAll('[data-toc-link]'))
+
+    const updateProgress = () => {
+      if (!(articleBody instanceof HTMLElement) || !(progressBar instanceof HTMLElement)) {
+        return
+      }
+
+      const rect = articleBody.getBoundingClientRect()
+      const viewHeight = window.innerHeight
+      const total = Math.max(rect.height - viewHeight * 0.35, 1)
+      const travelled = Math.min(Math.max(-rect.top + viewHeight * 0.15, 0), total)
+      progressBar.style.transform = `scaleX(${travelled / total})`
+    }
+
+    const observer = 'IntersectionObserver' in window
+      ? new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              const id = entry.target.getAttribute('id')
+              if (!id) {
+                return
+              }
+
+              const link = tocLinks.find((item) => item.getAttribute('href') === `#${id}`)
+              if (link) {
+                link.setAttribute('aria-current', entry.isIntersecting ? 'true' : 'false')
+              }
+            })
+          },
+          {
+            rootMargin: '-20% 0px -65% 0px',
+            threshold: [0, 1],
+          }
+        )
+      : null
+
+    document.querySelectorAll('pre').forEach((block) => {
+      const code = block.querySelector('code')
+      const button = document.createElement('button')
+      button.className = 'copy-code-button'
+      button.type = 'button'
+      button.textContent = 'Copy'
+      button.addEventListener('click', async () => {
+        const text = code?.textContent || block.textContent || ''
+        try {
+          await navigator.clipboard.writeText(text)
+          button.textContent = 'Copied'
+          window.setTimeout(() => {
+            button.textContent = 'Copy'
+          }, 1600)
+        } catch {
+          button.textContent = 'Unable to copy'
+        }
+      })
+      block.appendChild(button)
+    })
+
+    document.querySelectorAll('[data-article-body] h2, [data-article-body] h3').forEach((heading) => {
+      observer?.observe(heading)
+    })
+
+    updateProgress()
+    document.addEventListener('scroll', updateProgress, { passive: true })
+    window.addEventListener('resize', updateProgress)
+  </script>
 </BaseLayout>

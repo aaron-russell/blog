@@ -61,9 +61,11 @@ export const buildPersonJsonLd = (author, imageUrl) => ({
 export const buildBlogPostingJsonLd = (post, locationHref, imageUrl) => ({
   '@context': 'https://schema.org',
   '@type': 'BlogPosting',
+  description: post.descriptionPlainText,
   image: imageUrl || post.heroImage?.resize?.src,
   url: locationHref,
   headline: post.title,
+  dateModified: post.rawUpdatedDate || post.rawDate,
   datePublished: post.rawDate,
   inLanguage: 'en-GB',
   isFamilyFriendly: true,

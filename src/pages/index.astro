@@ -1,12 +1,16 @@
 ---
 import ArticlePreview from '../components/ArticlePreview.astro'
-import Hero from '../components/Hero.astro'
+import Container from '../components/Container.astro'
 import BaseLayout from '../layouts/BaseLayout.astro'
 import { getAuthor, getHomePagePosts } from '../lib/contentful'
+import { getTopTags } from '../lib/blog'
 import { buildContentfulImageUrl } from '../lib/contentful-images'
+import { homeConfig } from '../lib/site-config'
 import { absoluteUrl, buildPersonJsonLd } from '../utils/structured-data'
+import styles from './index.module.css'
 
 const [author, posts] = await Promise.all([getAuthor(), getHomePagePosts()])
+const topTags = getTopTags(posts, 4)
 const seoImage = buildContentfulImageUrl(author.heroImage?.url, {
   fit: 'fill',
   fm: 'jpg',
@@ -27,10 +31,145 @@ const personJsonLd = buildPersonJsonLd(author, profileImage)
   seo={{
     alt: author.heroImage?.description,
     canonical: author.website,
+    description: homeConfig.hero.intro,
     image: seoImage,
     structuredData: [personJsonLd],
   }}
 >
-  <Hero image={author.heroImage} title={author.name} contentHtml={author.shortBioHtml} />
-  <ArticlePreview posts={posts} />
+  <section class={styles.heroSection}>
+    <div class={styles.heroGrid}>
+      <div class={`${styles.heroCard} surface`}>
+        <span class="eyebrow">{homeConfig.hero.eyebrow}</span>
+        <h1 class={styles.statement}>{homeConfig.hero.title}</h1>
+        <p class={styles.intro}>{homeConfig.hero.intro}</p>
+        <div class={styles.actions}>
+          <a class={styles.primaryAction} href="/blog/">
+            Read the latest notes
+          </a>
+          <a class={styles.secondaryAction} href="/contact/">
+            Get in touch
+          </a>
+        </div>
+      </div>
+      <div class={styles.statGrid}>
+        <article class={`${styles.stat} surface`}>
+          <span class={styles.statLabel}>Latest writing</span>
+          <p class={styles.statValue}>{posts.length}</p>
+          <p class={styles.statText}>Published notes and experiments currently on the site.</p>
+        </article>
+        <article class={`${styles.stat} surface`}>
+          <span class={styles.statLabel}>Focus</span>
+          <p class={styles.statValue}>AI x Web</p>
+          <p class={styles.statText}>Practical engineering workflows, delivery systems, and front-end craft.</p>
+        </article>
+        <article class={`${styles.stat} surface`}>
+          <span class={styles.statLabel}>About</span>
+          <p class={styles.statValue}>{author.name}</p>
+          <p class={styles.statText}>An active notebook for building, testing, and refining ideas in public.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class={styles.section}>
+    <div class={styles.sectionHeader}>
+      <div>
+        <span class="eyebrow">Current workbench</span>
+        <h2>What I’m building right now</h2>
+      </div>
+      <p>Ideas, systems, and publishing workflows I’m actively refining right now.</p>
+    </div>
+    <div class={styles.featureGrid}>
+      {homeConfig.workbench.map((item) => (
+        <article class={`${styles.featureCard} surface`}>
+          <h3>{item.title}</h3>
+          <p>{item.description}</p>
+          <a class={styles.featureLink} href={item.href}>
+            Explore more
+          </a>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class={styles.section}>
+    <div class={styles.sectionHeader}>
+      <div>
+        <span class="eyebrow">Latest writing</span>
+        <h2>Fresh notes from the notebook</h2>
+      </div>
+      <p>Recent writing, experiments, and practical implementation details.</p>
+    </div>
+    <ArticlePreview posts={posts.slice(0, 3)} />
+  </section>
+
+  <section class={styles.section}>
+    <div class={styles.sectionHeader}>
+      <div>
+        <span class="eyebrow">Featured topics</span>
+        <h2>Start with the areas I keep returning to</h2>
+      </div>
+      <p>Use topic collections to jump into recurring themes without digging through the full archive.</p>
+    </div>
+    <div class={styles.featureGrid}>
+      {topTags.map(({ count, tag }) => (
+        <a class={`${styles.topicCard} surface`} href={`/blog/?topic=${encodeURIComponent(tag)}`}>
+          <div class={styles.topicLink}>
+            <h3>{tag}</h3>
+            <span>{count} posts</span>
+          </div>
+          <p>Browse everything filed under {tag}.</p>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class={styles.section}>
+    <div class={styles.sectionHeader}>
+      <div>
+        <span class="eyebrow">Currently exploring</span>
+        <h2>Questions worth spending time on</h2>
+      </div>
+      <p>Areas I’m actively researching, prototyping, or pressure-testing in real projects.</p>
+    </div>
+    <div class={styles.featureGrid}>
+      {homeConfig.exploring.map((item) => (
+        <article class={`${styles.topicCard} surface`}>
+          <h3>{item}</h3>
+          <p>Notes and experiments will land in the blog as they turn into something useful.</p>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class={styles.section}>
+    <div class={styles.sectionHeader}>
+      <div>
+        <span class="eyebrow">Tools and stack</span>
+        <h2>Deliberately simple where it matters</h2>
+      </div>
+      <p>Static-first publishing, modern TypeScript, and lightweight infrastructure choices that keep the site maintainable.</p>
+    </div>
+    <div class={styles.stackGrid}>
+      {homeConfig.stack.map((item) => (
+        <div class={`${styles.stackItem} surface`}>{item}</div>
+      ))}
+    </div>
+  </section>
+
+  <Container>
+    <section class={styles.sectionHeader}>
+      <div>
+        <span class="eyebrow">Stay in touch</span>
+        <h2>Want to talk about engineering, AI, or product systems?</h2>
+      </div>
+      <p>
+        The fastest way to reach me right now is the contact page. No newsletter popups, no
+        heavy signup flow.
+      </p>
+      <a class={styles.primaryAction} href="/contact/">
+        Send a message
+      </a>
+    </section>
+  </Container>
 </BaseLayout>

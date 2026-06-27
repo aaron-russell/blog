@@ -3,28 +3,29 @@
   display: flex;
   margin: 0 auto;
   max-width: var(--size-max-width);
-  min-height: 200px;
-  padding: 0 0 var(--size-gutter);
+  min-height: 280px;
+  padding: 0 0 var(--space-4xl);
   position: relative;
 }
 
 .image {
-  /*
-    Ensure golden ratio for the hero size while limiting it to some extend to
-    the viewport width
-  */
-  height: 61.8vh;
-  max-height: 560px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  height: min(62vh, 680px);
   width: 100%;
 }
 
 .details {
-  background: var(--background);
+  background: linear-gradient(180deg, var(--surface-strong), var(--surface));
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
   left: 0;
-  max-width: 40rem;
+  max-width: 44rem;
   width: 85%;
-  padding: var(--space-2xl) var(--size-gutter) 0;
+  padding: var(--space-2xl) var(--space-2xl) 0;
   position: absolute;
+  backdrop-filter: blur(18px);
 }
 
 .title {
@@ -36,8 +37,13 @@
 }
 
 .content {
+  color: var(--text-muted);
   font-size: var(--text-lead);
-  font-weight: var(--semibold);
+  font-weight: var(--medium);
+  margin: 0;
+}
+
+.content :global(p) {
   margin: 0;
 }
 
@@ -53,8 +59,7 @@
   }
 
   .details {
-    max-width: 44rem;
-    padding: var(--space-3xl) var(--size-gutter) 0;
+    padding: var(--space-3xl) var(--space-3xl) 0;
   }
 }
 
@@ -66,6 +71,6 @@
 
   .details {
     left: var(--size-gutter);
-    padding: var(--space-3xl) var(--size-gutter) 0 0;
+    padding: var(--space-3xl) var(--space-3xl) 0 0;
   }
 }

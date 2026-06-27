@@ -4,11 +4,12 @@ import styles from './hero.module.css'
 
 type Props = {
   contentHtml?: string
+  eyebrow?: string
   image?: any
   title: string
 }
 
-const { contentHtml, image, title } = Astro.props as Props
+const { contentHtml, eyebrow, image, title } = Astro.props as Props
 ---
 
 <div class={styles.hero}>
@@ -22,9 +23,10 @@ const { contentHtml, image, title } = Astro.props as Props
         sizes="(min-width: 1024px) 68vw, 100vw"
         widths={[640, 960, 1280, 1600]}
       />
-    ) : null
+  ) : null
   }
   <div class={styles.details}>
+    {eyebrow ? <span class="eyebrow">{eyebrow}</span> : null}
     <h1 class={styles.title}>{title}</h1>
     {contentHtml ? <div class={styles.content} set:html={contentHtml} /> : null}
   </div>

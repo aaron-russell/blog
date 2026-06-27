@@ -238,7 +238,19 @@
           "type": "RichText",
           "localized": false,
           "required": true,
-          "validations": [],
+          "validations": [
+            {
+              "nodes": {
+                "embedded-entry-block": [
+                  {
+                    "linkContentType": [
+                      "codeBlock"
+                    ]
+                  }
+                ]
+              }
+            }
+          ],
           "disabled": false,
           "omitted": false
         },
@@ -284,6 +296,159 @@
               }
             ]
           }
+        }
+      ]
+    },
+    {
+      "sys": {
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "28p9vvm1oxuw"
+          }
+        },
+        "id": "codeBlock",
+        "type": "ContentType",
+        "createdAt": "2026-06-27T16:00:00.000Z",
+        "updatedAt": "2026-06-27T16:00:00.000Z",
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "066RqBikAjzKy0SWUEtFvH"
+          }
+        },
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "066RqBikAjzKy0SWUEtFvH"
+          }
+        },
+        "publishedCounter": 1,
+        "version": 1,
+        "publishedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "066RqBikAjzKy0SWUEtFvH"
+          }
+        },
+        "publishedVersion": 1,
+        "firstPublishedAt": "2026-06-27T16:00:00.000Z",
+        "publishedAt": "2026-06-27T16:00:00.000Z"
+      },
+      "displayField": "internalName",
+      "name": "Code Block",
+      "description": "Structured code block embedded inside blog post rich text.",
+      "fields": [
+        {
+          "id": "internalName",
+          "name": "Internal Name",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "code",
+          "name": "Code",
+          "type": "Text",
+          "localized": false,
+          "required": true,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "language",
+          "name": "Language",
+          "type": "Symbol",
+          "localized": false,
+          "required": true,
+          "validations": [
+            {
+              "in": [
+                "astro",
+                "bash",
+                "css",
+                "diff",
+                "graphql",
+                "html",
+                "javascript",
+                "js",
+                "json",
+                "jsx",
+                "markdown",
+                "md",
+                "nginx",
+                "scss",
+                "shell",
+                "sql",
+                "text",
+                "ts",
+                "tsx",
+                "typescript",
+                "xml",
+                "yaml",
+                "yml"
+              ]
+            }
+          ],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "filename",
+          "name": "Filename",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "showLineNumbers",
+          "name": "Show Line Numbers",
+          "type": "Boolean",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "highlightedLines",
+          "name": "Highlighted Lines",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [],
+          "disabled": false,
+          "omitted": false
+        },
+        {
+          "id": "diffMode",
+          "name": "Diff Mode",
+          "type": "Symbol",
+          "localized": false,
+          "required": false,
+          "validations": [
+            {
+              "in": [
+                "none",
+                "diff",
+                "diff-add",
+                "diff-remove"
+              ]
+            }
+          ],
+          "disabled": false,
+          "omitted": false
         }
       ]
     }
@@ -434,6 +599,73 @@
           }
         },
         "updatedAt": "2017-05-17T10:55:25.370Z",
+        "updatedBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "066RqBikAjzKy0SWUEtFvH"
+          }
+        }
+      }
+    },
+    {
+      "controls": [
+        {
+          "fieldId": "internalName",
+          "widgetId": "singleLine"
+        },
+        {
+          "fieldId": "code",
+          "widgetId": "multipleLine"
+        },
+        {
+          "fieldId": "language",
+          "widgetId": "dropdown"
+        },
+        {
+          "fieldId": "filename",
+          "widgetId": "singleLine"
+        },
+        {
+          "fieldId": "showLineNumbers",
+          "widgetId": "boolean"
+        },
+        {
+          "fieldId": "highlightedLines",
+          "widgetId": "singleLine"
+        },
+        {
+          "fieldId": "diffMode",
+          "widgetId": "dropdown"
+        }
+      ],
+      "sys": {
+        "id": "default",
+        "type": "EditorInterface",
+        "version": 1,
+        "createdAt": "2026-06-27T16:00:00.000Z",
+        "createdBy": {
+          "sys": {
+            "type": "Link",
+            "linkType": "User",
+            "id": "066RqBikAjzKy0SWUEtFvH"
+          }
+        },
+        "space": {
+          "sys": {
+            "type": "Link",
+            "linkType": "Space",
+            "id": "28p9vvm1oxuw"
+          }
+        },
+        "contentType": {
+          "sys": {
+            "type": "Link",
+            "linkType": "ContentType",
+            "id": "codeBlock"
+          }
+        },
+        "updatedAt": "2026-06-27T16:00:00.000Z",
         "updatedBy": {
           "sys": {
             "type": "Link",

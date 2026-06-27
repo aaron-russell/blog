@@ -36,3 +36,8 @@ export const formatBlogDate = (value: string) => {
   const { day, month, year } = getUtcParts(value)
   return `${month} ${day}${getOrdinalSuffix(day)}, ${year}`
 }
+
+export const formatIsoDate = (value: string) => {
+  const date = new Date(value)
+  return date.toISOString()
+}

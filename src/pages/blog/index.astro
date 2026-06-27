@@ -1,11 +1,13 @@
 ---
 import ArticlePreview from '../../components/ArticlePreview.astro'
-import Hero from '../../components/Hero.astro'
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import { getAllBlogPosts, getAuthor } from '../../lib/contentful'
+import { getTopTags } from '../../lib/blog'
 import { buildContentfulImageUrl } from '../../lib/contentful-images'
+import styles from './index.module.css'
 
 const [author, posts] = await Promise.all([getAuthor(), getAllBlogPosts()])
+const topTags = getTopTags(posts, 8)
 const seoImage = buildContentfulImageUrl(author.heroImage?.url, {
   fit: 'fill',
   fm: 'jpg',
@@ -19,10 +21,121 @@ const seoImage = buildContentfulImageUrl(author.heroImage?.url, {
   seo={{
     alt: author.heroImage?.description,
     canonical: `${author.website}/blog/`,
+    description: 'Engineering notes, experiments, and implementation details from Aaron Russell.',
     image: seoImage,
     title: 'Blog',
   }}
 >
-  <Hero title="Blog" />
-  <ArticlePreview posts={posts} />
+  <section class={styles.heroSection}>
+    <div class={`${styles.heroPanel} surface`}>
+      <div>
+        <span class="eyebrow">Writing archive</span>
+        <h1 class={styles.title}>Browse the full notebook.</h1>
+        <p class={styles.description}>
+          Implementation notes, experiments, and practical engineering write-ups collected in one place.
+        </p>
+      </div>
+      <div class={styles.tools}>
+        <label>
+          <span class="visually-hidden">Search posts</span>
+          <input
+            class={styles.searchInput}
+            data-blog-search
+            type="search"
+            placeholder="Search by title, summary, or tag"
+          />
+        </label>
+        <div class={styles.topicList} aria-label="Popular topics">
+          <button class={styles.topicButton} data-active="true" data-topic-filter="" type="button">
+            All topics
+          </button>
+          {topTags.map(({ tag }) => (
+            <button class={styles.topicButton} data-topic-filter={tag} type="button">
+              {tag}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class={styles.section}>
+    <p class={styles.resultsMeta} data-results-count>
+      Showing all {posts.length} posts.
+    </p>
+    <div data-blog-results>
+      <ArticlePreview posts={posts} />
+    </div>
+    <p class={`${styles.emptyState} surface`} data-empty-state>
+      No posts match that search yet. Try a broader keyword or clear the topic filter.
+    </p>
+  </section>
+
+  <script is:inline>
+    const searchInput = document.querySelector('[data-blog-search]')
+    const filterButtons = Array.from(document.querySelectorAll('[data-topic-filter]'))
+    const cards = Array.from(document.querySelectorAll('[data-blog-results] li'))
+    const resultsCount = document.querySelector('[data-results-count]')
+    const emptyState = document.querySelector('[data-empty-state]')
+    const params = new URLSearchParams(window.location.search)
+
+    let activeTopic = params.get('topic') || ''
+
+    const getCardData = (card) => {
+      const text = card.textContent?.toLowerCase() || ''
+      return text
+    }
+
+    const applyFilters = () => {
+      const query = searchInput instanceof HTMLInputElement ? searchInput.value.trim().toLowerCase() : ''
+      let visibleCount = 0
+
+      cards.forEach((card) => {
+        const haystack = getCardData(card)
+        const matchesTopic = !activeTopic || haystack.includes(activeTopic.toLowerCase())
+        const matchesQuery = !query || haystack.includes(query)
+        const isVisible = matchesTopic && matchesQuery
+
+        card.style.display = isVisible ? '' : 'none'
+        if (isVisible) {
+          visibleCount += 1
+        }
+      })
+
+      filterButtons.forEach((button) => {
+        const isActive = (button.getAttribute('data-topic-filter') || '') === activeTopic
+        button.setAttribute('data-active', isActive ? 'true' : 'false')
+      })
+
+      if (resultsCount) {
+        resultsCount.textContent = visibleCount === cards.length
+          ? `Showing all ${cards.length} posts.`
+          : `Showing ${visibleCount} of ${cards.length} posts${activeTopic ? ` in ${activeTopic}` : ''}.`
+      }
+
+      if (emptyState instanceof HTMLElement) {
+        emptyState.style.display = visibleCount === 0 ? 'block' : 'none'
+      }
+    }
+
+    filterButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        activeTopic = button.getAttribute('data-topic-filter') || ''
+        const url = new URL(window.location.href)
+        if (activeTopic) {
+          url.searchParams.set('topic', activeTopic)
+        } else {
+          url.searchParams.delete('topic')
+        }
+        history.replaceState({}, '', url)
+        applyFilters()
+      })
+    })
+
+    if (searchInput instanceof HTMLInputElement) {
+      searchInput.addEventListener('input', applyFilters)
+    }
+
+    applyFilters()
+  </script>
 </BaseLayout>

@@ -1,0 +1,52 @@
+---
+import styles from './theme-switcher.module.css'
+
+const themes = [
+  { id: 'dark', label: 'Dark' },
+  { id: 'light', label: 'Light' },
+]
+---
+
+<div class={styles.switcher} role="group" aria-label="Color theme">
+  {themes.map((theme) => (
+    <button
+      type="button"
+      class={styles.option}
+      data-theme-option={theme.id}
+      aria-pressed="false"
+    >
+      {theme.label}
+    </button>
+  ))}
+</div>
+
+<script is:inline>
+  (() => {
+    const storageKey = 'site-theme'
+    const root = document.documentElement
+    const options = Array.from(document.querySelectorAll('[data-theme-option]'))
+
+    const setActive = (theme) => {
+      root.setAttribute('data-theme', theme)
+      options.forEach((button) => {
+        const isCurrent = button.getAttribute('data-theme-option') === theme
+        button.setAttribute('aria-pressed', String(isCurrent))
+      })
+    }
+
+    const savedTheme = localStorage.getItem(storageKey) || 'dark'
+    setActive(savedTheme)
+
+    options.forEach((button) => {
+      button.addEventListener('click', () => {
+        const nextTheme = button.getAttribute('data-theme-option')
+        if (!nextTheme) {
+          return
+        }
+
+        localStorage.setItem(storageKey, nextTheme)
+        setActive(nextTheme)
+      })
+    })
+  })()
+</script>

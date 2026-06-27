@@ -3,6 +3,7 @@ import Container from './Container.astro'
 import ResponsiveImage from './ResponsiveImage.astro'
 import Tags from './Tags.astro'
 import styles from './article-preview.module.css'
+import { createExcerpt } from '../lib/blog'
 
 const { posts = [] } = Astro.props
 ---
@@ -12,23 +13,29 @@ const { posts = [] } = Astro.props
     <Container>
       <ul class={styles['article-list']}>
         {posts.map((post: any) => (
-          <li>
-            <a href={`/blog/${post.slug}/`} class={styles.link}>
-              <ResponsiveImage
-                asset={post.heroImage}
-                alt={post.heroImage?.description || post.title}
-                loading="lazy"
-                sizes="(min-width: 1140px) 424px, (min-width: 720px) 45vw, 100vw"
-                transform={{ fit: 'fill', fm: 'jpg', h: 212, q: 80 }}
-                widths={[424, 848]}
-              />
-              <h2 class={styles.title}>{post.title}</h2>
-            </a>
-            {post.descriptionHtml ? <div set:html={post.descriptionHtml} /> : null}
-            <div class={styles.meta}>
-              <small class="meta">{post.publishDate}</small>
-              <Tags tags={post.tags} />
-            </div>
+          <li class={`${styles.card} surface`}>
+            <article class={styles.article}>
+              <a href={`/blog/${post.slug}/`} class={styles.link}>
+                <ResponsiveImage
+                  asset={post.heroImage}
+                  alt={post.heroImage?.description || post.title}
+                  class={styles.image}
+                  loading="lazy"
+                  sizes="(min-width: 1140px) 424px, (min-width: 720px) 45vw, 100vw"
+                  transform={{ fit: 'fill', fm: 'jpg', h: 240, q: 80 }}
+                  widths={[424, 848]}
+                />
+                <p class={styles.kicker}>Latest writing</p>
+                <h2 class={styles.title}>{post.title}</h2>
+              </a>
+              <p class={styles.excerpt}>
+                {createExcerpt(post.descriptionPlainText || post.bodyPlainText || '', 156)}
+              </p>
+              <div class={styles.meta}>
+                <small>{post.publishDate}</small>
+                <Tags linkToFilter tags={post.tags} />
+              </div>
+            </article>
           </li>
         ))}
       </ul>

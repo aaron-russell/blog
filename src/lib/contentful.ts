@@ -35,9 +35,11 @@ export type BlogPostSummary = {
   heroImage?: ReturnType<typeof createContentfulImage>
   publishDate: string
   rawDate: string
+  rawUpdatedDate?: string
   slug: string
   tags: string[]
   title: string
+  updatedDate?: string
 }
 
 const getContentfulConfig = () => {
@@ -64,7 +66,7 @@ const mapLinkedCompany = (items: any[] | undefined) =>
     website: item?.fields?.website,
   })) || []
 
-const mapAuthor = (entry: any): ContentfulAuthor => ({
+const mapAuthor = async (entry: any): Promise<ContentfulAuthor> => ({
   affiliatedWith: mapLinkedCompany(entry?.fields?.affiliatedWith),
   alumniOf: mapLinkedCompany(entry?.fields?.alumniOf),
   birthPlace: entry?.fields?.birthPlace,
@@ -80,13 +82,13 @@ const mapAuthor = (entry: any): ContentfulAuthor => ({
   name: entry?.fields?.name || '',
   nationality: entry?.fields?.nationality,
   profilePhoto: createContentfulImage(entry?.fields?.profilePhoto),
-  shortBioHtml: renderRichText(entry?.fields?.shortBio),
+  shortBioHtml: await renderRichText(entry?.fields?.shortBio),
   twitter: entry?.fields?.twitter,
   website: entry?.fields?.website || '',
   worksFor: mapLinkedCompany(entry?.fields?.worksFor),
 })
 
-const mapBlogPost = (entry: any): BlogPostSummary => {
+const mapBlogPost = async (entry: any): Promise<BlogPostSummary> => {
   const publishDate = entry?.fields?.publishDate || ''
 
   return {
@@ -96,18 +98,20 @@ const mapBlogPost = (entry: any): BlogPostSummary => {
           website: entry.fields.author.fields?.website,
         }
       : undefined,
-    bodyHtml: renderRichText(entry?.fields?.body),
+    bodyHtml: await renderRichText(entry?.fields?.body),
     bodyPlainText: richTextToPlainText(entry?.fields?.body),
     canonical: entry?.fields?.canonical,
     category: entry?.fields?.category,
-    descriptionHtml: renderRichText(entry?.fields?.description),
+    descriptionHtml: await renderRichText(entry?.fields?.description),
     descriptionPlainText: richTextToPlainText(entry?.fields?.description),
     heroImage: createContentfulImage(entry?.fields?.heroImage),
     publishDate: formatBlogDate(publishDate),
     rawDate: publishDate,
+    rawUpdatedDate: entry?.sys?.updatedAt,
     slug: entry?.fields?.slug || '',
     tags: entry?.fields?.tags || [],
     title: entry?.fields?.title || '',
+    updatedDate: entry?.sys?.updatedAt ? formatBlogDate(entry.sys.updatedAt) : undefined,
   }
 }
 
@@ -134,7 +138,7 @@ export const getAllBlogPosts = async () => {
     order: ['-fields.publishDate'],
   })
 
-  return response.items.map(mapBlogPost)
+  return Promise.all(response.items.map(mapBlogPost))
 }
 
 export const getHomePagePosts = async () => {

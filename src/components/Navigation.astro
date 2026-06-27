@@ -1,5 +1,6 @@
 ---
 import styles from './navigation.module.css'
+import ThemeSwitcher from './ThemeSwitcher.astro'
 
 const pathname = Astro.url.pathname
 
@@ -13,20 +14,26 @@ const isActive = (href: string) => {
 ---
 
 <nav role="navigation" class={styles.container} aria-label="Main">
-  <a href="/" class={styles.logoLink}>
-    <span class={styles.navigationItem}>
-      Aaron Russell&apos;s Development Blog
-    </span>
-  </a>
-  <ul class={styles.navigation}>
-    <li class={styles.navigationItem}>
-      <a href="/" class:list={{ active: isActive('/') }}>Home</a>
-    </li>
-    <li class={styles.navigationItem}>
-      <a href="/blog/" class:list={{ active: isActive('/blog/') }}>Blog</a>
-    </li>
-    <li class={styles.navigationItem}>
-      <a href="/contact/" class:list={{ active: isActive('/contact/') }}>Contact</a>
-    </li>
-  </ul>
+  <div class={styles.inner}>
+    <a href="/" class={styles.logoLink}>
+      <span aria-hidden="true" class={styles.logo}></span>
+      <span class={styles.navigationItem}>
+        Aaron Russell
+      </span>
+    </a>
+    <div class={styles.controls}>
+      <ul class={styles.navigation}>
+        <li class={styles.navigationItem}>
+          <a href="/" class:list={{ active: isActive('/') }}>Home</a>
+        </li>
+        <li class={styles.navigationItem}>
+          <a href="/blog/" class:list={{ active: isActive('/blog/') }}>Blog</a>
+        </li>
+        <li class={styles.navigationItem}>
+          <a href="/contact/" class:list={{ active: isActive('/contact/') }}>Contact</a>
+        </li>
+      </ul>
+      <ThemeSwitcher />
+    </div>
+  </div>
 </nav>

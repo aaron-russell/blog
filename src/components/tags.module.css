@@ -8,8 +8,19 @@
 }
 
 .tag {
-  background-color: var(--black-fade-5);
-  border-radius: var(--radius-sm);
+  background-color: var(--primary-soft);
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  color: var(--text-muted);
+  display: inline-flex;
+  font-size: var(--text-sm);
   line-height: var(--solid);
-  padding: var(--space-sm) var(--space-md);
+  padding: 0.5rem 0.8rem;
+}
+
+a.tag:hover,
+a.tag:focus-visible {
+  border-color: var(--border-strong);
+  color: var(--primary);
+  transform: translateY(-1px);
 }

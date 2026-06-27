@@ -1,2 +1,3 @@
 User-agent: *
 Disallow:
+Sitemap: https://aaron-russell.co.uk/sitemap.xml

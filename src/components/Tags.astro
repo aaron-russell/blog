@@ -1,14 +1,27 @@
 ---
 import styles from './tags.module.css'
 
-const { tags = [] } = Astro.props
+type Props = {
+  linkToFilter?: boolean
+  tags?: string[]
+}
+
+const { linkToFilter = false, tags = [] } = Astro.props as Props
 ---
 
 {
   tags.length > 0 ? (
     <ul class={styles.tags} aria-label="Tags">
       {tags.map((tag: string) => (
-        <li class={styles.tag}>{tag}</li>
+        <li>
+          {linkToFilter ? (
+            <a class={styles.tag} href={`/blog/?topic=${encodeURIComponent(tag)}`}>
+              {tag}
+            </a>
+          ) : (
+            <span class={styles.tag}>{tag}</span>
+          )}
+        </li>
       ))}
     </ul>
   ) : null
