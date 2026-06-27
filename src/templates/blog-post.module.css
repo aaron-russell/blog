@@ -24,12 +24,12 @@
   align-items: start;
   display: grid;
   gap: var(--space-lg);
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   margin: 0 auto;
   max-width: var(--size-max-width);
   padding: clamp(1.2rem, 2vw, 1.8rem);
   position: relative;
-  top: -1rem;
+  top: 0;
 }
 
 .metaGroup {
@@ -45,7 +45,7 @@
 }
 
 .metaTags {
-  align-self: center;
+  align-self: start;
 }
 
 .body {
@@ -311,12 +311,21 @@
     margin: 0 auto;
   }
 
+  .metaPanel {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    top: -1rem;
+  }
+
   .article {
     gap: var(--space-xl);
   }
 
   .articleNavigation {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .nextOnly {
+    grid-column: 2;
   }
 }
 

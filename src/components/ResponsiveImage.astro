@@ -1,25 +1,24 @@
 ---
 import {
-  buildContentfulImageUrl,
-  buildSrcSet,
+  buildResponsiveContentfulImage,
+  resolveContentfulAltText,
+  type ImageFormat,
+  type ImageTransform,
   type ContentfulImage,
 } from '../lib/contentful-images'
-
-type Transform = {
-  fit?: string
-  fm?: string
-  h?: number
-  q?: number
-  w?: number
-}
 
 type Props = {
   alt?: string
   asset?: ContentfulImage
   class?: string
+  fallbackAlt?: string
+  fallbackFormat?: ImageFormat
+  fetchpriority?: 'auto' | 'high' | 'low'
+  formats?: ImageFormat[]
   loading?: 'eager' | 'lazy'
+  priority?: boolean
   sizes?: string
-  transform?: Transform
+  transform?: ImageTransform
   widths?: number[]
 }
 
@@ -27,41 +26,46 @@ const {
   alt,
   asset,
   class: className,
+  fallbackAlt,
+  fallbackFormat = 'jpg',
+  fetchpriority = 'auto',
+  formats = ['avif', 'webp'],
   loading = 'lazy',
+  priority = false,
   sizes = '100vw',
-  transform = { fm: 'jpg', q: 80 },
+  transform = { q: 80 },
   widths = [],
 } = Astro.props as Props
 
-const fallbackWidth = widths[widths.length - 1] || asset?.width || 1200
-const baseWidth = transform.w || widths[0] || fallbackWidth
-const height = transform.h
-  ? Math.round((transform.h * fallbackWidth) / baseWidth)
-  : asset?.height
-const src = buildContentfulImageUrl(asset?.url, {
-  ...transform,
-  h: height,
-  w: fallbackWidth,
+const image = buildResponsiveContentfulImage(asset, {
+  fallbackFormat,
+  formats,
+  transform,
+  widths,
 })
-const srcSet = buildSrcSet(asset, widths, transform, {
-  baseHeight: transform.h,
-  baseWidth,
-})
-const imageAlt = alt || asset?.description || asset?.title || ''
+const imageAlt = resolveContentfulAltText(asset, alt, fallbackAlt)
+const imageLoading = priority ? 'eager' : loading
+const imageFetchPriority = priority ? 'high' : fetchpriority
 ---
 
 {
-  asset && src ? (
-    <img
-      alt={imageAlt}
-      class={className}
-      decoding="async"
-      height={height}
-      loading={loading}
-      sizes={srcSet ? sizes : undefined}
-      src={src}
-      srcset={srcSet}
-      width={fallbackWidth}
-    />
+  asset && image.fallbackSrc ? (
+    <picture>
+      {image.sources.map((source) => (
+        <source sizes={sizes} srcset={source.srcSet} type={source.type} />
+      ))}
+      <img
+        alt={imageAlt}
+        class={className}
+        decoding="async"
+        fetchpriority={imageFetchPriority}
+        height={image.fallbackHeight}
+        loading={imageLoading}
+        sizes={image.fallbackSrcSet ? sizes : undefined}
+        src={image.fallbackSrc}
+        srcset={image.fallbackSrcSet}
+        width={image.fallbackWidth}
+      />
+    </picture>
   ) : null
 }

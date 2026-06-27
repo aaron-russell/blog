@@ -2,13 +2,8 @@
 import BaseLayout from '../layouts/BaseLayout.astro'
 import Hero from '../components/Hero.astro'
 import { getAuthor } from '../lib/contentful'
-import {
-  buildOgImageUrl,
-  buildStaticOgImagePath,
-  OG_IMAGE_HEIGHT,
-  OG_IMAGE_TYPE,
-  OG_IMAGE_WIDTH,
-} from '../lib/og'
+import { buildContentfulSocialImageUrl } from '../lib/contentful-images'
+import { OG_IMAGE_HEIGHT, OG_IMAGE_TYPE, OG_IMAGE_WIDTH } from '../lib/og'
 import styles from './contact.module.css'
 
 const CONTACT_MESSAGES = {
@@ -21,7 +16,7 @@ const CONTACT_MESSAGES = {
 }
 
 const author = await getAuthor()
-const seoImage = buildOgImageUrl(author.website, buildStaticOgImagePath('contact'))
+const seoImage = buildContentfulSocialImageUrl(author.heroImage?.url)
 const successClass = styles.statusSuccess
 const errorClass = styles.statusError
 ---
@@ -49,14 +44,13 @@ const errorClass = styles.statusError
     <div class={styles.grid}>
       <section class={`${styles.infoPanel} surface`}>
         <span class="eyebrow">Get in touch</span>
-        <h2>Email and phone</h2>
+        <h2>Email</h2>
         <p>
           If you want to talk about engineering, AI-assisted workflows, product delivery, or
-          the systems behind this site, send a message here or reach out directly.
+          the systems behind this site, send a message here or reach out directly by email.
         </p>
         <address class={styles.contactDetails}>
           <a href="mailto:aaron@russell-tech.co.uk">aaron@russell-tech.co.uk</a>
-          <a href="tel:+447411693644">07411693644</a>
         </address>
       </section>
 

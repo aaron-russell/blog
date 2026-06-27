@@ -3,18 +3,13 @@ import ArticlePreview from '../../components/ArticlePreview.astro'
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import { getAllBlogPosts, getAuthor } from '../../lib/contentful'
 import { getTopTags } from '../../lib/blog'
-import {
-  buildOgImageUrl,
-  buildStaticOgImagePath,
-  OG_IMAGE_HEIGHT,
-  OG_IMAGE_TYPE,
-  OG_IMAGE_WIDTH,
-} from '../../lib/og'
+import { buildContentfulSocialImageUrl } from '../../lib/contentful-images'
+import { OG_IMAGE_HEIGHT, OG_IMAGE_TYPE, OG_IMAGE_WIDTH } from '../../lib/og'
 import styles from './index.module.css'
 
 const [author, posts] = await Promise.all([getAuthor(), getAllBlogPosts()])
 const topTags = getTopTags(posts, 8)
-const seoImage = buildOgImageUrl(author.website, buildStaticOgImagePath('blog'))
+const seoImage = buildContentfulSocialImageUrl(author.heroImage?.url)
 ---
 
 <BaseLayout

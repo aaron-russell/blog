@@ -6,14 +6,9 @@ import ArticlePreview from '../../components/ArticlePreview.astro'
 import Tags from '../../components/Tags.astro'
 import { getAllBlogPosts, getAuthor } from '../../lib/contentful'
 import { annotateArticleHtml, getRelatedPosts } from '../../lib/blog'
-import {
-  buildOgImageUrl,
-  buildPostOgImagePath,
-  OG_IMAGE_HEIGHT,
-  OG_IMAGE_TYPE,
-  OG_IMAGE_WIDTH,
-} from '../../lib/og'
-import { buildBlogPostingJsonLd } from '../../utils/structured-data'
+import { buildContentfulSocialImageUrl } from '../../lib/contentful-images'
+import { OG_IMAGE_HEIGHT, OG_IMAGE_TYPE, OG_IMAGE_WIDTH } from '../../lib/og'
+import { absoluteUrl, buildBlogPostingJsonLd } from '../../utils/structured-data'
 import styles from '../../templates/blog-post.module.css'
 
 export async function getStaticPaths() {
@@ -36,7 +31,7 @@ const timeToRead = readingTime(post.bodyPlainText || '').minutes
 const { headings, html: articleHtml } = annotateArticleHtml(post.bodyHtml || '')
 const relatedPosts = getRelatedPosts(post, posts, 3)
 const canonicalUrl = post.canonical || `${author.website}/blog/${post.slug}/`
-const seoImage = buildOgImageUrl(author.website, buildPostOgImagePath(post.slug))
+const seoImage = absoluteUrl(author.website, buildContentfulSocialImageUrl(post.heroImage?.url))
 const blogPostingJsonLd = buildBlogPostingJsonLd(post, canonicalUrl, seoImage)
 ---
 
@@ -124,7 +119,7 @@ const blogPostingJsonLd = buildBlogPostingJsonLd(post, canonicalUrl, seoImage)
                 </li>
               ) : null}
               {next ? (
-                <li>
+                <li class:list={{ [styles.nextOnly]: !previous }}>
                   <a class={`${styles.navCard} surface`} href={`/blog/${next.slug}/`} rel="next">
                     <span class={styles.navLabel}>Next article</span>
                     <strong>{next.title} →</strong>

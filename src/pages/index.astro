@@ -5,20 +5,15 @@ import BaseLayout from '../layouts/BaseLayout.astro'
 import { getAuthor, getHomePagePosts } from '../lib/contentful'
 import { getTopTags } from '../lib/blog'
 import { buildContentfulImageUrl } from '../lib/contentful-images'
-import {
-  buildOgImageUrl,
-  buildStaticOgImagePath,
-  OG_IMAGE_HEIGHT,
-  OG_IMAGE_TYPE,
-  OG_IMAGE_WIDTH,
-} from '../lib/og'
+import { buildContentfulSocialImageUrl } from '../lib/contentful-images'
+import { OG_IMAGE_HEIGHT, OG_IMAGE_TYPE, OG_IMAGE_WIDTH } from '../lib/og'
 import { homeConfig } from '../lib/site-config'
 import { absoluteUrl, buildPersonJsonLd } from '../utils/structured-data'
 import styles from './index.module.css'
 
 const [author, posts] = await Promise.all([getAuthor(), getHomePagePosts()])
 const topTags = getTopTags(posts, 4)
-const seoImage = buildOgImageUrl(author.website, buildStaticOgImagePath('site'))
+const seoImage = buildContentfulSocialImageUrl(author.heroImage?.url)
 const profileImage = author.profilePhoto?.url
   ? absoluteUrl(
       author.website,
