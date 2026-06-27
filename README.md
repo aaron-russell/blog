@@ -40,6 +40,11 @@ npm run dev
 
 The production build requires `CONTENTFUL_SPACE_ID` and `CONTENTFUL_ACCESS_TOKEN`. Optional preview builds can also set `CONTENTFUL_HOST=preview.contentful.com`.
 
+Optional analytics environment variables:
+
+- `PUBLIC_POSTHOG_API_KEY`: PostHog project API key. Leave empty to disable analytics.
+- `PUBLIC_REQUIRE_ANALYTICS_CONSENT`: Set to `true` to require `localStorage['analytics-consent'] = 'granted'` before tracking.
+
 To verify that a production build has the required credentials before spending time in Astro:
 
 ```sh

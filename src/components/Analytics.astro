@@ -1,7 +1,16 @@
 <script>
   import posthog from 'posthog-js'
 
-  const posthogApiKey = 'phc_Tx60pBXpFuImoXXYIXUsSbdhQG02IqyouPF8EH0NZqW'
+  const posthogApiKey = import.meta.env.PUBLIC_POSTHOG_API_KEY
+  const requireConsent = import.meta.env.PUBLIC_REQUIRE_ANALYTICS_CONSENT === 'true'
+
+  const hasConsent = () => {
+    try {
+      return window.localStorage.getItem('analytics-consent') === 'granted'
+    } catch {
+      return false
+    }
+  }
 
   const shouldTrack = () => {
     if (!posthogApiKey) {
@@ -12,7 +21,7 @@
       window.navigator?.doNotTrack || (window as Window & { doNotTrack?: string }).doNotTrack
     const isLocalhost = ['localhost', '127.0.0.1'].includes(window.location.hostname)
 
-    return doNotTrack !== '1' && !isLocalhost
+    return doNotTrack !== '1' && !isLocalhost && (!requireConsent || hasConsent())
   }
 
   if (shouldTrack()) {
