@@ -69,11 +69,25 @@
   --accent-violet-soft: rgba(124, 58, 237, 0.28);
   --gradient-brand: linear-gradient(135deg, #ff7a18 0%, #ff4d8d 48%, #8b5cf6 100%);
   --gradient-brand-strong: linear-gradient(135deg, #f97316 0%, #ec4899 52%, #7c3aed 100%);
+  --gradient-background: linear-gradient(
+    135deg,
+    rgba(255, 122, 24, 0.2) 0%,
+    #17171b 24%,
+    #121216 52%,
+    #1a1830 78%,
+    rgba(168, 85, 247, 0.24) 100%
+  );
   --gradient-panel: linear-gradient(
     160deg,
     rgba(255, 122, 24, 0.14) 0%,
     rgba(255, 77, 141, 0.1) 28%,
     rgba(168, 85, 247, 0.14) 100%
+  );
+  --gradient-glass: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.18) 0%,
+    rgba(255, 255, 255, 0.07) 24%,
+    rgba(255, 255, 255, 0.02) 100%
   );
   --glow-orange: rgba(255, 122, 24, 0.28);
   --glow-pink: rgba(255, 77, 141, 0.24);
@@ -84,11 +98,13 @@
   --primary-soft: rgba(255, 122, 24, 0.22);
   --background: #222222;
   --background-secondary: #2a2a2a;
-  --background-elevated: rgba(31, 31, 37, 0.8);
+  --background-elevated: rgba(25, 25, 31, 0.76);
   --background-strong: #18181c;
-  --surface: rgba(42, 42, 48, 0.7);
-  --surface-strong: rgba(48, 48, 56, 0.9);
+  --surface: rgba(28, 28, 34, 0.62);
+  --surface-strong: rgba(40, 40, 48, 0.78);
   --surface-solid: #303030;
+  --glass-surface: rgba(255, 255, 255, 0.045);
+  --glass-surface-strong: rgba(255, 255, 255, 0.1);
   --border: rgba(255, 255, 255, 0.1);
   --border-strong: rgba(255, 255, 255, 0.18);
   --border-accent: rgba(168, 85, 247, 0.38);
@@ -123,11 +139,13 @@
   --primary-soft: rgba(255, 122, 24, 0.22);
   --background: #222222;
   --background-secondary: #2a2a2a;
-  --background-elevated: rgba(31, 31, 37, 0.8);
+  --background-elevated: rgba(25, 25, 31, 0.76);
   --background-strong: #18181c;
-  --surface: rgba(42, 42, 48, 0.7);
-  --surface-strong: rgba(48, 48, 56, 0.9);
+  --surface: rgba(28, 28, 34, 0.62);
+  --surface-strong: rgba(40, 40, 48, 0.78);
   --surface-solid: #303030;
+  --glass-surface: rgba(255, 255, 255, 0.045);
+  --glass-surface-strong: rgba(255, 255, 255, 0.1);
   --border: rgba(255, 255, 255, 0.1);
   --border-strong: rgba(255, 255, 255, 0.18);
   --border-accent: rgba(168, 85, 247, 0.38);
@@ -143,13 +161,23 @@
 :root[data-theme='light'] {
   --primary: #f97316;
   --primary-soft: rgba(249, 115, 22, 0.18);
-  --background: #f4edf8;
-  --background-secondary: #ede3f4;
-  --background-elevated: rgba(255, 255, 255, 0.76);
-  --background-strong: #fff9fe;
-  --surface: rgba(255, 255, 255, 0.72);
-  --surface-strong: rgba(255, 255, 255, 0.9);
+  --gradient-background: linear-gradient(
+    135deg,
+    rgba(255, 122, 24, 0.18) 0%,
+    #ffffff 26%,
+    #ffffff 58%,
+    #faf5ff 78%,
+    rgba(168, 85, 247, 0.16) 100%
+  );
+  --background: #ffffff;
+  --background-secondary: #ffffff;
+  --background-elevated: rgba(255, 255, 255, 0.84);
+  --background-strong: #ffffff;
+  --surface: rgba(255, 255, 255, 0.56);
+  --surface-strong: rgba(255, 255, 255, 0.74);
   --surface-solid: #ffffff;
+  --glass-surface: rgba(255, 255, 255, 0.16);
+  --glass-surface-strong: rgba(255, 255, 255, 0.24);
   --border: rgba(31, 24, 44, 0.12);
   --border-strong: rgba(31, 24, 44, 0.18);
   --border-accent: rgba(124, 58, 237, 0.24);

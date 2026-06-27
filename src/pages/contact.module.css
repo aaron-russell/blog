@@ -4,54 +4,101 @@
   padding: 0 var(--size-gutter) calc(var(--space-3xl) * 1.5);
 }
 
+.grid {
+  display: grid;
+  gap: var(--space-2xl);
+}
+
+.infoPanel,
+.formPanel {
+  padding: clamp(1.5rem, 2vw, 2.3rem);
+}
+
+.infoPanel h2 {
+  font-size: clamp(2rem, 3vw, 3rem);
+  margin: 0 0 var(--space-lg);
+}
+
+.infoPanel p {
+  color: var(--text-muted);
+  margin: 0 0 var(--space-xl);
+  max-width: 34rem;
+}
+
+.contactDetails {
+  display: grid;
+  gap: 0.75rem;
+  font-style: normal;
+}
+
+.contactDetails a {
+  color: var(--text-color);
+  font-size: clamp(1.05rem, 1.5vw, 1.18rem);
+  font-weight: var(--semibold);
+}
+
+.contactDetails a:hover {
+  color: var(--primary);
+}
+
+.form {
+  display: grid;
+  gap: 0.9rem;
+}
+
 .form input {
   width: 100%;
-  max-width: var(--size-max-width);
-  padding: 10px;
-  margin: 10px 0;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-  clear: both;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent),
+    rgba(255, 255, 255, 0.03);
+  border: 1px solid color-mix(in srgb, var(--border) 72%, var(--border-accent));
+  border-radius: var(--radius-md);
+  color: var(--text-color);
   display: block;
-  font-size: large;
   font-family: inherit;
+  font-size: 1rem;
+  margin: 0;
+  padding: 0.95rem 1rem;
 }
 
 .form textarea {
   width: 100%;
-  height: 100px;
-  max-width: var(--size-max-width);
-  padding: 10px;
-  margin: 10px 0;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
-  clear: both;
+  min-height: 10rem;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent),
+    rgba(255, 255, 255, 0.03);
+  border: 1px solid color-mix(in srgb, var(--border) 72%, var(--border-accent));
+  border-radius: var(--radius-md);
+  color: var(--text-color);
   display: block;
-  font-size: large;
   font-family: inherit;
+  font-size: 1rem;
+  margin: 0;
+  padding: 0.95rem 1rem;
+  resize: vertical;
 }
 
 .form label {
   display: block;
-  margin: 10px 0;
-  clear: both;
-  font-weight: 600;
+  margin-top: 0.25rem;
+  font-weight: var(--semibold);
 }
 
 .form button {
-  background-color: #000;
-  color: white;
-  padding: 10px 20px;
-  margin: 10px 0;
+  background: var(--gradient-brand);
   border: none;
+  border-radius: var(--radius-pill);
+  color: var(--text-inverse);
   cursor: pointer;
-  font-size: large;
+  font-size: 1rem;
+  font-weight: var(--bold);
+  justify-self: start;
+  margin-top: var(--space-md);
+  padding: 0.95rem 1.3rem;
 }
 
 .form button:hover {
-  background-color: var(--primary);
+  transform: translateY(-1px);
 }
 
 .honeypotField {
@@ -67,17 +114,17 @@
 }
 
 .statusSuccess {
-  background: rgba(13, 138, 61, 0.08);
-  border: 1px solid rgba(13, 138, 61, 0.24);
+  background: rgba(52, 211, 153, 0.1);
+  border: 1px solid rgba(52, 211, 153, 0.3);
 }
 
 .statusError {
-  background: rgba(185, 28, 28, 0.08);
-  border: 1px solid rgba(185, 28, 28, 0.24);
+  background: rgba(251, 113, 133, 0.1);
+  border: 1px solid rgba(251, 113, 133, 0.3);
 }
 
-@media (min-width: 768px) {
-  .article {
-    gap: var(--space-xl);
+@media (min-width: 960px) {
+  .grid {
+    grid-template-columns: minmax(280px, 0.9fr) minmax(0, 1.1fr);
   }
 }

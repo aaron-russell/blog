@@ -25,6 +25,7 @@ const { contentHtml, eyebrow, image, title } = Astro.props as Props
       />
   ) : null
   }
+  <div class={styles.glow} aria-hidden="true"></div>
   <div class={styles.details}>
     {eyebrow ? <span class="eyebrow">{eyebrow}</span> : null}
     <h1 class={styles.title}>{title}</h1>

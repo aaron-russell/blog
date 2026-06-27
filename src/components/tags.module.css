@@ -8,19 +8,32 @@
 }
 
 .tag {
-  background-color: var(--primary-soft);
-  border: 1px solid transparent;
+  align-items: center;
+  background:
+    linear-gradient(135deg, rgba(255, 122, 24, 0.14), rgba(168, 85, 247, 0.1)),
+    rgba(255, 255, 255, 0.03);
+  border: 1px solid color-mix(in srgb, var(--border) 68%, var(--border-accent));
   border-radius: var(--radius-pill);
   color: var(--text-muted);
   display: inline-flex;
+  gap: 0.5rem;
   font-size: var(--text-sm);
+  font-weight: var(--medium);
   line-height: var(--solid);
   padding: 0.5rem 0.8rem;
 }
 
+.dot {
+  background: var(--gradient-brand);
+  border-radius: 999px;
+  display: inline-block;
+  height: 0.45rem;
+  width: 0.45rem;
+}
+
 a.tag:hover,
 a.tag:focus-visible {
-  border-color: var(--border-strong);
-  color: var(--primary);
+  border-color: color-mix(in srgb, var(--border) 52%, var(--border-accent));
+  color: var(--text-color);
   transform: translateY(-1px);
 }

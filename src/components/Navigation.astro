@@ -15,10 +15,10 @@ const isActive = (href: string) => {
 
 <nav role="navigation" class={styles.container} aria-label="Main">
   <div class={styles.inner}>
-    <a href="/" class={styles.logoLink}>
-      <span aria-hidden="true" class={styles.logo}></span>
-      <span class={styles.navigationItem}>
-        Aaron Russell
+    <a href="/" class={styles.logoLink} aria-label="Aaron Russell home">
+      <span class={styles.brand}>
+        <span class={styles.brandName}>Aaron Russell</span>
+        <span class={styles.brandMeta}>Engineering notebook</span>
       </span>
     </a>
     <div class={styles.controls}>
@@ -33,6 +33,9 @@ const isActive = (href: string) => {
           <a href="/contact/" class:list={{ active: isActive('/contact/') }}>Contact</a>
         </li>
       </ul>
+      <a href="/blog/" class={styles.ctaLink}>
+        Latest notes
+      </a>
       <ThemeSwitcher />
     </div>
   </div>

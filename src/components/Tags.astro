@@ -16,10 +16,14 @@ const { linkToFilter = false, tags = [] } = Astro.props as Props
         <li>
           {linkToFilter ? (
             <a class={styles.tag} href={`/blog/?topic=${encodeURIComponent(tag)}`}>
+              <span class={styles.dot} aria-hidden="true"></span>
               {tag}
             </a>
           ) : (
-            <span class={styles.tag}>{tag}</span>
+            <span class={styles.tag}>
+              <span class={styles.dot} aria-hidden="true"></span>
+              {tag}
+            </span>
           )}
         </li>
       ))}

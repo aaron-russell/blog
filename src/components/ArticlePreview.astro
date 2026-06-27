@@ -4,8 +4,9 @@ import ResponsiveImage from './ResponsiveImage.astro'
 import Tags from './Tags.astro'
 import styles from './article-preview.module.css'
 import { createExcerpt } from '../lib/blog'
+import { isWithinLastSixMonths } from '../lib/date'
 
-const { posts = [] } = Astro.props
+const { linkTagsToFilter = true, posts = [], wholeCardLink = false } = Astro.props
 ---
 
 {
@@ -15,7 +16,21 @@ const { posts = [] } = Astro.props
         {posts.map((post: any) => (
           <li class={`${styles.card} surface`}>
             <article class={styles.article}>
+              {
+                wholeCardLink ? (
+                  <a
+                    href={`/blog/${post.slug}/`}
+                    class={styles.cardLink}
+                    aria-label={`Read ${post.title}`}
+                  ></a>
+                ) : null
+              }
               <a href={`/blog/${post.slug}/`} class={styles.link}>
+                {
+                  isWithinLastSixMonths(post.rawDate) ? (
+                    <span class={styles.badge}>Fresh note</span>
+                  ) : null
+                }
                 <ResponsiveImage
                   asset={post.heroImage}
                   alt={post.heroImage?.description || post.title}
@@ -25,7 +40,10 @@ const { posts = [] } = Astro.props
                   transform={{ fit: 'fill', fm: 'jpg', h: 240, q: 80 }}
                   widths={[424, 848]}
                 />
-                <p class={styles.kicker}>Latest writing</p>
+                <div class={styles.heading}>
+                  <p class={styles.kicker}>Latest writing</p>
+                  <span class={styles.readMore}>Read article</span>
+                </div>
                 <h2 class={styles.title}>{post.title}</h2>
               </a>
               <p class={styles.excerpt}>
@@ -33,7 +51,7 @@ const { posts = [] } = Astro.props
               </p>
               <div class={styles.meta}>
                 <small>{post.publishDate}</small>
-                <Tags linkToFilter tags={post.tags} />
+                <Tags linkToFilter={linkTagsToFilter} tags={post.tags} />
               </div>
             </article>
           </li>

@@ -40,8 +40,18 @@ const personJsonLd = buildPersonJsonLd(author, profileImage)
     <div class={styles.heroGrid}>
       <div class={`${styles.heroCard} surface`}>
         <span class="eyebrow">{homeConfig.hero.eyebrow}</span>
-        <h1 class={styles.statement}>{homeConfig.hero.title}</h1>
+        <p class={styles.leadIn}>Bold ideas, production-minded notes, and a sharper publishing surface.</p>
+        <h1 class={styles.statement}>
+          Calm systems,
+          <span class="gradient-text"> sharper tools, </span>
+          and notes from the workbench.
+        </h1>
         <p class={styles.intro}>{homeConfig.hero.intro}</p>
+        <div class={styles.signalRow}>
+          <span class={styles.signalPill}>Static-first</span>
+          <span class={styles.signalPill}>AI-assisted workflows</span>
+          <span class={styles.signalPill}>Cloudflare + Astro</span>
+        </div>
         <div class={styles.actions}>
           <a class={styles.primaryAction} href="/blog/">
             Read the latest notes
@@ -100,7 +110,7 @@ const personJsonLd = buildPersonJsonLd(author, profileImage)
       </div>
       <p>Recent writing, experiments, and practical implementation details.</p>
     </div>
-    <ArticlePreview posts={posts.slice(0, 3)} />
+    <ArticlePreview posts={posts.slice(0, 3)} wholeCardLink linkTagsToFilter={false} />
   </section>
 
   <section class={styles.section}>
@@ -158,8 +168,8 @@ const personJsonLd = buildPersonJsonLd(author, profileImage)
   </section>
 
   <Container>
-    <section class={styles.sectionHeader}>
-      <div>
+    <section class={`${styles.ctaSection} surface`}>
+      <div class={styles.sectionHeader}>
         <span class="eyebrow">Stay in touch</span>
         <h2>Want to talk about engineering, AI, or product systems?</h2>
       </div>

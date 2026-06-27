@@ -4,8 +4,17 @@ import styles from './footer.module.css'
 ---
 
 <Container as="footer">
-  <div class={styles.container}>
-    Building software, experimenting with AI, and documenting what actually works.
-    <a href="/contact/"> Say hello</a>.
+  <div class={`${styles.container} surface`}>
+    <div class={styles.brandBlock}>
+      <span class="eyebrow">Aaron Russell</span>
+      <p class={styles.statement}>
+        Building software, experimenting with AI, and documenting what actually works.
+      </p>
+    </div>
+    <div class={styles.links}>
+      <a href="/">Home</a>
+      <a href="/blog/">Blog</a>
+      <a href="/contact/">Say hello</a>
+    </div>
   </div>
 </Container>

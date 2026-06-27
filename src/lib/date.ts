@@ -41,3 +41,16 @@ export const formatIsoDate = (value: string) => {
   const date = new Date(value)
   return date.toISOString()
 }
+
+export const isWithinLastSixMonths = (value: string, now = new Date()) => {
+  const date = new Date(value)
+
+  if (Number.isNaN(date.getTime()) || Number.isNaN(now.getTime())) {
+    return false
+  }
+
+  const cutoff = new Date(now)
+  cutoff.setUTCMonth(cutoff.getUTCMonth() - 6)
+
+  return date >= cutoff
+}

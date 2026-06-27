@@ -1,13 +1,14 @@
 .progress {
-  background: var(--border);
-  height: 3px;
+  background: rgba(255, 255, 255, 0.05);
+  height: 4px;
   inset: 0 0 auto;
   position: fixed;
-  z-index: 20;
+  z-index: 30;
 }
 
 .progressBar {
-  background: linear-gradient(90deg, var(--teal-400), var(--primary));
+  background: var(--gradient-brand);
+  box-shadow: 0 0 18px rgba(255, 122, 24, 0.58);
   height: 100%;
   transform: scaleX(0);
   transform-origin: left center;
@@ -26,7 +27,7 @@
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   margin: 0 auto;
   max-width: var(--size-max-width);
-  padding: var(--space-xl);
+  padding: clamp(1.2rem, 2vw, 1.8rem);
   position: relative;
   top: -1rem;
 }
@@ -56,7 +57,7 @@
 }
 
 .article a {
-  border-bottom: 1.5px solid currentColor;
+  border-bottom: 1.5px solid color-mix(in srgb, currentColor 56%, transparent);
   font-weight: var(--medium);
 }
 
@@ -94,7 +95,9 @@
 }
 
 .body :global(img) {
+  border: 1px solid color-mix(in srgb, var(--border) 70%, var(--border-accent));
   border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
   margin: 2rem 0;
 }
 
@@ -225,7 +228,7 @@
 }
 
 .toc a[aria-current='true'] {
-  color: var(--primary);
+  color: var(--text-color);
 }
 
 .tocSubItem {
@@ -251,6 +254,16 @@
   gap: var(--space-sm);
   min-height: 100%;
   padding: var(--space-xl);
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    border-color 180ms ease;
+}
+
+.navCard:hover {
+  border-color: color-mix(in srgb, var(--border) 54%, var(--border-accent));
+  box-shadow: var(--shadow-lg), var(--inner-highlight);
+  transform: translateY(-4px);
 }
 
 .navLabel {
@@ -276,14 +289,17 @@
 }
 
 :global(.copy-code-button) {
-  background: var(--background-strong);
-  border: 1px solid var(--border);
+  background:
+    linear-gradient(135deg, rgba(255, 122, 24, 0.18), rgba(168, 85, 247, 0.16)),
+    rgba(255, 255, 255, 0.06);
+  border: 1px solid color-mix(in srgb, var(--border) 62%, var(--border-accent));
   border-radius: var(--radius-pill);
-  color: var(--text-muted);
+  color: var(--text-color);
   cursor: pointer;
   font: inherit;
   font-size: var(--text-xs);
-  padding: 0.4rem 0.7rem;
+  font-weight: var(--bold);
+  padding: 0.42rem 0.76rem;
   position: absolute;
   right: 1rem;
   top: 1rem;
