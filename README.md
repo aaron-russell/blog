@@ -8,7 +8,7 @@ Personal blog built with Astro, Contentful, and Cloudflare Pages.
 - npm `10+`
 - A Contentful space with delivery credentials for local content builds
 
-This repository pins Node in [.nvmrc](/Users/aaronrussell/.codex/worktrees/9f11/blog/.nvmrc:1). The expected verification baseline is:
+This repository pins Node in [.nvmrc](.nvmrc). The expected verification baseline is:
 
 ```sh
 npm ci
@@ -60,21 +60,39 @@ To bootstrap a fresh Contentful space with the bundled content model and sample 
 npm run setup
 ```
 
-The setup script writes `.env.development` and `.env.production` for you and imports [contentful/export.json](/Users/aaronrussell/.codex/worktrees/9f11/blog/contentful/export.json:1) into the target space.
+The setup script writes `.env.development` and `.env.production` for you and imports [contentful/export.json](contentful/export.json) into the target space.
 
 ## Cloudflare Pages
 
 This repo includes:
 
 - Astro static output for the main site
-- [functions/_middleware.ts](/Users/aaronrussell/.codex/worktrees/9f11/blog/functions/_middleware.ts:1) for contact form validation, Turnstile verification, and KV-backed rate limiting
-- [static/_headers](/Users/aaronrussell/.codex/worktrees/9f11/blog/static/_headers:1) and [static/_redirects](/Users/aaronrussell/.codex/worktrees/9f11/blog/static/_redirects:1) for Pages routing and security policies
+- [functions/_middleware.ts](functions/_middleware.ts) for contact form validation, Turnstile verification, and KV-backed rate limiting
+- build-time Open Graph image generation under [src/pages/og](src/pages/og), rendered by [src/lib/og.ts](src/lib/og.ts)
+- [static/_headers](static/_headers) and [static/_redirects](static/_redirects) for Pages routing and security policies
 
 Required Cloudflare bindings and secrets:
 
 - `NAMESPACE`
 - `SENTRY_DSN`
 - `TURNSTILE_SECRET`
+
+## Open Graph images
+
+The site now emits branded 1200x630 PNGs for:
+
+- the home page at `/og/site.png`
+- the blog index at `/og/blog.png`
+- the contact page at `/og/contact.png`
+- every post at `/og/blog/<slug>.png`
+
+This is intentionally build-time rather than request-time:
+
+- Astro already has the post metadata during the production build
+- Cloudflare Pages can serve the generated PNGs as immutable static assets
+- social crawlers avoid worker cold starts and runtime Contentful fetches
+
+The metadata layer in [src/components/SeoHead.astro](src/components/SeoHead.astro) now also emits `og:image:width`, `og:image:height`, and `og:image:type` alongside the Open Graph and Twitter image URLs.
 
 ## CI
 

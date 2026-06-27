@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro'
 import Hero from '../components/Hero.astro'
 import { getAuthor } from '../lib/contentful'
 import { buildContentfulSocialImageUrl } from '../lib/contentful-images'
+import { OG_IMAGE_HEIGHT, OG_IMAGE_TYPE, OG_IMAGE_WIDTH } from '../lib/og'
 import styles from './contact.module.css'
 
 const CONTACT_MESSAGES = {
@@ -22,10 +23,13 @@ const errorClass = styles.statusError
 
 <BaseLayout
   seo={{
-    alt: author.heroImage?.description,
+    alt: 'Aaron Russell contact page social card',
     canonical: `${author.website}/contact/`,
     description: 'Get in touch with Aaron Russell about engineering, AI, product systems, and delivery work.',
     image: seoImage,
+    imageHeight: OG_IMAGE_HEIGHT,
+    imageType: OG_IMAGE_TYPE,
+    imageWidth: OG_IMAGE_WIDTH,
     title: 'Contact me',
     turnstile: true,
   }}

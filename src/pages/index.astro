@@ -4,7 +4,9 @@ import Container from '../components/Container.astro'
 import BaseLayout from '../layouts/BaseLayout.astro'
 import { getAuthor, getHomePagePosts } from '../lib/contentful'
 import { getTopTags } from '../lib/blog'
-import { buildContentfulImageUrl, buildContentfulSocialImageUrl } from '../lib/contentful-images'
+import { buildContentfulImageUrl } from '../lib/contentful-images'
+import { buildContentfulSocialImageUrl } from '../lib/contentful-images'
+import { OG_IMAGE_HEIGHT, OG_IMAGE_TYPE, OG_IMAGE_WIDTH } from '../lib/og'
 import { homeConfig } from '../lib/site-config'
 import { absoluteUrl, buildPersonJsonLd } from '../utils/structured-data'
 import styles from './index.module.css'
@@ -23,10 +25,13 @@ const personJsonLd = buildPersonJsonLd(author, profileImage)
 
 <BaseLayout
   seo={{
-    alt: author.heroImage?.description,
+    alt: 'Aaron Russell home page social card',
     canonical: author.website,
     description: homeConfig.hero.intro,
     image: seoImage,
+    imageHeight: OG_IMAGE_HEIGHT,
+    imageType: OG_IMAGE_TYPE,
+    imageWidth: OG_IMAGE_WIDTH,
     structuredData: [personJsonLd],
   }}
 >

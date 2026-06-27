@@ -7,6 +7,9 @@ type Props = {
   canonical?: string
   description?: string
   image?: string
+  imageHeight?: number
+  imageType?: string
+  imageWidth?: number
   structuredData?: Array<Record<string, unknown>>
   title?: string
   turnstile?: boolean
@@ -18,6 +21,9 @@ const {
   canonical,
   description = '',
   image,
+  imageHeight,
+  imageType,
+  imageWidth,
   structuredData = [],
   title,
   turnstile = false,
@@ -30,6 +36,9 @@ const metaTags = buildSeoMetaTags({
   description,
   image,
   imageAlt: alt,
+  imageHeight,
+  imageType,
+  imageWidth,
   siteMetadata,
   title,
   type,

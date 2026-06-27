@@ -7,6 +7,7 @@ import Tags from '../../components/Tags.astro'
 import { getAllBlogPosts, getAuthor } from '../../lib/contentful'
 import { annotateArticleHtml, getRelatedPosts } from '../../lib/blog'
 import { buildContentfulSocialImageUrl } from '../../lib/contentful-images'
+import { OG_IMAGE_HEIGHT, OG_IMAGE_TYPE, OG_IMAGE_WIDTH } from '../../lib/og'
 import { absoluteUrl, buildBlogPostingJsonLd } from '../../utils/structured-data'
 import styles from '../../templates/blog-post.module.css'
 
@@ -36,10 +37,13 @@ const blogPostingJsonLd = buildBlogPostingJsonLd(post, canonicalUrl, seoImage)
 
 <BaseLayout
   seo={{
-    alt: post.heroImage?.description,
+    alt: `${post.title} social card`,
     canonical: canonicalUrl,
     description: post.descriptionPlainText,
     image: seoImage,
+    imageHeight: OG_IMAGE_HEIGHT,
+    imageType: OG_IMAGE_TYPE,
+    imageWidth: OG_IMAGE_WIDTH,
     structuredData: [blogPostingJsonLd],
     title: post.title,
     type: 'article',

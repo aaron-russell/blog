@@ -14,6 +14,9 @@ export const buildSeoMetaTags = ({
   description,
   image,
   imageAlt,
+  imageHeight,
+  imageType,
+  imageWidth,
   meta = [],
   siteMetadata,
   title,
@@ -52,6 +55,24 @@ export const buildSeoMetaTags = ({
           content: image,
         }
       : null,
+    image && imageWidth
+      ? {
+          property: 'og:image:width',
+          content: String(imageWidth),
+        }
+      : null,
+    image && imageHeight
+      ? {
+          property: 'og:image:height',
+          content: String(imageHeight),
+        }
+      : null,
+    image && imageType
+      ? {
+          property: 'og:image:type',
+          content: imageType,
+        }
+      : null,
     canonical
       ? {
           property: 'og:url',
@@ -74,6 +95,12 @@ export const buildSeoMetaTags = ({
       ? {
           name: 'twitter:image',
           content: image,
+        }
+      : null,
+    image && imageType
+      ? {
+          name: 'twitter:image:type',
+          content: imageType,
         }
       : null,
     image
