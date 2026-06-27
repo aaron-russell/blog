@@ -124,7 +124,7 @@ const blogPostingJsonLd = buildBlogPostingJsonLd(post, canonicalUrl, seoImage)
                 </li>
               ) : null}
               {next ? (
-                <li>
+                <li class:list={{ [styles.nextOnly]: !previous }}>
                   <a class={`${styles.navCard} surface`} href={`/blog/${next.slug}/`} rel="next">
                     <span class={styles.navLabel}>Next article</span>
                     <strong>{next.title} →</strong>
