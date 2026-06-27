@@ -6,8 +6,8 @@ test('gatsby config keeps the required source and rendering plugins', () => {
 
   assert.equal(config.siteMetadata.siteUrl, 'https://aaron-russell.co.uk')
   assert.ok(config.plugins.includes('gatsby-plugin-image'))
-  assert.ok(config.plugins.includes('gatsby-plugin-react-helmet'))
   assert.ok(config.plugins.includes('gatsby-plugin-sharp'))
+  assert.ok(!config.plugins.includes('gatsby-plugin-react-helmet'))
 
   const contentfulPlugin = config.plugins.find(
     (plugin) =>

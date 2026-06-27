@@ -1,89 +1,51 @@
 import React from 'react'
 import { graphql } from 'gatsby'
-import get from 'lodash/get'
 
-import Layout from '../components/layout'
-import Hero from '../components/hero'
 import ArticlePreview from '../components/article-preview'
+import Hero from '../components/hero'
+import Layout from '../components/layout'
 import Seo from '../components/seo'
+import {
+  buildPersonJsonLd,
+  absoluteUrl,
+  CONTENTFUL_PERSON_ID,
+} from '../utils/structured-data'
 
-class RootIndex extends React.Component {
-  render() {
-    const posts = get(this, 'props.data.allContentfulBlogPost.nodes')
-    const [author] = get(this, 'props.data.allContentfulPerson.nodes')
-    const sources = ['website', 'twitter', 'github', 'linkedIn', 'facebook']
-    const sameAs = sources
-      .map((source) => author[source])
-      .filter((source) => source !== null)
+const RootIndex = ({ data }) => {
+  const posts = data.allContentfulBlogPost.nodes
+  const [author] = data.allContentfulPerson.nodes
 
-    const personJsonLd = {
-      '@context': 'http://www.schema.org',
-      '@type': 'Person',
-      '@id': author.website,
-      name: author.name,
-      alternateName: author.name,
-      nationality: author.nationality,
-      birthPlace: {
-        '@type': 'Place',
-        address: {
-          '@type': 'PostalAddress',
-          addressLocality: author.birthPlace.city,
-          addressRegion: author.birthPlace.region,
-          addressCountry: author.birthPlace.country,
-        },
-      },
-      affiliation: author.affiliatedWith.map((company) => ({
-        '@type': 'Organization',
-        name: company.companyName,
-        sameAs: [company.website],
-      })),
-      alumniOf: author.alumniOf.map((company) => ({
-        '@type': 'CollegeOrUniversity',
-        name: company.companyName,
-        sameAs: [company.website],
-      })),
-      Description: author.shortBio,
-      disambiguatingDescription: author.description,
-      jobTitle: author.jobTitle,
-      worksFor: author.worksFor.map((company) => ({
-        '@type': 'Organization',
-        name: company.companyName,
-        sameAs: [company.website],
-      })),
-      url: author.website,
-      image: `${this.props.location.protocol}//${this.props.location.host}${author.profilePhoto.gatsbyImage.images.fallback.src}`,
-      address: author.currentLocations.map((location) => ({
-        '@type': 'PostalAddress',
-        addressLocality: location.city,
-        addressRegion: location.region,
-        addressCountry: location.country,
-      })),
-      sameAs,
-    }
-
-    return (
-      <Layout location={this.props.location}>
-        <Seo
-          image={`${author.website}${author.heroImage.resize.src}`}
-          alt={author.heroImage.description}
-          canonical={author.website}
-        >
-          <script type="application/ld+json">
-            {JSON.stringify(personJsonLd)}
-          </script>
-        </Seo>
-        <Hero
-          image={author.heroImage.gatsbyImage}
-          title={author.name}
-          content={author.shortBio}
-        />
-        <ArticlePreview posts={posts} />
-      </Layout>
-    )
-  }
+  return (
+    <Layout>
+      <Hero
+        image={author.heroImage.gatsbyImage}
+        title={author.name}
+        content={author.shortBio}
+      />
+      <ArticlePreview posts={posts} />
+    </Layout>
+  )
 }
 
 export default RootIndex
+
+export const Head = ({ data }) => {
+  const [author] = data.allContentfulPerson.nodes
+  const personJsonLd = buildPersonJsonLd(
+    author,
+    absoluteUrl(author.website, author.profilePhoto.gatsbyImage.images.fallback.src)
+  )
+
+  return (
+    <Seo
+      image={absoluteUrl(author.website, author.heroImage.resize.src)}
+      alt={author.heroImage.description}
+      canonical={author.website}
+    >
+      <script type="application/ld+json">{JSON.stringify(personJsonLd)}</script>
+    </Seo>
+  )
+}
 
 export const pageQuery = graphql`
   query HomeQuery {
@@ -108,7 +70,7 @@ export const pageQuery = graphql`
       }
     }
     allContentfulPerson(
-      filter: { contentful_id: { eq: "4Ff1pPPUTdU7JI822TLc7O" } }
+      filter: { contentful_id: { eq: "${CONTENTFUL_PERSON_ID}" } }
     ) {
       nodes {
         name
@@ -133,7 +95,6 @@ export const pageQuery = graphql`
         description {
           description
         }
-        title
         jobTitle
         worksFor {
           companyName

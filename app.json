@@ -1,15 +1,7 @@
 {
   "name": "Aaron Russell's Development Blog",
-  "description": "A blog about web and app development as well as personal development.",
-  "keywords": ["web development", "app development"],
+  "description": "Personal blog built with Gatsby, Contentful, and Cloudflare Pages.",
+  "keywords": ["gatsby", "contentful", "cloudflare pages", "blog"],
   "repository": "https://github.com/aaron-russell/blog",
-  "success_url": "/",
-  "buildpacks": [
-    {
-      "url": "heroku/nodejs"
-    },
-    {
-      "url": "https://github.com/heroku/heroku-buildpack-static"
-    }
-  ]
+  "website": "https://aaron-russell.co.uk"
 }

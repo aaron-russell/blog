@@ -1,11 +1,6 @@
-## Deploy the blog
+## Next improvements
 
-A blog on your local machine is nice to have, but a blog on the internet is even better. Return to the [tutorial doc](https://www.contentful.com/developers/docs/tutorials/general/get-started/#deploy-the-starter-gatsby-blog), select a hosting service (Gatsby Cloud, Netlify, or Heroku) and follow the instructions to deploy.
-
-## Explore the blog content structure
-
-Return to the [tutorial doc](https://www.contentful.com/developers/docs/tutorials/general/get-started/#explore-how-the-sample-website-is-built-with-contentful) to view the relationship between the blog content and the data model.
-
-## Modify content and redeploy
-
-Follow this [tutorial](https://www.contentful.com/developers/docs/tutorials/general/automate-site-builds-with-webhooks/) to learn how to use webhooks to automate the process of redeploying your site after publishing new content.
+- Add a small end-to-end smoke check for the contact flow against a local Pages preview.
+- Consider moving structured data helpers to TypeScript once the broader Gatsby component layer is typed.
+- Review whether PostHog remains necessary or if first-party analytics alone is enough for this site.
+- If Contentful setup becomes infrequent, move `contentful-import` behind an on-demand script or a separate tooling package.

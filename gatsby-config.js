@@ -9,12 +9,11 @@ module.exports = {
     description:
       'A blog about web and app development as well as personal development',
     social: {
-      twitter: '@thisperson',
+      twitter: '',
     },
   },
   plugins: [
     'gatsby-transformer-sharp',
-    'gatsby-plugin-react-helmet',
     'gatsby-plugin-sharp',
     'gatsby-plugin-image',
     'gatsby-plugin-sitemap',

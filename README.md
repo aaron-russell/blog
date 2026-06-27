@@ -1,88 +1,85 @@
-# Contentful Gatsby Starter Blog
+# Aaron Russell's Development Blog
 
-Create a [Gatsby](http://gatsbyjs.com/) blog powered by [Contentful](https://www.contentful.com).
+Personal blog built with Gatsby, Contentful, and Cloudflare Pages.
 
-![An article page of the starter blog](./screenshot.png "An article page of the starter blog")
+## Requirements
 
-Static sites are scalable, secure and have very little required maintenance. They come with a drawback though. Not everybody feels good editing files, building a project and uploading it somewhere. This is where Contentful comes into play.
+- Node `24.18.0`
+- npm `10+`
+- A Contentful space with delivery credentials for local content builds
 
-With Contentful and Gatsby you can connect your favorite static site generator with an API that provides an easy to use interface for people writing content and automate the publishing using services like [Travis CI](https://travis-ci.org/) or [Netlify](https://www.netlify.com/).
+This repository pins Node in [.nvmrc](/Users/aaronrussell/.codex/worktrees/e8f4/blog/.nvmrc:1). The expected verification baseline is:
 
-## Features
-
-- Simple content model and structure. Easy to adjust to your needs.
-- Use the [synchronization feature](https://www.contentful.com/developers/docs/references/content-delivery-api/#/reference/synchronization) of our [Delivery API](https://www.contentful.com/developers/docs/references/content-delivery-api/).
-- Responsive/adaptive images via [gatsby-plugin-image](https://www.gatsbyjs.org/packages/gatsby-plugin-image/) and our [Images API](https://www.contentful.com/developers/docs/references/content-delivery-api/#/reference/synchronization/initial-synchronization-of-entries-of-a-specific-content-type).
-
-## Getting started
-
-See our [official Contentful getting started guide](https://www.contentful.com/developers/docs/tutorials/general/get-started/).
-
-### Get the source code and install dependencies.
-
-```
-$ git clone https://github.com/contentful/starter-gatsby-blog.git
-$ nvm use
-$ npm install
+```sh
+npm ci
+npm run verify
 ```
 
-Or use Gatsby Cloud
+## Local development
 
-Use Deploy Now to get started in [Gatsby Cloud](https://gatsbyjs.com/products/cloud):
+1. Install dependencies:
 
-[<img src="https://www.gatsbyjs.com/deploynow.png" alt="Deploy to Gatsby Cloud">](https://www.gatsbyjs.com/dashboard/deploynow?url=https://github.com/contentful/starter-gatsby-blog)
-
-If you use Deploy Now, Gatsby Cloud will run the `gatsby-provision` script on your behalf, if you choose, after you Quick Connected to your empty Contentful Space. That script will add the necessary content models and content to support this site.
-
-
-Or use the [Gatsby CLI](https://www.npmjs.com/package/gatsby-cli).
-
-```
-$ gatsby new contentful-starter-blog https://github.com/contentful/starter-gatsby-blog/
+```sh
+npm ci
 ```
 
-### Set up of the needed content model and create a configuration file
+2. Create local environment files from the example:
 
-This project comes with a Contentful setup command `npm run setup`.
+```sh
+cp .env.example .env.development
+cp .env.example .env.production
+```
 
-This command will ask you for a space ID, and access tokens for the Contentful Management and Delivery API and then import the needed content model into the space you define and write a config file (`./.contentful.json`).
+3. Fill in your Contentful credentials, then start Gatsby:
 
-`npm run setup` automates that for you but if you want to do it yourself rename `.contentful.json.sample` to `.contentful.json` and add your configuration in this file.
+```sh
+npm run dev
+```
 
-## Crucial Commands
+The production build requires `CONTENTFUL_SPACE_ID` and `CONTENTFUL_ACCESS_TOKEN`. Optional preview builds can also set `CONTENTFUL_HOST=preview.contentful.com`.
 
-### `npm run dev`
+To verify that a production build has the required credentials before spending time in Gatsby:
 
-Run the project locally with live reload in development mode.
+```sh
+npm run build:check
+```
 
-### `npm run build`
+To run the full credential-checked production build:
 
-Run a production build into `./public`. The result is ready to be put on any static hosting you prefer.
+```sh
+npm run build:contentful
+```
 
-This project currently targets Node `24.18.0` via [`.nvmrc`](./.nvmrc) and supports stable Gatsby on Node `<26`.
+## Contentful setup
 
-### `npm run lint`
+To bootstrap a fresh Contentful space with the bundled content model and sample content:
 
-Run the repository lint checks.
+```sh
+npm run setup
+```
 
-### `npm test`
+The setup script writes `.env.development` and `.env.production` for you and imports [contentful/export.json](/Users/aaronrussell/.codex/worktrees/e8f4/blog/contentful/export.json:1) into the target space.
 
-Run the lightweight repository smoke tests.
+## Cloudflare Pages
 
-### `npm run typecheck`
+This repo includes:
 
-Typecheck the Cloudflare Pages function entrypoint.
+- Gatsby static output for the main site
+- [functions/_middleware.ts](/Users/aaronrussell/.codex/worktrees/e8f4/blog/functions/_middleware.ts:1) for contact form validation, Turnstile verification, and KV-backed rate limiting
+- [static/_headers](/Users/aaronrussell/.codex/worktrees/e8f4/blog/static/_headers:1) and [static/_redirects](/Users/aaronrussell/.codex/worktrees/e8f4/blog/static/_redirects:1) for Pages routing and security policies
 
-### `npm run serve`
+Required Cloudflare bindings and secrets:
 
-Spin up a production-ready server with your blog. Don't forget to build your page beforehand.
+- `NAMESPACE`
+- `SENTRY_DSN`
+- `TURNSTILE_SECRET`
 
-## Deployment
+## CI
 
-See the [official Contentful getting started guide](https://www.contentful.com/developers/docs/tutorials/general/get-started/).
+GitHub Actions runs:
 
-## Contribution
+- `npm run lint`
+- `npm test`
+- `npm run typecheck`
 
-Feel free to open pull requests to fix bugs. If you want to add features, please have a look at the [original version](https://github.com/contentful-userland/gatsby-contentful-starter). It is always open to contributions and pull requests.
-
-You can learn more about how Contentful userland is organized by visiting [our about repository](https://github.com/contentful-userland/about).
+Production deployment additionally runs `npm run build:contentful` when the Contentful secrets are available.

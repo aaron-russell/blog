@@ -1,62 +1,97 @@
 import staticFormsPlugin from '@cloudflare/pages-plugin-static-forms'
 import { Toucan } from 'toucan-js'
 
+import {
+  buildContactSubmission,
+  buildRedirectUrl,
+  sanitizeContactFields,
+  validateContactSubmission,
+} from './contact-form'
+
 interface Env {
   NAMESPACE: KVNamespace
   SENTRY_DSN: string
   TURNSTILE_SECRET: string
 }
 
+type TurnstileResponse = {
+  success: boolean
+}
+
+const RATE_LIMIT_TTL_SECONDS = 300
+
+const redirect = (requestUrl: string, params: Record<string, string>) =>
+  Response.redirect(buildRedirectUrl(requestUrl, params), 303)
+
+export const handleContactFormSubmission = async (
+  context: EventContext<Env, string, unknown>,
+  formData: FormData
+) => {
+  const sentry = new Toucan({
+    dsn: context.env.SENTRY_DSN,
+    context,
+    request: context.request,
+  })
+
+  try {
+    const token = formData.get('cf-turnstile-response')
+    const ip = context.request.headers.get('CF-Connecting-IP') || 'unknown'
+    const fields = sanitizeContactFields(formData)
+    const validation = validateContactSubmission(fields)
+
+    if (validation !== 'ok') {
+      return redirect(context.request.url, { error: validation })
+    }
+
+    const rateLimitKey = `contact:${ip}`
+    const existingSubmission = await context.env.NAMESPACE.get(rateLimitKey)
+
+    if (existingSubmission) {
+      return redirect(context.request.url, { error: 'rate_limited' })
+    }
+
+    if (typeof token !== 'string' || token.trim().length === 0) {
+      return redirect(context.request.url, { error: 'verification' })
+    }
+
+    const turnstileFormData = new FormData()
+    turnstileFormData.append('secret', context.env.TURNSTILE_SECRET)
+    turnstileFormData.append('response', token)
+    turnstileFormData.append('remoteip', ip)
+
+    const outcome = await fetch(
+      'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+      {
+        method: 'POST',
+        body: turnstileFormData,
+      }
+    ).then((result) => result.json<TurnstileResponse>())
+
+    if (!outcome.success) {
+      return redirect(context.request.url, { error: 'verification' })
+    }
+
+    await context.env.NAMESPACE.put(
+      rateLimitKey,
+      new Date().toISOString(),
+      {
+        expirationTtl: RATE_LIMIT_TTL_SECONDS,
+      }
+    )
+
+    await context.env.NAMESPACE.put(
+      crypto.randomUUID(),
+      JSON.stringify(buildContactSubmission(fields))
+    )
+
+    return redirect(context.request.url, { submitted: 'success' })
+  } catch (error) {
+    sentry.captureException(error)
+    return redirect(context.request.url, { error: 'blocked' })
+  }
+}
+
 export const onRequest: PagesFunction<Env> = (context) =>
   staticFormsPlugin({
-    respondWith: async ({ formData }) => {
-      const sentry = new Toucan({
-        dsn: context.env.SENTRY_DSN,
-        context,
-        request: context.request,
-      })
-      try {
-        const token = formData.get('cf-turnstile-response')
-        const ip = context.request.headers.get('CF-Connecting-IP') || ''
-
-        const turnstileFormData = new FormData()
-        turnstileFormData.append('secret', context.env.TURNSTILE_SECRET)
-        turnstileFormData.append('response', typeof token === 'string' ? token : '')
-        turnstileFormData.append('remoteip', ip)
-
-        const url = 'https://challenges.cloudflare.com/turnstile/v0/siteverify'
-        const result = await fetch(url, {
-          body: turnstileFormData,
-          method: 'POST',
-        })
-        const outcome: { success: boolean } = await result.json()
-        if (outcome.success) {
-          const email = formData.get('email')
-          const content = formData.get('message')
-          const nameOnForm = formData.get('name')
-
-          const comment = {
-            user_ip: ip,
-            user_agent: context.request.headers.get('User-Agent') || '',
-            name: typeof nameOnForm === 'string' ? nameOnForm : '',
-            email: typeof email === 'string' ? email : '',
-            content: typeof content === 'string' ? content : '',
-            date: new Date().toISOString(),
-          }
-
-          await context.env.NAMESPACE.put(
-            crypto.randomUUID(),
-            JSON.stringify(comment)
-          )
-        }
-        return Response.redirect(
-          'https://aaron-russell.co.uk/contact?submitted=true'
-        )
-      } catch (error) {
-        sentry.captureException(error)
-        return Response.redirect(
-          'https://aaron-russell.co.uk/contact?submitted=true'
-        )
-      }
-    },
+    respondWith: ({ formData }) => handleContactFormSubmission(context, formData),
   })(context)

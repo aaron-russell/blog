@@ -1,3 +1,9 @@
+.container {
+  margin: 0 auto;
+  max-width: var(--size-max-width);
+  padding: 0 var(--size-gutter) calc(var(--space-3xl) * 1.5);
+}
+
 .form input {
   width: 100%;
   max-width: var(--size-max-width);
@@ -9,6 +15,7 @@
   clear: both;
   display: block;
   font-size: large;
+  font-family: inherit;
 }
 
 .form textarea {
@@ -23,6 +30,7 @@
   clear: both;
   display: block;
   font-size: large;
+  font-family: inherit;
 }
 
 .form label {
@@ -42,12 +50,33 @@
   font-size: large;
 }
 
-@media (min-width: 768px) {
-  .container {
-    max-width: var(--size-max-width);
-    margin: 0 auto;
-  }
+.form button:hover {
+  background-color: var(--primary);
+}
 
+.honeypotField {
+  left: -9999px;
+  position: absolute;
+}
+
+.statusSuccess,
+.statusError {
+  border-radius: var(--radius-sm);
+  margin: var(--space-xl) 0;
+  padding: var(--space-lg);
+}
+
+.statusSuccess {
+  background: rgba(13, 138, 61, 0.08);
+  border: 1px solid rgba(13, 138, 61, 0.24);
+}
+
+.statusError {
+  background: rgba(185, 28, 28, 0.08);
+  border: 1px solid rgba(185, 28, 28, 0.24);
+}
+
+@media (min-width: 768px) {
   .article {
     gap: var(--space-xl);
   }
