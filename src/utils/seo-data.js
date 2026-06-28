@@ -1,6 +1,31 @@
 export const buildPageTitle = (title, siteTitle) =>
   title ? `${title} | ${siteTitle}` : siteTitle
 
+export const resolveCanonicalUrl = ({ canonical, pathname, siteUrl }) => {
+  const canonicalPageUrl = new URL(pathname, `${siteUrl}/`)
+
+  if (!canonical) {
+    return canonicalPageUrl.toString()
+  }
+
+  try {
+    const configuredUrl = new URL(canonical, `${siteUrl}/`)
+    const configuredPath = configuredUrl.pathname.replace(/\/+$/, '')
+    const canonicalPagePath = canonicalPageUrl.pathname.replace(/\/+$/, '')
+
+    if (
+      configuredUrl.origin === canonicalPageUrl.origin &&
+      configuredPath === canonicalPagePath
+    ) {
+      configuredUrl.pathname = canonicalPageUrl.pathname
+    }
+
+    return configuredUrl.toString()
+  } catch {
+    return canonicalPageUrl.toString()
+  }
+}
+
 export const buildWebsiteJsonLd = (siteMetadata) => ({
   '@context': 'https://schema.org',
   '@type': 'WebSite',
@@ -124,4 +149,5 @@ export default {
   buildPageTitle,
   buildSeoMetaTags,
   buildWebsiteJsonLd,
+  resolveCanonicalUrl,
 }

@@ -87,3 +87,30 @@ test('seo data helpers produce stable metadata for social and canonical tags', a
     )
   )
 })
+
+test('canonical URLs match the trailing-slash article URL served by Astro', async () => {
+  const { default: seoData } = await import('../src/utils/seo-data.js')
+  const values = {
+    pathname: '/blog/example-article/',
+    siteUrl: 'https://aaron-russell.co.uk',
+  }
+
+  assert.equal(
+    seoData.resolveCanonicalUrl({
+      ...values,
+      canonical: 'https://aaron-russell.co.uk/blog/example-article',
+    }),
+    'https://aaron-russell.co.uk/blog/example-article/'
+  )
+  assert.equal(
+    seoData.resolveCanonicalUrl(values),
+    'https://aaron-russell.co.uk/blog/example-article/'
+  )
+  assert.equal(
+    seoData.resolveCanonicalUrl({
+      ...values,
+      canonical: 'https://example.com/original-article',
+    }),
+    'https://example.com/original-article'
+  )
+})
