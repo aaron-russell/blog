@@ -7,6 +7,7 @@ import {
   sanitizeContactFields,
   validateContactSubmission,
 } from './contact-form'
+import { htmlToMarkdown, isHtmlResponse, requestsMarkdown } from './markdown-converter'
 
 interface Env {
   NAMESPACE: KVNamespace
@@ -20,8 +21,59 @@ type TurnstileResponse = {
 
 const RATE_LIMIT_TTL_SECONDS = 300
 
+export const DISCOVERY_LINKS = [
+  '</.well-known/agent-card.json>; rel="agent"',
+  '</.well-known/agent-skills/index.json>; rel="agent-skills"',
+  '</.well-known/api-catalog>; rel="api-catalog"',
+  '</auth.md>; rel="service-auth"',
+  '</.well-known/mcp/server-card.json>; rel="mcp-server-card"',
+]
+
 const redirect = (requestUrl: string, params: Record<string, string>) =>
   Response.redirect(buildRedirectUrl(requestUrl, params), 303)
+
+// Add Link headers for agent discovery (RFC 8288) and markdown support
+export const addDiscoveryHeaders = async (response: Response, request: Request): Promise<Response> => {
+  const newResponse = new Response(response.body, response)
+
+  newResponse.headers.append('Link', DISCOVERY_LINKS.join(', '))
+  
+  // Handle Markdown for Agents content negotiation
+  const acceptHeader = request.headers.get('accept') || ''
+  const contentType = newResponse.headers.get('content-type') || ''
+  
+  if (requestsMarkdown(acceptHeader) && isHtmlResponse(contentType) && newResponse.body) {
+    try {
+      // Clone the response to read the body
+      const clonedResponse = newResponse.clone()
+      const htmlText = await clonedResponse.text()
+      
+      // Convert HTML to markdown
+      const markdown = htmlToMarkdown(htmlText)
+      
+      // Return new response with markdown content
+      const markdownResponse = new Response(markdown, {
+        status: newResponse.status,
+        statusText: newResponse.statusText,
+        headers: new Headers(newResponse.headers)
+      })
+      
+      // Set markdown content type and headers
+      markdownResponse.headers.set('Content-Type', 'text/markdown; charset=utf-8')
+      markdownResponse.headers.set('X-Markdown-Version', '1.0')
+      markdownResponse.headers.set('X-Markdown-From-Html', 'true')
+      
+      return markdownResponse
+    } catch (error) {
+      console.warn('Failed to convert HTML to markdown:', error)
+      // Fall back to original response with markdown header
+      newResponse.headers.set('Content-Type', 'text/markdown; charset=utf-8')
+      newResponse.headers.append('X-Markdown-Version', '1.0')
+    }
+  }
+  
+  return newResponse
+}
 
 export const handleContactFormSubmission = async (
   context: EventContext<Env, string, unknown>,
@@ -91,10 +143,17 @@ export const handleContactFormSubmission = async (
   }
 }
 
-export const onRequest: PagesFunction<Env> = (context) =>
-  staticFormsPlugin({
+export const onRequest: PagesFunction<Env> = async (context) => {
+  // Handle form submissions
+  const formHandler = staticFormsPlugin({
     respondWith: ({ formData }) => handleContactFormSubmission(context, formData),
-  })(context)
+  })
+  
+  const response = await formHandler(context)
+  
+  // Add discovery headers and markdown support to all responses
+  return addDiscoveryHeaders(response, context.request)
+}
 
 export default {
   handleContactFormSubmission,

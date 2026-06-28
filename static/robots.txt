@@ -1,4 +1,5 @@
 User-agent: *
 Disallow:
 Sitemap: https://aaron-russell.co.uk/sitemap.xml
-Content-Signal: ai-train=no, search=yes, ai-input=yes
+
+Content-Signal: ai-train=yes, search=yes, ai-input=yes

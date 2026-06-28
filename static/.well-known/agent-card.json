@@ -1,0 +1,19 @@
+{
+  "name": "Aaron Russell Blog",
+  "url": "https://aaron-russell.co.uk/",
+  "description": "Personal development blog with public technical articles and contact routes.",
+  "provider": {
+    "name": "Aaron Russell"
+  },
+  "capabilities": {
+    "public_read": true,
+    "markdown_responses": true,
+    "contact_form": true
+  },
+  "links": {
+    "auth": "https://aaron-russell.co.uk/auth.md",
+    "skills": "https://aaron-russell.co.uk/.well-known/agent-skills/index.json",
+    "api_catalog": "https://aaron-russell.co.uk/.well-known/api-catalog",
+    "mcp_server_card": "https://aaron-russell.co.uk/.well-known/mcp/server-card.json"
+  }
+}

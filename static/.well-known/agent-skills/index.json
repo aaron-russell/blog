@@ -1,0 +1,19 @@
+{
+  "$schema": "https://agentskills.io/schema/v0.2.0",
+  "skills": [
+    {
+      "name": "blog-discovery",
+      "type": "resource",
+      "description": "Discover blog posts, articles, and technical content",
+      "url": "https://aaron-russell.co.uk/blog/",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "contact-form",
+      "type": "action",
+      "description": "Submit contact form inquiries",
+      "url": "https://aaron-russell.co.uk/contact/",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}
