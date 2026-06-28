@@ -8,12 +8,15 @@ import styles from './contact.module.css'
 const CONTACT_MESSAGES = {
   blocked:
     'Your message could not be sent. Please email me directly if the issue continues.',
-  invalid: 'Please complete the required fields and try again.',
+  invalid: 'Please check the highlighted fields and try again.',
   rate_limited: 'Please wait a few minutes before sending another message.',
   success: 'Thank you for your message. I will get back to you soon.',
+  unavailable:
+    'I could not deliver that message just now. Please try again shortly or email me directly.',
   verification: 'Please complete the Turnstile check before sending your message.',
 }
 
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY
 const author = await getAuthor()
 const seoImage = buildContentfulImageUrl(author.heroImage?.url, {
   fit: 'fill',
@@ -24,6 +27,7 @@ const seoImage = buildContentfulImageUrl(author.heroImage?.url, {
 })
 const successClass = styles.statusSuccess
 const errorClass = styles.statusError
+const pendingClass = styles.statusPending
 ---
 
 <BaseLayout
@@ -33,7 +37,7 @@ const errorClass = styles.statusError
     description: 'Get in touch with Aaron Russell about engineering, AI, product systems, and delivery work.',
     image: seoImage,
     title: 'Contact me',
-    turnstile: true,
+    turnstile: Boolean(turnstileSiteKey),
   }}
 >
   <Hero
@@ -46,17 +50,38 @@ const errorClass = styles.statusError
     <div class={styles.grid}>
       <section class={`${styles.infoPanel} surface`}>
         <span class="eyebrow">Get in touch</span>
-        <h2>Email</h2>
+        <h2>Direct, private, and built to be useful.</h2>
         <p>
-          If you want to talk about engineering, AI-assisted workflows, product delivery, or
-          the systems behind this site, send a message here or reach out directly by email.
+          Send a note about consulting, product delivery, platform work, or practical AI systems.
+          Messages come straight to my inbox through a Cloudflare-backed form with layered spam
+          protection.
         </p>
-        <address class={styles.contactDetails}>
-          <a href="mailto:aaron@russell-tech.co.uk">aaron@russell-tech.co.uk</a>
-        </address>
+        <ul class={styles.featureList}>
+          <li>Typical fields only: name, email, subject, and message.</li>
+          <li>No analytics added to the form flow.</li>
+          <li>Server-side validation, rate limiting, and bot filtering before delivery.</li>
+        </ul>
+        <div class={styles.metaCard}>
+          <p class={styles.metaLabel}>Direct email</p>
+          <address class={styles.contactDetails}>
+            <a href="mailto:aaron@russell-tech.co.uk">aaron@russell-tech.co.uk</a>
+          </address>
+          <p class={styles.metaHint}>
+            If the form ever fails, email works as the fallback.
+          </p>
+        </div>
       </section>
 
       <section class={`${styles.formPanel} surface`}>
+        <div class={styles.formHeader}>
+          <span class="eyebrow">Contact form</span>
+          <h2>Send a message</h2>
+          <p>
+            Include a little context and a good reply address. I usually reply by email after I
+            have read the note.
+          </p>
+        </div>
+
         <p
           id="contact-status"
           class={styles.statusError}
@@ -64,78 +89,157 @@ const errorClass = styles.statusError
           aria-live="polite"
           hidden
         ></p>
-        <form class={styles.form} method="POST">
-          <label for="name">
-            Name <span aria-hidden="true">*</span>
-          </label>
-          <input
-            id="name"
-            placeholder="Aaron Russell"
-            type="text"
-            name="name"
-            autocomplete="name"
-            required
-            minlength="2"
-            maxlength="120"
-          />
 
-          <label for="email">
-            Email address <span aria-hidden="true">*</span>
-          </label>
-          <input
-            id="email"
-            placeholder="aaron@russell-tech.co.uk"
-            type="email"
-            name="email"
-            autocomplete="email"
-            required
-            maxlength="200"
-          />
+        <form class={styles.form} method="POST" action="/api/contact" data-contact-form>
+          <input type="hidden" name="startedAt" value={new Date().toISOString()} />
+          <input type="hidden" name="pageUrl" value={`${author.website}/contact/`} />
 
-          <label for="message">
-            Message <span aria-hidden="true">*</span>
-          </label>
-          <textarea
-            id="message"
-            placeholder="Tell me a little about what you're building or exploring."
-            name="message"
-            required
-            minlength="10"
-            maxlength="4000"
-          ></textarea>
+          <div class={styles.field}>
+            <label for="name">
+              Name <span aria-hidden="true">*</span>
+            </label>
+            <input
+              id="name"
+              type="text"
+              name="name"
+              autocomplete="name"
+              required
+              minlength="2"
+              maxlength="120"
+              aria-describedby="name-error"
+            />
+            <p id="name-error" class={styles.fieldError} data-field-error="name"></p>
+          </div>
+
+          <div class={styles.field}>
+            <label for="email">
+              Email address <span aria-hidden="true">*</span>
+            </label>
+            <input
+              id="email"
+              type="email"
+              name="email"
+              autocomplete="email"
+              inputmode="email"
+              required
+              maxlength="200"
+              aria-describedby="email-error"
+            />
+            <p id="email-error" class={styles.fieldError} data-field-error="email"></p>
+          </div>
+
+          <div class={styles.field}>
+            <label for="subject">
+              Subject <span aria-hidden="true">*</span>
+            </label>
+            <input
+              id="subject"
+              type="text"
+              name="subject"
+              autocomplete="off"
+              required
+              minlength="3"
+              maxlength="160"
+              aria-describedby="subject-error"
+            />
+            <p id="subject-error" class={styles.fieldError} data-field-error="subject"></p>
+          </div>
+
+          <div class={styles.field}>
+            <label for="message">
+              Message <span aria-hidden="true">*</span>
+            </label>
+            <textarea
+              id="message"
+              name="message"
+              required
+              minlength="20"
+              maxlength="4000"
+              aria-describedby="message-hint message-error"
+            ></textarea>
+            <div class={styles.fieldMeta}>
+              <p id="message-hint" class={styles.fieldHint}>
+                A little context helps me reply faster.
+              </p>
+              <p id="message-error" class={styles.fieldError} data-field-error="message"></p>
+            </div>
+          </div>
 
           <div class={styles.honeypotField} aria-hidden="true">
-            <label for="company">Company</label>
+            <label for="website">Website</label>
             <input
-              id="company"
-              name="company"
+              id="website"
+              name="website"
               type="text"
               autocomplete="off"
               tabindex="-1"
             />
           </div>
 
-          <div
-            class="cf-turnstile"
-            data-sitekey="0x4AAAAAAADUKX7Xm2l9yHju"
-            data-theme="dark"
-          ></div>
-          <input type="hidden" name="static-form-name" value="contact" />
-          <button type="submit">Send message</button>
+          {
+            turnstileSiteKey ? (
+              <div class={styles.turnstileWrap}>
+                <div
+                  class="cf-turnstile"
+                  data-sitekey={turnstileSiteKey}
+                  data-theme="dark"
+                ></div>
+              </div>
+            ) : (
+              <p class={styles.fieldHint}>
+                Turnstile is not configured in this environment, so the form uses the remaining
+                server-side checks.
+              </p>
+            )
+          }
+
+          <div class={styles.formActions}>
+            <button type="submit" data-submit-button>
+              <span data-submit-label>Send message</span>
+            </button>
+            <p class={styles.finePrint}>
+              This form only uses the details you enter here so I can reply.
+            </p>
+          </div>
         </form>
       </section>
     </div>
   </div>
   <script
-    define:vars={{ contactMessages: CONTACT_MESSAGES, errorClass, successClass }}
+    define:vars={{ contactMessages: CONTACT_MESSAGES, errorClass, pendingClass, successClass }}
     is:inline
   >
-    const params = new URLSearchParams(window.location.search)
-    const submitted = params.get('submitted')
-    const error = params.get('error')
     const statusNode = document.getElementById('contact-status')
+    const form = document.querySelector('[data-contact-form]')
+    const fieldErrorNodes = document.querySelectorAll('[data-field-error]')
+    const submitButton = document.querySelector('[data-submit-button]')
+    const submitLabel = document.querySelector('[data-submit-label]')
 
-    if (statusNode) {
+    const clearFieldErrors = () => {
+      fieldErrorNodes.forEach((node) => {
+        node.textContent = ''
+      })
+    }
+
+    const setStatus = (type, message) => {
+      if (!statusNode || !message) {
+        return
+      }
+
+      statusNode.hidden = false
+      statusNode.textContent = message
+      statusNode.className =
+        type === 'success'
+          ? successClass
+          : type === 'pending'
+            ? pendingClass
+            : errorClass
+    }
+
+    const showQueryStringState = () => {
+      const params = new URLSearchParams(window.location.search)
+      const submitted = params.get('submitted')
+      const error = params.get('error')
       const message =
         submitted === 'success'
           ? contactMessages.success
@@ -144,11 +248,84 @@ const errorClass = styles.statusError
             : ''
 
       if (message) {
-        statusNode.hidden = false
-        statusNode.textContent = message
-        statusNode.className =
-          submitted === 'success' ? successClass : errorClass
+        setStatus(submitted === 'success' ? 'success' : 'error', message)
       }
+    }
+
+    showQueryStringState()
+
+    if (form instanceof HTMLFormElement && submitButton instanceof HTMLButtonElement) {
+      form.addEventListener('submit', async (event) => {
+        if (!form.reportValidity()) {
+          return
+        }
+
+        event.preventDefault()
+        clearFieldErrors()
+        setStatus('pending', 'Sending your message...')
+
+        submitButton.disabled = true
+        form.setAttribute('aria-busy', 'true')
+        if (submitLabel) {
+          submitLabel.textContent = 'Sending...'
+        }
+
+        const pageUrlInput = form.elements.namedItem('pageUrl')
+        if (pageUrlInput instanceof HTMLInputElement) {
+          pageUrlInput.value = window.location.href
+        }
+
+        try {
+          const response = await fetch(form.action, {
+            body: new FormData(form),
+            headers: {
+              Accept: 'application/json',
+            },
+            method: 'POST',
+          })
+
+          const payload = await response.json()
+
+          if (!response.ok || !payload.ok) {
+            Object.entries(payload.fieldErrors || {}).forEach(([name, message]) => {
+              const node = form.querySelector(`[data-field-error="${name}"]`)
+              if (node) {
+                node.textContent = String(message)
+              }
+            })
+
+            setStatus('error', payload.message || contactMessages.blocked)
+            window.turnstile?.reset?.()
+            return
+          }
+
+          form.reset()
+
+          const startedAtInput = form.elements.namedItem('startedAt')
+          if (startedAtInput instanceof HTMLInputElement) {
+            startedAtInput.value = new Date().toISOString()
+          }
+
+          const restoredPageUrlInput = form.elements.namedItem('pageUrl')
+          if (restoredPageUrlInput instanceof HTMLInputElement) {
+            restoredPageUrlInput.value = window.location.href
+          }
+
+          window.turnstile?.reset?.()
+          setStatus('success', payload.message || contactMessages.success)
+          history.replaceState({}, '', window.location.pathname)
+        } catch (error) {
+          console.error('Contact form submission failed', error)
+          window.turnstile?.reset?.()
+          setStatus('error', contactMessages.unavailable)
+        } finally {
+          submitButton.disabled = false
+          form.removeAttribute('aria-busy')
+          if (submitLabel) {
+            submitLabel.textContent = 'Send message'
+          }
+        }
+      })
     }
   </script>
 </BaseLayout>
