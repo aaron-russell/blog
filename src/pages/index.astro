@@ -3,16 +3,19 @@ import ArticlePreview from '../components/ArticlePreview.astro'
 import Container from '../components/Container.astro'
 import BaseLayout from '../layouts/BaseLayout.astro'
 import { getAuthor, getHomePagePosts } from '../lib/contentful'
-import { getTopTags } from '../lib/blog'
 import { buildContentfulImageUrl } from '../lib/contentful-images'
-import { buildContentfulSocialImageUrl } from '../lib/contentful-images'
-import { OG_IMAGE_HEIGHT, OG_IMAGE_TYPE, OG_IMAGE_WIDTH } from '../lib/og'
+import {
+  buildContentfulSocialImageUrl,
+  CONTENTFUL_SOCIAL_IMAGE_TYPE,
+} from '../lib/contentful-images'
+import { OG_IMAGE_HEIGHT, OG_IMAGE_WIDTH } from '../lib/og'
 import { homeConfig } from '../lib/site-config'
+import { getFeaturedTopics } from '../lib/topics'
 import { absoluteUrl, buildPersonJsonLd } from '../utils/structured-data'
 import styles from './index.module.css'
 
 const [author, posts] = await Promise.all([getAuthor(), getHomePagePosts()])
-const topTags = getTopTags(posts, 4)
+const featuredTopics = getFeaturedTopics(posts).slice(0, 4)
 const seoImage = buildContentfulSocialImageUrl(author.heroImage?.url)
 const profileImage = author.profilePhoto?.url
   ? absoluteUrl(
@@ -30,7 +33,7 @@ const personJsonLd = buildPersonJsonLd(author, profileImage)
     description: homeConfig.hero.intro,
     image: seoImage,
     imageHeight: OG_IMAGE_HEIGHT,
-    imageType: OG_IMAGE_TYPE,
+    imageType: CONTENTFUL_SOCIAL_IMAGE_TYPE,
     imageWidth: OG_IMAGE_WIDTH,
     structuredData: [personJsonLd],
   }}
@@ -86,7 +89,7 @@ const personJsonLd = buildPersonJsonLd(author, profileImage)
         <span class="eyebrow">Current workbench</span>
         <h2>What I’m building right now</h2>
       </div>
-      <p>Ideas, systems, and publishing workflows I’m actively refining right now.</p>
+      <p>Ideas, systems, and publishing workflows I’m actively refining right now. More background lives on the <a href="/about/">About page</a>.</p>
     </div>
     <div class={styles.featureGrid}>
       {homeConfig.workbench.map((item) => (
@@ -121,13 +124,13 @@ const personJsonLd = buildPersonJsonLd(author, profileImage)
       <p>Use topic collections to jump into recurring themes without digging through the full archive.</p>
     </div>
     <div class={styles.featureGrid}>
-      {topTags.map(({ count, tag }) => (
-        <a class={`${styles.topicCard} surface`} href={`/blog/?topic=${encodeURIComponent(tag)}`}>
+      {featuredTopics.map((topic) => (
+        <a class={`${styles.topicCard} surface`} href={`/topics/${topic.path}/`}>
           <div class={styles.topicLink}>
-            <h3>{tag}</h3>
-            <span>{count} posts</span>
+            <h3>{topic.name}</h3>
+            <span>{topic.postCount} posts</span>
           </div>
-          <p>Browse everything filed under {tag}.</p>
+          <p>{topic.description}</p>
         </a>
       ))}
     </div>

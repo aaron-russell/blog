@@ -2,16 +2,15 @@ const test = require('node:test')
 const assert = require('node:assert/strict')
 
 test('contentful image helpers normalize urls and build social images', async () => {
-  const { buildContentfulSocialImageUrl, normalizeContentfulUrl } = await import(
-    '../src/lib/contentful-images.ts'
-  )
+  const contentfulImages = await import('../src/lib/contentful-images.ts')
+  const helpers = contentfulImages.default || contentfulImages
 
   assert.equal(
-    normalizeContentfulUrl('//images.ctfassets.net/example.jpg'),
+    helpers.normalizeContentfulUrl('//images.ctfassets.net/example.jpg'),
     'https://images.ctfassets.net/example.jpg'
   )
 
-  const socialImage = buildContentfulSocialImageUrl('//images.ctfassets.net/example.jpg')
+  const socialImage = helpers.buildContentfulSocialImageUrl('//images.ctfassets.net/example.jpg')
 
   assert.match(socialImage, /^https:\/\/images\.ctfassets\.net\/example\.jpg\?/)
   assert.match(socialImage, /fit=fill/)
@@ -19,12 +18,12 @@ test('contentful image helpers normalize urls and build social images', async ()
   assert.match(socialImage, /fl=progressive/)
   assert.match(socialImage, /h=630/)
   assert.match(socialImage, /w=1200/)
+  assert.equal(helpers.CONTENTFUL_SOCIAL_IMAGE_TYPE, 'image/jpeg')
 })
 
 test('contentful image helpers clamp widths and emit modern responsive sources', async () => {
-  const { buildResponsiveContentfulImage, clampContentfulWidths } = await import(
-    '../src/lib/contentful-images.ts'
-  )
+  const contentfulImages = await import('../src/lib/contentful-images.ts')
+  const helpers = contentfulImages.default || contentfulImages
 
   const image = {
     description: 'Example image',
@@ -34,9 +33,9 @@ test('contentful image helpers clamp widths and emit modern responsive sources',
     width: 1800,
   }
 
-  assert.deepEqual(clampContentfulWidths(image, [320, 640, 2400]), [320, 640, 1800])
+  assert.deepEqual(helpers.clampContentfulWidths(image, [320, 640, 2400]), [320, 640, 1800])
 
-  const responsiveImage = buildResponsiveContentfulImage(image, {
+  const responsiveImage = helpers.buildResponsiveContentfulImage(image, {
     fallbackFormat: 'jpg',
     formats: ['avif', 'webp'],
     transform: {

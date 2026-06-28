@@ -1,0 +1,64 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import Container from '../components/Container.astro'
+import { getAuthor } from '../lib/contentful'
+import {
+  buildContentfulSocialImageUrl,
+  CONTENTFUL_SOCIAL_IMAGE_TYPE,
+} from '../lib/contentful-images'
+import { OG_IMAGE_HEIGHT, OG_IMAGE_WIDTH } from '../lib/og'
+import { buildBreadcrumbListJsonLd } from '../utils/structured-data'
+import styles from './about.module.css'
+
+const author = await getAuthor()
+const seoImage = buildContentfulSocialImageUrl(author.heroImage?.url)
+const breadcrumbJsonLd = buildBreadcrumbListJsonLd(
+  [
+    { name: 'Home', path: '/' },
+    { name: 'Editorial policy', path: '/editorial-policy/' },
+  ],
+  author.website
+)
+---
+
+<BaseLayout
+  seo={{
+    alt: 'Editorial policy social card',
+    canonical: `${author.website}/editorial-policy/`,
+    description: 'How Aaron Russell researches, updates, corrects, and AI-assists articles on this site.',
+    image: seoImage,
+    imageHeight: OG_IMAGE_HEIGHT,
+    imageType: CONTENTFUL_SOCIAL_IMAGE_TYPE,
+    imageWidth: OG_IMAGE_WIDTH,
+    structuredData: [breadcrumbJsonLd],
+    title: 'Editorial policy',
+  }}
+>
+  <Container>
+    <section class={styles.grid}>
+      <article class={`${styles.panel} surface`}>
+        <span class="eyebrow">Editorial policy</span>
+        <h1>How this site is researched and updated</h1>
+        <p>
+          Posts on this site are based on hands-on product, engineering, and publishing work. When a piece is comparative or instructional, it is written to be practical first and promotional never.
+        </p>
+        <h2>Research and sourcing</h2>
+        <p>
+          Articles draw on first-hand implementation experience, source documentation, repository work, and reproducible tests where possible. External claims should be traceable back to a primary source.
+        </p>
+        <h2>Corrections and updates</h2>
+        <p>
+          Substantive fixes are reflected in article update timestamps. Minor wording, formatting, or deployment-only changes should not be treated as a meaningful editorial refresh.
+        </p>
+        <h2>AI assistance</h2>
+        <p>
+          AI tools may help with drafting, editing, restructuring, or code review, but they are not treated as authoritative sources. Technical claims should be checked against the underlying system, code, or documentation before publication.
+        </p>
+        <h2>Contact</h2>
+        <p>
+          If you spot an error or outdated recommendation, use the <a href="/contact/">contact page</a> so it can be reviewed and corrected.
+        </p>
+      </article>
+    </section>
+  </Container>
+</BaseLayout>

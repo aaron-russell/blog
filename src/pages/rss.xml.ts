@@ -1,5 +1,6 @@
 import { getAllBlogPosts } from '../lib/contentful'
 import { siteMetadata } from '../lib/site-config'
+import { resolveCanonicalUrl } from '../utils/seo-data'
 
 const escapeXml = (value: string) =>
   value
@@ -14,13 +15,18 @@ export async function GET() {
   const items = posts
     .map((post) => {
       const url = new URL(`/blog/${post.slug}/`, siteMetadata.siteUrl).toString()
+      const canonicalUrl = resolveCanonicalUrl({
+        canonical: post.canonical,
+        pathname: `/blog/${post.slug}/`,
+        siteUrl: siteMetadata.siteUrl,
+      })
       const description = escapeXml(post.descriptionPlainText || post.bodyPlainText || '')
 
       return [
         '<item>',
         `<title>${escapeXml(post.title)}</title>`,
         `<link>${url}</link>`,
-        `<guid>${post.canonical || url}</guid>`,
+        `<guid>${canonicalUrl}</guid>`,
         `<pubDate>${new Date(post.rawDate).toUTCString()}</pubDate>`,
         `<description>${description}</description>`,
         ...post.tags.map((tag) => `<category>${escapeXml(tag)}</category>`),

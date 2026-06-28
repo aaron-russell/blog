@@ -2,7 +2,8 @@ const test = require('node:test')
 const assert = require('node:assert/strict')
 
 test('og helpers build stable social image paths and urls', async () => {
-  const og = await import('../src/lib/og.ts')
+  const ogModule = await import('../src/lib/og.ts')
+  const og = ogModule.default || ogModule
 
   assert.equal(og.buildPostOgImagePath('edge-functions'), '/og/blog/edge-functions.png')
   assert.equal(og.buildStaticOgImagePath('site'), '/og/site.png')
@@ -13,7 +14,8 @@ test('og helpers build stable social image paths and urls', async () => {
 })
 
 test('og renderer returns a png buffer with the expected signature', async () => {
-  const og = await import('../src/lib/og.ts')
+  const ogModule = await import('../src/lib/og.ts')
+  const og = ogModule.default || ogModule
   const buffer = og.renderOgImage({
     category: 'Cloudflare',
     description: 'A premium social card generated at build time for the Astro blog.',

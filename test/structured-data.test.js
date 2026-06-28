@@ -17,6 +17,10 @@ test('structured data helpers build absolute URLs and social links', async () =>
     structuredData.absoluteUrl(author.website, '/images/hero.png'),
     'https://aaron-russell.co.uk/images/hero.png'
   )
+  assert.equal(
+    structuredData.buildPersonSchemaId(author.website),
+    'https://aaron-russell.co.uk/#person'
+  )
   assert.deepEqual(structuredData.getPersonSameAs(author), [
     'https://aaron-russell.co.uk',
     'https://twitter.com/example',
@@ -70,11 +74,60 @@ test('structured data helpers produce stable schema output', async () => {
   )
 
   assert.equal(person['@type'], 'Person')
+  assert.equal(person['@id'], 'https://aaron-russell.co.uk/#person')
   assert.equal(person.image, 'https://aaron-russell.co.uk/profile.png')
   assert.equal(post['@type'], 'BlogPosting')
   assert.equal(post.image, 'https://aaron-russell.co.uk/images/testing.png')
+  assert.equal(post.author['@id'], 'https://aaron-russell.co.uk/#person')
+  assert.equal(post.author.url, 'https://aaron-russell.co.uk/about/')
+  assert.equal(post.publisher['@id'], 'https://aaron-russell.co.uk/#person')
   assert.equal(
     post.mainEntityOfPage,
     'https://aaron-russell.co.uk/blog/testing-gatsby/'
   )
+})
+
+test('structured data helpers build profile and breadcrumb schema', async () => {
+  const { default: structuredData } = await import('../src/utils/structured-data.js')
+  const author = {
+    website: 'https://aaron-russell.co.uk',
+    name: 'Aaron Russell',
+    description: { description: 'Developer and writer' },
+  }
+
+  const profile = structuredData.buildProfilePageJsonLd(
+    author,
+    'https://aaron-russell.co.uk/profile.png'
+  )
+  const breadcrumb = structuredData.buildBreadcrumbListJsonLd(
+    [
+      { name: 'Home', path: '/' },
+      { name: 'Blog', path: '/blog/' },
+      { name: 'Article', path: '/blog/article/' },
+    ],
+    author.website
+  )
+
+  assert.equal(profile['@type'], 'ProfilePage')
+  assert.equal(profile.url, 'https://aaron-russell.co.uk/about/')
+  assert.equal(profile.mainEntity['@id'], 'https://aaron-russell.co.uk/#person')
+  assert.equal(breadcrumb['@type'], 'BreadcrumbList')
+  assert.equal(breadcrumb.itemListElement[2].item, 'https://aaron-russell.co.uk/blog/article/')
+})
+
+test('structured data helpers build blog schema', async () => {
+  const { default: structuredData } = await import('../src/utils/structured-data.js')
+  const blog = structuredData.buildBlogJsonLd({
+    author: {
+      website: 'https://aaron-russell.co.uk',
+      name: 'Aaron Russell',
+    },
+    description: 'Engineering notes and implementation details.',
+    name: 'Aaron Russell blog',
+    url: 'https://aaron-russell.co.uk/blog/',
+  })
+
+  assert.equal(blog['@type'], 'Blog')
+  assert.equal(blog.author['@id'], 'https://aaron-russell.co.uk/#person')
+  assert.equal(blog.publisher.url, 'https://aaron-russell.co.uk/about/')
 })

@@ -3,13 +3,25 @@ import ArticlePreview from '../../components/ArticlePreview.astro'
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import { getAllBlogPosts, getAuthor } from '../../lib/contentful'
 import { getTopTags } from '../../lib/blog'
-import { buildContentfulSocialImageUrl } from '../../lib/contentful-images'
-import { OG_IMAGE_HEIGHT, OG_IMAGE_TYPE, OG_IMAGE_WIDTH } from '../../lib/og'
+import {
+  buildContentfulSocialImageUrl,
+  CONTENTFUL_SOCIAL_IMAGE_TYPE,
+} from '../../lib/contentful-images'
+import { OG_IMAGE_HEIGHT, OG_IMAGE_WIDTH } from '../../lib/og'
+import { getFeaturedTopics } from '../../lib/topics'
+import { buildBlogJsonLd } from '../../utils/structured-data'
 import styles from './index.module.css'
 
 const [author, posts] = await Promise.all([getAuthor(), getAllBlogPosts()])
 const topTags = getTopTags(posts, 8)
+const featuredTopics = getFeaturedTopics(posts)
 const seoImage = buildContentfulSocialImageUrl(author.heroImage?.url)
+const blogJsonLd = buildBlogJsonLd({
+  author,
+  description: 'Engineering notes, experiments, and implementation details from Aaron Russell.',
+  name: 'Aaron Russell blog',
+  url: `${author.website}/blog/`,
+})
 ---
 
 <BaseLayout
@@ -19,8 +31,9 @@ const seoImage = buildContentfulSocialImageUrl(author.heroImage?.url)
     description: 'Engineering notes, experiments, and implementation details from Aaron Russell.',
     image: seoImage,
     imageHeight: OG_IMAGE_HEIGHT,
-    imageType: OG_IMAGE_TYPE,
+    imageType: CONTENTFUL_SOCIAL_IMAGE_TYPE,
     imageWidth: OG_IMAGE_WIDTH,
+    structuredData: [blogJsonLd],
     title: 'Blog',
   }}
 >
@@ -58,6 +71,19 @@ const seoImage = buildContentfulSocialImageUrl(author.heroImage?.url)
   </section>
 
   <section class={styles.section}>
+    {
+      featuredTopics.length > 0 ? (
+        <div class={styles.hubGrid}>
+          {featuredTopics.map((topic) => (
+            <a class={`${styles.hubCard} surface`} href={`/topics/${topic.path}/`}>
+              <h2>{topic.name}</h2>
+              <p>{topic.description}</p>
+              <span>{topic.postCount} posts</span>
+            </a>
+          ))}
+        </div>
+      ) : null
+    }
     <p class={styles.resultsMeta} data-results-count>
       Showing all {posts.length} posts.
     </p>

@@ -39,6 +39,8 @@ const FORMAT_MIME_TYPES: Record<ImageFormat, string> = {
   webp: 'image/webp',
 }
 
+export const CONTENTFUL_SOCIAL_IMAGE_TYPE = FORMAT_MIME_TYPES.jpg
+
 export const normalizeContentfulUrl = (value?: string) => {
   if (!value) {
     return undefined

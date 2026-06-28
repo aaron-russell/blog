@@ -1,0 +1,121 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import Hero from '../components/Hero.astro'
+import Container from '../components/Container.astro'
+import { getAuthor } from '../lib/contentful'
+import { buildContentfulImageUrl, buildContentfulSocialImageUrl } from '../lib/contentful-images'
+import { CONTENTFUL_SOCIAL_IMAGE_TYPE } from '../lib/contentful-images'
+import { OG_IMAGE_HEIGHT, OG_IMAGE_WIDTH } from '../lib/og'
+import { absoluteUrl, buildPersonJsonLd, buildProfilePageJsonLd } from '../utils/structured-data'
+import styles from './about.module.css'
+
+const author = await getAuthor()
+const seoImage = buildContentfulSocialImageUrl(author.heroImage?.url)
+const profileImage = author.profilePhoto?.url
+  ? absoluteUrl(
+      author.website,
+      buildContentfulImageUrl(author.profilePhoto.url, { fm: 'jpg', q: 80, w: 1180 })
+    )
+  : undefined
+const personJsonLd = buildPersonJsonLd(author, profileImage)
+const profilePageJsonLd = buildProfilePageJsonLd(author, profileImage)
+const locations = author.currentLocations?.filter(Boolean) || []
+const employers = author.worksFor?.filter((item) => item?.companyName) || []
+const affiliations = author.affiliatedWith?.filter((item) => item?.companyName) || []
+const alumni = author.alumniOf?.filter((item) => item?.companyName) || []
+const sameAs = [author.github, author.linkedIn, author.twitter, author.facebook].filter(Boolean)
+---
+
+<BaseLayout
+  seo={{
+    alt: 'Aaron Russell about page social card',
+    canonical: `${author.website}/about/`,
+    description: author.description?.description || 'Background, current work, and links for Aaron Russell.',
+    image: seoImage,
+    imageHeight: OG_IMAGE_HEIGHT,
+    imageType: CONTENTFUL_SOCIAL_IMAGE_TYPE,
+    imageWidth: OG_IMAGE_WIDTH,
+    structuredData: [personJsonLd, profilePageJsonLd],
+    title: 'About',
+  }}
+>
+  <Hero
+    eyebrow="About"
+    image={author.heroImage}
+    imageAlt={author.heroImage?.description || `${author.name} hero image`}
+    title={author.name}
+    contentHtml={author.shortBioHtml || `<p>${author.description?.description || ''}</p>`}
+  />
+
+  <Container>
+    <section class={styles.grid}>
+      <article class={`${styles.panel} surface`}>
+        <h2>What I work on</h2>
+        <p>{author.description?.description}</p>
+        {author.jobTitle ? <p><strong>Role:</strong> {author.jobTitle}</p> : null}
+        {locations.length > 0 ? (
+          <p>
+            <strong>Based in:</strong>{' '}
+            {locations
+              .map((location) => [location.city, location.region, location.country].filter(Boolean).join(', '))
+              .join(' · ')}
+          </p>
+        ) : null}
+      </article>
+
+      <article class={`${styles.panel} surface`}>
+        <h2>Find me elsewhere</h2>
+        <ul class={styles.linkList}>
+          <li><a href="/contact/">Contact</a></li>
+          <li><a href="/editorial-policy/">Editorial policy</a></li>
+          {sameAs.map((url) => (
+            <li><a href={url} rel="me noopener noreferrer">{url}</a></li>
+          ))}
+        </ul>
+      </article>
+
+      {employers.length > 0 ? (
+        <article class={`${styles.panel} surface`}>
+          <h2>Current work</h2>
+          <ul class={styles.linkList}>
+            {employers.map((company) => (
+              <li>
+                {company.website ? (
+                  <a href={company.website} rel="noopener noreferrer">{company.companyName}</a>
+                ) : (
+                  company.companyName
+                )}
+              </li>
+            ))}
+          </ul>
+        </article>
+      ) : null}
+
+      {affiliations.length > 0 || alumni.length > 0 ? (
+        <article class={`${styles.panel} surface`}>
+          <h2>Background</h2>
+          <ul class={styles.linkList}>
+            {affiliations.map((company) => (
+              <li>
+                {company.website ? (
+                  <a href={company.website} rel="noopener noreferrer">{company.companyName}</a>
+                ) : (
+                  company.companyName
+                )}
+              </li>
+            ))}
+            {alumni.map((company) => (
+              <li>
+                {company.website ? (
+                  <a href={company.website} rel="noopener noreferrer">{company.companyName}</a>
+                ) : (
+                  company.companyName
+                )}
+              </li>
+            ))}
+          </ul>
+        </article>
+      ) : null}
+    </section>
+  </Container>
+</BaseLayout>

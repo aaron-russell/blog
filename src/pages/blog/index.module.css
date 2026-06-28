@@ -73,6 +73,29 @@
   margin: 0 0 var(--space-2xl);
 }
 
+.hubGrid {
+  display: grid;
+  gap: var(--space-xl);
+  margin-bottom: var(--space-2xl);
+}
+
+.hubCard {
+  display: grid;
+  gap: var(--space-md);
+  padding: clamp(1.2rem, 1.8vw, 1.6rem);
+}
+
+.hubCard h2,
+.hubCard p,
+.hubCard span {
+  margin: 0;
+}
+
+.hubCard p,
+.hubCard span {
+  color: var(--text-muted);
+}
+
 .emptyState {
   color: var(--text-muted);
   display: none;
@@ -82,5 +105,9 @@
 @media (min-width: 900px) {
   .heroPanel {
     grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
+  }
+
+  .hubGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }

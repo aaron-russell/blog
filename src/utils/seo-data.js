@@ -108,10 +108,12 @@ export const buildSeoMetaTags = ({
       name: 'twitter:card',
       content: 'summary_large_image',
     },
-    {
-      name: 'twitter:creator',
-      content: siteMetadata.social?.twitter || '',
-    },
+    siteMetadata.social?.twitter
+      ? {
+          name: 'twitter:creator',
+          content: siteMetadata.social.twitter,
+        }
+      : null,
     {
       name: 'twitter:title',
       content: title || siteMetadata.title,
@@ -134,10 +136,12 @@ export const buildSeoMetaTags = ({
           content: imageAlt || title || siteMetadata.title,
         }
       : null,
-    {
-      name: 'twitter:site',
-      content: siteMetadata.social?.twitter || '',
-    },
+    siteMetadata.social?.twitter
+      ? {
+          name: 'twitter:site',
+          content: siteMetadata.social.twitter,
+        }
+      : null,
     {
       name: 'twitter:description',
       content: description || siteMetadata.description,

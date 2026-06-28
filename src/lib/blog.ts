@@ -24,6 +24,29 @@ const slugify = (value: string) =>
     .trim()
     .replace(/\s+/g, '-')
 
+const TAG_ALIASES: Record<string, string> = {
+  'my story': 'My Story',
+  pagespeed: 'PageSpeed',
+  quesrions: 'Questions',
+  'web development': 'Web Development',
+}
+
+const normalizeTagKey = (value: string) =>
+  value
+    .trim()
+    .replace(/\s+/g, ' ')
+    .toLowerCase()
+
+export const normalizeTagLabel = (value = '') => {
+  const cleanedValue = value.trim().replace(/\s+/g, ' ')
+
+  if (!cleanedValue) {
+    return ''
+  }
+
+  return TAG_ALIASES[normalizeTagKey(cleanedValue)] || cleanedValue
+}
+
 export const createExcerpt = (value = '', maxLength = 180) => {
   const text = value.trim()
   if (text.length <= maxLength) {

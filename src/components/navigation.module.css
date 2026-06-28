@@ -1,3 +1,20 @@
+.skipLink {
+  background: var(--surface-strong);
+  border: 1px solid color-mix(in srgb, var(--border) 72%, var(--border-accent));
+  border-radius: var(--radius-pill);
+  color: var(--text-color);
+  left: var(--size-gutter);
+  padding: 0.8rem 1rem;
+  position: fixed;
+  top: 0.75rem;
+  transform: translateY(-160%);
+  z-index: 40;
+}
+
+.skipLink:focus-visible {
+  transform: translateY(0);
+}
+
 .container {
   backdrop-filter: blur(24px) saturate(140%);
   -webkit-backdrop-filter: blur(24px) saturate(140%);

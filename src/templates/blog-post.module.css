@@ -14,6 +14,41 @@
   transform-origin: left center;
 }
 
+.breadcrumbs {
+  margin: 0 auto;
+  max-width: var(--size-max-width);
+  padding: 0 var(--size-gutter);
+}
+
+.breadcrumbList {
+  align-items: center;
+  color: var(--text-subtle);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.breadcrumbList li {
+  margin: 0;
+}
+
+.breadcrumbList li + li::before {
+  content: '/';
+  margin-right: 0.6rem;
+}
+
+.breadcrumbList a {
+  border: 0;
+  color: var(--text-subtle);
+}
+
+.breadcrumbList [aria-current='page'] {
+  color: var(--text-color);
+}
+
 .article {
   display: grid;
   gap: var(--space-xl);

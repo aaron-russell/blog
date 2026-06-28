@@ -13,6 +13,7 @@ const isActive = (href: string) => {
 }
 ---
 
+<a class={styles.skipLink} href="#main-content">Skip to content</a>
 <nav role="navigation" class={styles.container} aria-label="Main">
   <div class={styles.inner}>
     <a href="/" class={styles.logoLink} aria-label="Aaron Russell home">
@@ -28,6 +29,9 @@ const isActive = (href: string) => {
         </li>
         <li class={styles.navigationItem}>
           <a href="/blog/" class:list={{ active: isActive('/blog/') }}>Blog</a>
+        </li>
+        <li class={styles.navigationItem}>
+          <a href="/about/" class:list={{ active: isActive('/about/') }}>About</a>
         </li>
         <li class={styles.navigationItem}>
           <a href="/contact/" class:list={{ active: isActive('/contact/') }}>Contact</a>

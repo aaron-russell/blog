@@ -1,5 +1,6 @@
 import { createClient } from 'contentful'
 import { CONTENTFUL_PERSON_ID } from '../utils/structured-data'
+import { normalizeTagLabel } from './blog'
 import { formatBlogDate, formatHomeDate } from './date'
 import { createContentfulImage } from './contentful-images'
 import { renderRichText, richTextToPlainText } from './contentful-rich-text'
@@ -90,6 +91,13 @@ const mapAuthor = async (entry: any): Promise<ContentfulAuthor> => ({
 
 const mapBlogPost = async (entry: any): Promise<BlogPostSummary> => {
   const publishDate = entry?.fields?.publishDate || ''
+  const normalizedTags = Array.from(
+    new Set(
+      ((entry?.fields?.tags || []) as string[])
+        .map((tag) => normalizeTagLabel(tag))
+        .filter((tag): tag is string => Boolean(tag))
+    )
+  )
 
   return {
     author: entry?.fields?.author
@@ -109,7 +117,7 @@ const mapBlogPost = async (entry: any): Promise<BlogPostSummary> => {
     rawDate: publishDate,
     rawUpdatedDate: entry?.sys?.updatedAt,
     slug: entry?.fields?.slug || '',
-    tags: entry?.fields?.tags || [],
+    tags: normalizedTags,
     title: entry?.fields?.title || '',
     updatedDate: entry?.sys?.updatedAt ? formatBlogDate(entry.sys.updatedAt) : undefined,
   }

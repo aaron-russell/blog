@@ -40,6 +40,11 @@ npm run dev
 
 The production build requires `CONTENTFUL_SPACE_ID` and `CONTENTFUL_ACCESS_TOKEN`. Optional preview builds can also set `CONTENTFUL_HOST=preview.contentful.com`.
 
+For programmatic Contentful fixes and imports, also set:
+
+- `CONTENTFUL_MANAGEMENT_TOKEN`
+- optional `CONTENTFUL_ENVIRONMENT` (defaults to `master`)
+
 Optional analytics environment variables:
 
 - `PUBLIC_POSTHOG_API_KEY`: PostHog project API key. Leave empty to disable analytics.
@@ -66,6 +71,30 @@ npm run setup
 ```
 
 The setup script writes `.env.development` and `.env.production` for you and imports [contentful/export.json](contentful/export.json) into the target space.
+
+## Programmatic SEO fixes
+
+The repo includes a dry-run-first Contentful management script for deterministic SEO cleanup on `blogPost` entries.
+
+Dry run:
+
+```sh
+npm run contentful:fix-seo
+```
+
+Write and publish:
+
+```sh
+npm run contentful:fix-seo:write
+```
+
+Current automated fixes:
+
+- normalize known tag variants such as `Quesrions`, `pagespeed`, and `Web development`
+- normalize same-origin blog canonicals to the trailing-slash URL
+- remove duplicated consecutive paragraphs in rich-text descriptions
+
+The script only updates entries that actually change, and `--dry-run` is the default safety mode.
 
 ## Cloudflare Pages
 

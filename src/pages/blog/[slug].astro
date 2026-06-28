@@ -6,10 +6,17 @@ import ArticlePreview from '../../components/ArticlePreview.astro'
 import Tags from '../../components/Tags.astro'
 import { getAllBlogPosts, getAuthor } from '../../lib/contentful'
 import { annotateArticleHtml, getRelatedPosts } from '../../lib/blog'
-import { buildContentfulSocialImageUrl } from '../../lib/contentful-images'
-import { OG_IMAGE_HEIGHT, OG_IMAGE_TYPE, OG_IMAGE_WIDTH } from '../../lib/og'
+import {
+  buildContentfulSocialImageUrl,
+  CONTENTFUL_SOCIAL_IMAGE_TYPE,
+} from '../../lib/contentful-images'
+import { OG_IMAGE_HEIGHT, OG_IMAGE_WIDTH } from '../../lib/og'
 import { resolveCanonicalUrl } from '../../utils/seo-data'
-import { absoluteUrl, buildBlogPostingJsonLd } from '../../utils/structured-data'
+import {
+  absoluteUrl,
+  buildBlogPostingJsonLd,
+  buildBreadcrumbListJsonLd,
+} from '../../utils/structured-data'
 import styles from '../../templates/blog-post.module.css'
 
 export async function getStaticPaths() {
@@ -38,6 +45,14 @@ const canonicalUrl = resolveCanonicalUrl({
 })
 const seoImage = absoluteUrl(author.website, buildContentfulSocialImageUrl(post.heroImage?.url))
 const blogPostingJsonLd = buildBlogPostingJsonLd(post, canonicalUrl, seoImage)
+const breadcrumbJsonLd = buildBreadcrumbListJsonLd(
+  [
+    { name: 'Home', path: '/' },
+    { name: 'Blog', path: '/blog/' },
+    { name: post.title, path: `/blog/${post.slug}/` },
+  ],
+  author.website
+)
 ---
 
 <BaseLayout
@@ -47,9 +62,9 @@ const blogPostingJsonLd = buildBlogPostingJsonLd(post, canonicalUrl, seoImage)
     description: post.descriptionPlainText,
     image: seoImage,
     imageHeight: OG_IMAGE_HEIGHT,
-    imageType: OG_IMAGE_TYPE,
+    imageType: CONTENTFUL_SOCIAL_IMAGE_TYPE,
     imageWidth: OG_IMAGE_WIDTH,
-    structuredData: [blogPostingJsonLd],
+    structuredData: [blogPostingJsonLd, breadcrumbJsonLd],
     title: post.title,
     type: 'article',
   }}
@@ -60,10 +75,18 @@ const blogPostingJsonLd = buildBlogPostingJsonLd(post, canonicalUrl, seoImage)
   <Hero
     eyebrow={post.category || 'Article'}
     image={post.heroImage}
+    imageAlt={post.heroImage?.description || post.title}
     title={post.title}
     contentHtml={post.descriptionHtml}
   />
   <div class={styles.container}>
+    <nav aria-label="Breadcrumb" class={styles.breadcrumbs}>
+      <ol class={styles.breadcrumbList}>
+        <li><a href="/">Home</a></li>
+        <li><a href="/blog/">Blog</a></li>
+        <li aria-current="page">{post.title}</li>
+      </ol>
+    </nav>
     <div class={`${styles.metaPanel} surface`}>
       <div class={styles.metaGroup}>
         <span class={styles.metaLabel}>Written by</span>

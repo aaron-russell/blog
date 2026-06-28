@@ -1,0 +1,90 @@
+---
+import ArticlePreview from '../../components/ArticlePreview.astro'
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import { getAllBlogPosts, getAuthor } from '../../lib/contentful'
+import {
+  buildContentfulSocialImageUrl,
+  CONTENTFUL_SOCIAL_IMAGE_TYPE,
+} from '../../lib/contentful-images'
+import { OG_IMAGE_HEIGHT, OG_IMAGE_WIDTH } from '../../lib/og'
+import { getFeaturedTopics, getTopicDefinition, getTopicPosts } from '../../lib/topics'
+import { buildBreadcrumbListJsonLd, buildBlogJsonLd } from '../../utils/structured-data'
+import styles from './topic.module.css'
+
+export async function getStaticPaths() {
+  const posts = await getAllBlogPosts()
+  const topics = getFeaturedTopics(posts)
+
+  return topics.map((topic) => ({
+    params: { topic: topic.path },
+  }))
+}
+
+const [author, posts] = await Promise.all([getAuthor(), getAllBlogPosts()])
+const topicDefinition = getTopicDefinition(Astro.params.topic || '')
+
+if (!topicDefinition) {
+  throw new Error(`Unknown topic ${Astro.params.topic}`)
+}
+
+const topicPosts = getTopicPosts(posts, topicDefinition.path)
+const seoImage = buildContentfulSocialImageUrl(author.heroImage?.url)
+const canonical = `${author.website}/topics/${topicDefinition.path}/`
+const breadcrumbJsonLd = buildBreadcrumbListJsonLd(
+  [
+    { name: 'Home', path: '/' },
+    { name: 'Blog', path: '/blog/' },
+    { name: topicDefinition.name, path: `/topics/${topicDefinition.path}/` },
+  ],
+  author.website
+)
+const blogJsonLd = buildBlogJsonLd({
+  author,
+  description: topicDefinition.description,
+  name: topicDefinition.title,
+  url: canonical,
+})
+---
+
+<BaseLayout
+  seo={{
+    alt: `${topicDefinition.name} topic hub social card`,
+    canonical,
+    description: topicDefinition.description,
+    image: seoImage,
+    imageHeight: OG_IMAGE_HEIGHT,
+    imageType: CONTENTFUL_SOCIAL_IMAGE_TYPE,
+    imageWidth: OG_IMAGE_WIDTH,
+    structuredData: [breadcrumbJsonLd, blogJsonLd],
+    title: topicDefinition.name,
+  }}
+>
+  <section class={styles.heroSection}>
+    <div class={`${styles.heroPanel} surface`}>
+      <span class="eyebrow">Topic hub</span>
+      <h1 class={styles.title}>{topicDefinition.title}</h1>
+      <p class={styles.description}>{topicDefinition.intro}</p>
+      <p class={styles.meta}>
+        {topicPosts.length} post{topicPosts.length === 1 ? '' : 's'} in this reading path.
+      </p>
+    </div>
+  </section>
+
+  <section class={styles.section}>
+    <nav aria-label="Breadcrumb" class={styles.breadcrumbs}>
+      <ol class={styles.breadcrumbList}>
+        <li><a href="/">Home</a></li>
+        <li><a href="/blog/">Blog</a></li>
+        <li aria-current="page">{topicDefinition.name}</li>
+      </ol>
+    </nav>
+  </section>
+
+  <section class={styles.section}>
+    <div class={`${styles.copyPanel} surface`}>
+      <h2>Start here</h2>
+      <p>{topicDefinition.description}</p>
+    </div>
+    <ArticlePreview posts={topicPosts} linkTagsToFilter={false} />
+  </section>
+</BaseLayout>

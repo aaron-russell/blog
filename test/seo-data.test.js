@@ -86,6 +86,29 @@ test('seo data helpers produce stable metadata for social and canonical tags', a
         tag.name === 'twitter:image:type' && tag.content === 'image/png'
     )
   )
+  assert.ok(
+    tags.some(
+      (tag) =>
+        tag.name === 'twitter:creator' && tag.content === '@aaron'
+    )
+  )
+})
+
+test('seo data helpers omit empty twitter account tags', async () => {
+  const { default: seoData } = await import('../src/utils/seo-data.js')
+  const tags = seoData.buildSeoMetaTags({
+    description: 'Fresh writing about web development',
+    siteMetadata: {
+      title: "Aaron Russell's Development Blog",
+      description: 'Default description',
+      social: {
+        twitter: '',
+      },
+    },
+  })
+
+  assert.equal(tags.some((tag) => tag.name === 'twitter:creator'), false)
+  assert.equal(tags.some((tag) => tag.name === 'twitter:site'), false)
 })
 
 test('canonical URLs match the trailing-slash article URL served by Astro', async () => {

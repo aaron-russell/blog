@@ -6,10 +6,11 @@ type Props = {
   contentHtml?: string
   eyebrow?: string
   image?: any
+  imageAlt?: string
   title: string
 }
 
-const { contentHtml, eyebrow, image, title } = Astro.props as Props
+const { contentHtml, eyebrow, image, imageAlt, title } = Astro.props as Props
 ---
 
 <div class={styles.hero}>
@@ -17,7 +18,7 @@ const { contentHtml, eyebrow, image, title } = Astro.props as Props
     image ? (
       <ResponsiveImage
         asset={image}
-        alt={title}
+        alt={imageAlt || title}
         class={styles.image}
         fallbackAlt={title}
         priority
