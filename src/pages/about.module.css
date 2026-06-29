@@ -14,6 +14,9 @@
   margin-top: 0;
 }
 
+.panel h3 { font-size: var(--text-2xl); margin: 0 0 var(--space-md); }
+.panel p { color: var(--text-muted); }
+
 .linkList {
   display: grid;
   gap: 0.8rem;
@@ -26,8 +29,41 @@
   text-underline-offset: 0.22em;
 }
 
+.techList,
+.linkRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .65rem;
+}
+
+.techList span {
+  background: var(--primary-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  font-size: var(--text-sm);
+  font-weight: var(--semibold);
+  padding: .5rem .75rem;
+}
+
+.textLink,
+.linkRow a { display: inline-block; font-weight: var(--bold); margin-top: var(--space-lg); }
+.status { color: var(--text-subtle); font-size: var(--text-xs); letter-spacing: .12em; text-transform: uppercase; }
+.sectionBlock { margin: var(--space-4xl) 0; }
+.sectionHeader h2 { font-size: clamp(2rem, 4vw, 3.4rem); margin: 0 0 var(--space-2xl); }
+.writingGrid { display: grid; gap: var(--space-xl); }
+.writingCard { display: grid; gap: var(--space-md); padding: clamp(1.2rem, 2vw, 1.8rem); }
+.writingCard span { color: var(--text-subtle); font-size: var(--text-xs); letter-spacing: .12em; text-transform: uppercase; }
+.writingCard h3, .writingCard p { margin: 0; }
+.writingCard p { color: var(--text-muted); }
+.contactPanel { align-items: center; display: grid; gap: var(--space-2xl); padding: clamp(1.4rem, 3vw, 2.8rem); }
+.contactPanel h2, .contactPanel p { margin: 0 0 var(--space-md); }
+.contactPanel p { color: var(--text-muted); }
+.contactPanel > a { background: var(--gradient-brand); border-radius: var(--radius-pill); color: var(--text-inverse); font-weight: var(--bold); justify-self: start; padding: .9rem 1.1rem; }
+
 @media (min-width: 900px) {
   .grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+  .writingGrid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .contactPanel { grid-template-columns: minmax(0, 1fr) auto; }
 }

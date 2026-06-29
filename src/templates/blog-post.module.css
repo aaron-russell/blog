@@ -83,6 +83,19 @@
   align-self: start;
 }
 
+.projectLink {
+  align-items: center;
+  display: grid;
+  gap: var(--space-lg);
+  margin: var(--space-xl) auto 0;
+  max-width: calc(var(--size-max-width) - (var(--size-gutter) * 2));
+  padding: var(--space-xl);
+}
+
+.projectLink div { display: grid; gap: .3rem; }
+.projectLink p { color: var(--text-muted); margin: 0; }
+.projectLink a { font-weight: var(--bold); }
+
 .body {
   font-family: var(--font-serif);
   font-size: clamp(1.08rem, 1.4vw, 1.26rem);
@@ -111,6 +124,14 @@
   margin-top: var(--space-4xl);
 }
 
+.body :global(h2:is(#the-problem, #what-i-tried, #what-worked, #what-didnt, #the-implementation, #what-id-do-differently, #links-code-references)) {
+  background: linear-gradient(90deg, var(--primary-soft), transparent 72%);
+  border-left: 3px solid var(--primary);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  margin-left: -1rem;
+  padding: 0.75rem 1rem;
+}
+
 .body :global(h2),
 .body :global(h3),
 .body :global(h4),
@@ -134,6 +155,14 @@
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
   margin: 2rem 0;
+}
+
+.body :global(figcaption) {
+  color: var(--text-subtle);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  margin-top: calc(var(--space-md) * -1);
+  text-align: center;
 }
 
 .body :global(figure.code-block) {
@@ -274,6 +303,19 @@
   margin-top: var(--space-2xl);
 }
 
+.articleCta {
+  display: grid;
+  gap: var(--space-lg);
+  margin-top: var(--space-3xl);
+  padding: clamp(1.3rem, 3vw, 2.4rem);
+}
+
+.articleCta h2,
+.articleCta p { margin: 0; }
+.articleCta p { color: var(--text-muted); }
+.articleCta div { display: flex; flex-wrap: wrap; gap: var(--space-lg); }
+.articleCta a { border: 0; font-family: var(--font-sans); font-size: var(--text-sm); font-weight: var(--bold); }
+
 .articleNavigation {
   display: grid;
   gap: var(--space-lg);
@@ -359,6 +401,8 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .projectLink { grid-template-columns: minmax(180px, .5fr) minmax(0, 1fr) auto; }
+
   .nextOnly {
     grid-column: 2;
   }
@@ -384,5 +428,11 @@
 
   .toc {
     display: block;
+  }
+
+  .body,
+  .articleCta,
+  .postNav {
+    grid-column: 2;
   }
 }

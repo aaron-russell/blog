@@ -6,6 +6,8 @@ import ArticlePreview from '../../components/ArticlePreview.astro'
 import Tags from '../../components/Tags.astro'
 import { getAllBlogPosts, getAuthor } from '../../lib/contentful'
 import { annotateArticleHtml, getRelatedPosts } from '../../lib/blog'
+import { findPostByTerms } from '../../lib/content-links'
+import { projects } from '../../lib/site-config'
 import {
   buildContentfulSocialImageUrl,
   CONTENTFUL_SOCIAL_IMAGE_TYPE,
@@ -53,6 +55,7 @@ const breadcrumbJsonLd = buildBreadcrumbListJsonLd(
   ],
   author.website
 )
+const relatedProject = projects.find((project) => findPostByTerms([post], project.relatedPostTerms))
 ---
 
 <BaseLayout
@@ -112,6 +115,13 @@ const breadcrumbJsonLd = buildBreadcrumbListJsonLd(
         <Tags linkToFilter tags={post.tags} />
       </div>
     </div>
+    {relatedProject ? (
+      <aside class={`${styles.projectLink} surface`}>
+        <div><span class={styles.metaLabel}>Related project</span><strong>{relatedProject.name}</strong></div>
+        <p>{relatedProject.description}</p>
+        <a href={relatedProject.href}>Explore the project →</a>
+      </aside>
+    ) : null}
     <div class={styles.article}>
       {
         headings.length >= 3 ? (
@@ -134,6 +144,12 @@ const breadcrumbJsonLd = buildBreadcrumbListJsonLd(
         ) : null
       }
       <div class={styles.body} data-article-body set:html={articleHtml} />
+      <aside class={`${styles.articleCta} surface`}>
+        <span class="eyebrow">From the workbench</span>
+        <h2>Want the next useful note?</h2>
+        <p>Browse the project context, keep reading by topic, or send me a specific question about the implementation.</p>
+        <div><a href="/projects/">Explore projects →</a><a href="/blog/">Browse all writing →</a><a href="/contact/">Ask a question →</a></div>
+      </aside>
       {
         previous || next ? (
           <nav aria-label="Post navigation" class={styles.postNav}>

@@ -1,0 +1,128 @@
+---
+import ArticlePreview from '../../components/ArticlePreview.astro'
+import PageIntro from '../../components/PageIntro.astro'
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import { findPostsByTerms } from '../../lib/content-links'
+import { getAllBlogPosts } from '../../lib/contentful'
+import { projects, siteMetadata } from '../../lib/site-config'
+import { OG_IMAGE_HEIGHT, OG_IMAGE_TYPE, OG_IMAGE_WIDTH } from '../../lib/og'
+import { buildBreadcrumbListJsonLd, buildSoftwareApplicationJsonLd } from '../../utils/structured-data'
+import pageStyles from '../lab-page.module.css'
+import styles from './pit-crew.module.css'
+
+const project = projects.find((item) => item.name === 'Pit Crew')!
+const posts = await getAllBlogPosts()
+const relatedPosts = findPostsByTerms(posts, project.relatedPostTerms, 3)
+const canonical = `${siteMetadata.siteUrl}/projects/pit-crew/`
+const description = 'Pit Crew is Aaron Russell’s browser-first fantasy motorsport app for private leagues, podium predictions, and season standings.'
+const appJsonLd = buildSoftwareApplicationJsonLd({ description, name: 'Pit Crew', url: 'https://pitcrew.team/en/' })
+const breadcrumbJsonLd = buildBreadcrumbListJsonLd([
+  { name: 'Home', path: '/' },
+  { name: 'Projects', path: '/projects/' },
+  { name: 'Pit Crew', path: '/projects/pit-crew/' },
+], siteMetadata.siteUrl)
+const seoImage = `${siteMetadata.siteUrl}/og/site.png`
+---
+
+<BaseLayout seo={{ alt: 'Pit Crew project by Aaron Russell', canonical, description, image: seoImage, imageHeight: OG_IMAGE_HEIGHT, imageType: OG_IMAGE_TYPE, imageWidth: OG_IMAGE_WIDTH, structuredData: [appJsonLd, breadcrumbJsonLd], title: 'Pit Crew project' }}>
+  <PageIntro
+    eyebrow="Project 01 · Live product"
+    title="Pit Crew"
+    description="Fantasy motorsport leagues for race-by-race podium predictions — built to make every race weekend matter a little more."
+    actions={[{ href: 'https://pitcrew.team/en/', label: 'Visit Pit Crew', external: true }, { href: '/contact/', label: 'Ask about the build' }]}
+  />
+
+  <section class={pageStyles.section}>
+    <div class={`${styles.productPreview} surface`} aria-label="Pit Crew product overview">
+      <div class={styles.previewHeader}>
+        <span class={styles.lights}><i></i><i></i><i></i></span>
+        <span>pitcrew.team</span>
+        <span class={styles.live}>Live</span>
+      </div>
+      <div class={styles.previewBody}>
+        <div>
+          <span class="eyebrow">Race weekend, with stakes</span>
+          <h2>Pick the podium.<br />Climb your league.</h2>
+          <p>Create a private league, make your picks before the race locks, and follow the standings across the season.</p>
+        </div>
+        <div class={styles.scorecard}>
+          <span class={styles.meta}>League · The Grid</span>
+          <strong>Season standings</strong>
+          <ol><li><span>You</span><b>47 pts</b></li><li><span>Jamie</span><b>41 pts</b></li><li><span>Priya</span><b>38 pts</b></li></ol>
+        </div>
+      </div>
+      <p class={styles.previewNote}>Product preview built from the live Pit Crew experience — not a screenshot.</p>
+    </div>
+  </section>
+
+  <section class={pageStyles.section}>
+    <div class={pageStyles.sectionHeader}>
+      <span class="eyebrow">Key features</span>
+      <h2>Everything needed for race weekend.</h2>
+    </div>
+    <div class={pageStyles.wideGrid}>
+      <article class={`${pageStyles.panel} surface`}><h3>Private leagues</h3><p>Create a league, share an invite, and compete with exactly the people you want.</p></article>
+      <article class={`${pageStyles.panel} surface`}><h3>Podium predictions</h3><p>Pick the top three before the race deadline locks the round.</p></article>
+      <article class={`${pageStyles.panel} surface`}><h3>Live scoring</h3><p>See points and standings update as official race results land.</p></article>
+    </div>
+  </section>
+
+  <section class={pageStyles.section}>
+    <div class={pageStyles.grid}>
+      <article class={`${pageStyles.panel} surface`}>
+        <span class={pageStyles.meta}>The product</span>
+        <h2>What it is</h2>
+        <p>Pit Crew is a free, browser-first fantasy motorsport app. Friends and communities create private leagues, predict each race podium, and compete across a full season.</p>
+      </article>
+      <article class={`${pageStyles.panel} surface`}>
+        <span class={pageStyles.meta}>The audience</span>
+        <h2>Who it is for</h2>
+        <p>Motorsport fans who want a lightweight competition with friends — no sprawling team budgets, no app-store install, and no gambling mechanics.</p>
+      </article>
+      <article class={`${pageStyles.panel} surface`}>
+        <span class={pageStyles.meta}>The reason</span>
+        <h2>Why I built it</h2>
+        <p>I wanted a prediction game that takes a few minutes before each race, rather than another season-long management chore. Pit Crew turns that simple race-day ritual into a product friends can play together.</p>
+      </article>
+      <article class={`${pageStyles.panel} surface`}>
+        <span class={pageStyles.meta}>Current status</span>
+        <h2>Shipped, then improved</h2>
+        <p>The product is live and actively evolving. That means architecture, accessibility, security, performance, and product feedback are real constraints rather than hypothetical exercises.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class={pageStyles.section}>
+    <div class={pageStyles.sectionHeader}>
+      <span class="eyebrow">Under the bonnet</span>
+      <h2>A pragmatic product stack.</h2>
+      <p>A mobile-first Angular application backed by Firebase services, with Cloudflare supporting its public web and discovery surface.</p>
+    </div>
+    <div class={pageStyles.wideGrid}>
+      <article class={`${pageStyles.panel} surface`}><h3>Frontend</h3><p>Angular provides the application structure and responsive PWA experience across mobile and desktop.</p></article>
+      <article class={`${pageStyles.panel} surface`}><h3>Product data</h3><p>Firebase and Firestore support accounts, leagues, predictions, race data, and standings.</p></article>
+      <article class={`${pageStyles.panel} surface`}><h3>Delivery</h3><p>Cloudflare supports the fast public-facing surface, while the product remains browser-first and install-optional.</p></article>
+    </div>
+  </section>
+
+  <section class={pageStyles.section}>
+    <div class={`${pageStyles.panel} surface`}>
+      <span class="eyebrow">Lessons so far</span>
+      <h2>Shipping creates better questions.</h2>
+      <ul>
+        <li>Deadline and scoring rules need to be clearer than the code implementing them.</li>
+        <li>Mobile race-weekend use rewards short paths and obvious state over feature density.</li>
+        <li>Security belongs in server-enforced data rules, not only in route guards and UI states.</li>
+        <li>A real season exposes operational edge cases that a demo dataset never will.</li>
+      </ul>
+      <div class={pageStyles.linkList}><a href="https://pitcrew.team/en/" rel="noopener noreferrer">Try Pit Crew ↗</a><a href="/contact/">Talk to me about the build →</a></div>
+    </div>
+  </section>
+
+  {relatedPosts.length > 0 ? (
+    <section class={pageStyles.section}>
+      <div class={pageStyles.sectionHeader}><span class="eyebrow">Build log</span><h2>Related writing</h2></div>
+      <ArticlePreview posts={relatedPosts} />
+    </section>
+  ) : null}
+</BaseLayout>

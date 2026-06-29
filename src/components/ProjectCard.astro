@@ -1,0 +1,28 @@
+---
+import type { Project } from '../lib/site-config'
+import styles from './project-card.module.css'
+
+const { project, relatedPost } = Astro.props as { project: Project; relatedPost?: any }
+---
+
+<article class={`${styles.card} surface`}>
+  <div class={styles.topline}>
+    <span>{project.status}</span>
+    <span aria-hidden="true">0{project.name === 'Pit Crew' ? '1' : '2'}</span>
+  </div>
+  <div>
+    <h2><a href={project.href}>{project.name}</a></h2>
+    <p>{project.description}</p>
+  </div>
+  <ul class={styles.highlights} aria-label={`${project.name} highlights`}>
+    {project.highlights.map((item) => <li>{item}</li>)}
+  </ul>
+  <div class={styles.stack} aria-label="Technology stack">
+    {project.stack.map((item) => <span>{item}</span>)}
+  </div>
+  <div class={styles.links}>
+    <a href={project.href}>Explore project →</a>
+    {relatedPost ? <a href={`/blog/${relatedPost.slug}/`}>Related writing</a> : null}
+    {project.externalUrl ? <a href={project.externalUrl} rel="noopener noreferrer">Visit live ↗</a> : null}
+  </div>
+</article>

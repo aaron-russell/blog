@@ -1,0 +1,49 @@
+---
+import PageIntro from '../../components/PageIntro.astro'
+import ProjectCard from '../../components/ProjectCard.astro'
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import { findPostByTerms } from '../../lib/content-links'
+import { getAllBlogPosts } from '../../lib/contentful'
+import { projects, siteMetadata } from '../../lib/site-config'
+import { OG_IMAGE_HEIGHT, OG_IMAGE_TYPE, OG_IMAGE_WIDTH } from '../../lib/og'
+import { buildCollectionPageJsonLd } from '../../utils/structured-data'
+import styles from '../lab-page.module.css'
+
+const posts = await getAllBlogPosts()
+const description = 'Products, experiments, and public build logs from Aaron Russell, including Pit Crew and the engineering behind this site.'
+const canonical = `${siteMetadata.siteUrl}/projects/`
+const collectionJsonLd = buildCollectionPageJsonLd({ description, name: 'Projects by Aaron Russell', url: canonical })
+const seoImage = `${siteMetadata.siteUrl}/og/site.png`
+---
+
+<BaseLayout seo={{ alt: 'Aaron Russell projects', canonical, description, image: seoImage, imageHeight: OG_IMAGE_HEIGHT, imageType: OG_IMAGE_TYPE, imageWidth: OG_IMAGE_WIDTH, structuredData: [collectionJsonLd], title: 'Projects' }}>
+  <PageIntro
+    eyebrow="Public engineering lab"
+    title="Things I’ve built — and what they taught me."
+    description="A working portfolio of products, platforms, and experiments. Each project connects the polished outcome to the engineering decisions behind it."
+    actions={[{ href: '/now/', label: 'What I’m doing now' }, { href: '/contact/', label: 'Work with me' }]}
+  />
+
+  <section class={styles.section}>
+    <div class={styles.grid}>
+      {projects.map((project) => (
+        <ProjectCard project={project} relatedPost={findPostByTerms(posts, project.relatedPostTerms)} />
+      ))}
+    </div>
+  </section>
+
+  <section class={styles.section}>
+    <div class={`${styles.panel} surface`}>
+      <span class="eyebrow">How I work</span>
+      <h2>Useful beats impressive.</h2>
+      <p>
+        I’m interested in software that earns its complexity: clear user value, maintainable architecture,
+        fast delivery, and enough evidence to know whether the idea actually worked.
+      </p>
+      <div class={styles.linkList}>
+        <a href="/blog/">Read the engineering notes →</a>
+        <a href="/about/">More about me →</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

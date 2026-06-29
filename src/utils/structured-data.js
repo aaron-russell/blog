@@ -104,6 +104,30 @@ export const buildBlogJsonLd = ({ author, description, name, url }) => ({
   },
 })
 
+export const buildCollectionPageJsonLd = ({ description, name, url }) => ({
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name,
+  description,
+  url,
+  inLanguage: 'en-GB',
+})
+
+export const buildSoftwareApplicationJsonLd = ({ description, name, url }) => ({
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name,
+  description,
+  url,
+  applicationCategory: 'GameApplication',
+  operatingSystem: 'Web',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'GBP',
+  },
+})
+
 export const buildBlogPostingJsonLd = (post, locationHref, imageUrl) => ({
   '@context': 'https://schema.org',
   '@type': 'BlogPosting',
@@ -153,8 +177,10 @@ export default {
   PERSON_SCHEMA_ID,
   absoluteUrl,
   buildBlogPostingJsonLd,
+  buildCollectionPageJsonLd,
   buildPersonSchemaId,
   buildPersonJsonLd,
   buildProfilePageJsonLd,
+  buildSoftwareApplicationJsonLd,
   getPersonSameAs,
 }

@@ -131,3 +131,22 @@ test('structured data helpers build blog schema', async () => {
   assert.equal(blog.author['@id'], 'https://aaron-russell.co.uk/#person')
   assert.equal(blog.publisher.url, 'https://aaron-russell.co.uk/about/')
 })
+
+test('structured data helpers describe projects and project collections', async () => {
+  const { default: structuredData } = await import('../src/utils/structured-data.js')
+  const collection = structuredData.buildCollectionPageJsonLd({
+    description: 'Selected products and experiments.',
+    name: 'Projects',
+    url: 'https://aaron-russell.co.uk/projects/',
+  })
+  const project = structuredData.buildSoftwareApplicationJsonLd({
+    description: 'Fantasy motorsport leagues.',
+    name: 'Pit Crew',
+    url: 'https://pitcrew.team/en/',
+  })
+
+  assert.equal(collection['@type'], 'CollectionPage')
+  assert.equal(project['@type'], 'SoftwareApplication')
+  assert.equal(project.operatingSystem, 'Web')
+  assert.equal(project.offers.price, '0')
+})

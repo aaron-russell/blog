@@ -1,6 +1,9 @@
 ---
 import Container from './Container.astro'
+import { getAuthor } from '../lib/contentful'
 import styles from './footer.module.css'
+
+const author = await getAuthor()
 ---
 
 <Container as="footer">
@@ -8,14 +11,26 @@ import styles from './footer.module.css'
     <div class={styles.brandBlock}>
       <a href="/about/" class="eyebrow">Aaron Russell</a>
       <p class={styles.statement}>
-        Building software, experimenting with AI, and documenting what actually works.
+        Aaron Russell is a UK-based software developer building practical web apps, AI-assisted workflows, and indie products.
       </p>
     </div>
-    <div class={styles.links}>
-      <a href="/">Home</a>
-      <a href="/blog/">Blog</a>
-      <a href="/about/">About</a>
-      <a href="/contact/">Say hello</a>
+    <div class={styles.linkGroups}>
+      <div class={styles.group}>
+        <strong>Explore</strong>
+        <a href="/blog/">Blog</a>
+        <a href="/projects/">Projects</a>
+        <a href="/now/">Now</a>
+        <a href="/uses/">Uses</a>
+      </div>
+      <div class={styles.group}>
+        <strong>Connect</strong>
+        <a href="/about/">About</a>
+        <a href="/contact/">Contact</a>
+        <a href="/rss.xml">RSS</a>
+        {author.github ? <a href={author.github} rel="me noopener noreferrer">GitHub ↗</a> : null}
+        {author.linkedIn ? <a href={author.linkedIn} rel="me noopener noreferrer">LinkedIn ↗</a> : null}
+        <a href="https://pitcrew.team/en/" rel="noopener noreferrer">Pit Crew ↗</a>
+      </div>
     </div>
   </div>
 </Container>

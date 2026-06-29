@@ -1,7 +1,9 @@
 ---
 import ArticlePreview from '../components/ArticlePreview.astro'
 import Container from '../components/Container.astro'
+import ProjectCard from '../components/ProjectCard.astro'
 import BaseLayout from '../layouts/BaseLayout.astro'
+import { findPostByTerms } from '../lib/content-links'
 import { getAuthor, getHomePagePosts } from '../lib/contentful'
 import { buildContentfulImageUrl } from '../lib/contentful-images'
 import {
@@ -9,7 +11,7 @@ import {
   CONTENTFUL_SOCIAL_IMAGE_TYPE,
 } from '../lib/contentful-images'
 import { OG_IMAGE_HEIGHT, OG_IMAGE_WIDTH } from '../lib/og'
-import { homeConfig } from '../lib/site-config'
+import { homeConfig, projects, startHere } from '../lib/site-config'
 import { getFeaturedTopics } from '../lib/topics'
 import { absoluteUrl, buildPersonJsonLd } from '../utils/structured-data'
 import styles from './index.module.css'
@@ -24,6 +26,10 @@ const profileImage = author.profilePhoto?.url
     )
   : undefined
 const personJsonLd = buildPersonJsonLd(author, profileImage)
+const startHereLinks = startHere.map((item) => {
+  const post = findPostByTerms(posts, item.terms)
+  return { ...item, href: post ? `/blog/${post.slug}/` : item.fallbackHref, post }
+})
 ---
 
 <BaseLayout
@@ -42,42 +48,38 @@ const personJsonLd = buildPersonJsonLd(author, profileImage)
     <div class={styles.heroGrid}>
       <div class={`${styles.heroCard} surface`}>
         <span class="eyebrow">{homeConfig.hero.eyebrow}</span>
-        <p class={styles.leadIn}>Bold ideas, production-minded notes, and a sharper publishing surface.</p>
-        <h1 class={styles.statement}>
-          Calm systems,
-          <span class="gradient-text"> sharper tools, </span>
-          and notes from the workbench.
-        </h1>
+        <p class={styles.leadIn}>Practical software. Honest build notes. Useful experiments.</p>
+        <h1 class={styles.statement}>{homeConfig.hero.title}</h1>
         <p class={styles.intro}>{homeConfig.hero.intro}</p>
         <div class={styles.signalRow}>
-          <span class={styles.signalPill}>Static-first</span>
+          <span class={styles.signalPill}>Indie products</span>
           <span class={styles.signalPill}>AI-assisted workflows</span>
-          <span class={styles.signalPill}>Cloudflare + Astro</span>
+          <span class={styles.signalPill}>Product engineering</span>
         </div>
         <div class={styles.actions}>
-          <a class={styles.primaryAction} href="/blog/">
-            Read the latest notes
+          <a class={styles.primaryAction} href="/projects/">
+            Explore the projects
           </a>
-          <a class={styles.secondaryAction} href="/contact/">
-            Get in touch
+          <a class={styles.secondaryAction} href="/blog/">
+            Read the build notes
           </a>
         </div>
       </div>
       <div class={styles.statGrid}>
         <article class={`${styles.stat} surface`}>
-          <span class={styles.statLabel}>Latest writing</span>
-          <p class={styles.statValue}>{posts.length}</p>
-          <p class={styles.statText}>Published notes and experiments currently on the site.</p>
+          <span class={styles.statLabel}>Currently building</span>
+          <p class={styles.statValue}>Pit Crew</p>
+          <p class={styles.statText}>Fantasy motorsport leagues, podium predictions, and season-long bragging rights.</p>
         </article>
         <article class={`${styles.stat} surface`}>
           <span class={styles.statLabel}>Focus</span>
-          <p class={styles.statValue}>AI x Web</p>
-          <p class={styles.statText}>Practical engineering workflows, delivery systems, and front-end craft.</p>
+          <p class={styles.statValue}>Web x AI</p>
+          <p class={styles.statText}>Angular and Firebase products; Astro, Contentful, and Cloudflare publishing.</p>
         </article>
         <article class={`${styles.stat} surface`}>
-          <span class={styles.statLabel}>About</span>
-          <p class={styles.statValue}>{author.name}</p>
-          <p class={styles.statText}>An active notebook for building, testing, and refining ideas in public.</p>
+          <span class={styles.statLabel}>Based in</span>
+          <p class={styles.statValue}>Leeds, UK</p>
+          <p class={styles.statText}>Building products, delivering software, and sharing the useful parts in public.</p>
         </article>
       </div>
     </div>
@@ -85,11 +87,39 @@ const personJsonLd = buildPersonJsonLd(author, profileImage)
 
   <section class={styles.section}>
     <div class={styles.sectionHeader}>
+      <div><span class="eyebrow">Start here</span><h2>A useful route into the work.</h2></div>
+      <p>New here? Pick the thread closest to what you’re building. Every link resolves to a real article, project, or topic collection.</p>
+    </div>
+    <div class={styles.startGrid}>
+      {startHereLinks.map((item, index) => (
+        <a class={`${styles.startCard} surface`} href={item.href}>
+          <span class={styles.startIndex}>0{index + 1}</span>
+          <h3>{item.label}</h3>
+          <p>{item.post?.descriptionPlainText || (item.label === 'Building Pit Crew' ? 'The product, architecture, and lessons behind a live fantasy motorsport app.' : 'A curated route through the most relevant notes and project work.')}</p>
+          <span class={styles.featureLink}>{item.post ? 'Read article' : 'Explore topic'} →</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class={styles.section}>
+    <div class={styles.sectionHeader}>
+      <div><span class="eyebrow">Selected projects</span><h2>Software with real users and real constraints.</h2></div>
+      <p>Product stories, architecture decisions, and the parts I would approach differently the next time around.</p>
+    </div>
+    <div class={styles.projectGrid}>
+      {projects.slice(0, 2).map((project) => <ProjectCard project={project} relatedPost={findPostByTerms(posts, project.relatedPostTerms)} />)}
+    </div>
+    <a class={styles.inlineCta} href="/projects/">See all projects →</a>
+  </section>
+
+  <section class={styles.section}>
+    <div class={styles.sectionHeader}>
       <div>
         <span class="eyebrow">Current workbench</span>
-        <h2>What I’m building right now</h2>
+        <h2>Inside the engineering lab</h2>
       </div>
-      <p>Ideas, systems, and publishing workflows I’m actively refining right now. More background lives on the <a href="/about/">About page</a>.</p>
+      <p>Products, workflows, and publishing systems I’m actively refining. The current snapshot lives on the <a href="/now/">Now page</a>.</p>
     </div>
     <div class={styles.featureGrid}>
       {homeConfig.workbench.map((item) => (
@@ -158,7 +188,7 @@ const personJsonLd = buildPersonJsonLd(author, profileImage)
     <div class={styles.sectionHeader}>
       <div>
         <span class="eyebrow">Tools and stack</span>
-        <h2>Deliberately simple where it matters</h2>
+        <h2>The stack I write from experience</h2>
       </div>
       <p>Static-first publishing, modern TypeScript, and lightweight infrastructure choices that keep the site maintainable.</p>
     </div>
@@ -173,11 +203,10 @@ const personJsonLd = buildPersonJsonLd(author, profileImage)
     <section class={`${styles.ctaSection} surface`}>
       <div class={styles.sectionHeader}>
         <span class="eyebrow">Stay in touch</span>
-        <h2>Want to talk about engineering, AI, or product systems?</h2>
+        <h2>Building something useful?</h2>
       </div>
       <p>
-        The fastest way to reach me right now is the contact page. No newsletter popups, no
-        heavy signup flow.
+        If you have a specific product, architecture, or delivery problem, send me the interesting part.
       </p>
       <a class={styles.primaryAction} href="/contact/">
         Send a message

@@ -55,9 +55,24 @@ const errorClass = styles.statusError
         <address class={styles.contactDetails}>
           <a href="mailto:aaron@russell-tech.co.uk">aaron@russell-tech.co.uk</a>
         </address>
+        <div class={styles.reasons}>
+          <h3>Good reasons to contact me</h3>
+          <ul>
+            <li>Product engineering and delivery work</li>
+            <li>AI-assisted delivery workflows</li>
+            <li>Astro, Cloudflare, or Contentful builds</li>
+            <li>Firebase and Angular app architecture</li>
+            <li>Indie product collaboration</li>
+            <li>A specific question about something I wrote</li>
+          </ul>
+        </div>
+        <p class={styles.expectation}>I usually reply when the message is specific and relevant.</p>
+        <div class={styles.contextLinks}><a href="/projects/">See my projects →</a><a href="/uses/">See my stack →</a></div>
       </section>
 
       <section class={`${styles.formPanel} surface`}>
+        <span class="eyebrow">Your message</span>
+        <h2>Give me the useful context.</h2>
         <p
           id="contact-status"
           class={styles.statusError}

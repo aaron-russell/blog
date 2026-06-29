@@ -1,0 +1,75 @@
+.card {
+  display: grid;
+  gap: var(--space-2xl);
+  min-height: 100%;
+  padding: clamp(1.4rem, 3vw, 2.6rem);
+  transition: transform 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
+}
+
+.card:hover {
+  border-color: var(--border-accent);
+  box-shadow: var(--shadow-lg), var(--inner-highlight);
+  transform: translateY(-5px);
+}
+
+.topline {
+  color: var(--text-subtle);
+  display: flex;
+  font-size: var(--text-xs);
+  font-weight: var(--bold);
+  justify-content: space-between;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.card h2 {
+  font-size: clamp(2rem, 4vw, 3.3rem);
+  margin: 0;
+}
+
+.card p {
+  color: var(--text-muted);
+  font-size: var(--text-lg);
+  margin-bottom: 0;
+}
+
+.highlights {
+  display: grid;
+  gap: 0.7rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.highlights li::before {
+  color: var(--primary);
+  content: '↗';
+  margin-right: 0.65rem;
+}
+
+.stack,
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.stack span {
+  background: var(--primary-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  font-size: var(--text-xs);
+  font-weight: var(--semibold);
+  padding: 0.45rem 0.7rem;
+}
+
+.links {
+  border-top: 1px solid var(--border);
+  padding-top: var(--space-xl);
+}
+
+.links a {
+  font-size: var(--text-sm);
+  font-weight: var(--bold);
+  margin-right: var(--space-lg);
+}

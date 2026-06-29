@@ -41,6 +41,18 @@ export async function GET() {
       loc: toAbsoluteUrl('/about/'),
     },
     {
+      loc: toAbsoluteUrl('/projects/'),
+    },
+    {
+      loc: toAbsoluteUrl('/projects/pit-crew/'),
+    },
+    {
+      loc: toAbsoluteUrl('/now/'),
+    },
+    {
+      loc: toAbsoluteUrl('/uses/'),
+    },
+    {
       loc: toAbsoluteUrl('/editorial-policy/'),
     },
     ...featuredTopics.map((topic) => ({
