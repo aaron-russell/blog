@@ -40,6 +40,26 @@ export const TOPIC_DEFINITIONS: TopicDefinition[] = [
     path: 'performance',
     title: 'Performance, SEO, and web platform quality',
   },
+  {
+    description:
+      'Experience-led notes on AI-assisted development, agent workflows, review practices, and keeping human judgement in the delivery loop.',
+    intro:
+      'A practical reading path for using AI in real engineering work: where it saves time, where verification matters, and how the workflow changes once a prototype has to become maintainable software.',
+    keywords: ['ai-assisted', 'artificial intelligence', 'agent', 'copilot', 'ai workflow'],
+    name: 'AI-assisted development',
+    path: 'ai-assisted-development',
+    title: 'AI-assisted development and engineering workflows',
+  },
+  {
+    description:
+      'Product notes on taking indie ideas from an early concept through architecture, launch, operations, and iteration.',
+    intro:
+      'This collection follows the product-building decisions behind independent software: choosing a narrow problem, shipping the first useful version, managing platform trade-offs, and learning from real users.',
+    keywords: ['pit crew', 'indie', 'product building', 'fantasy motorsport', 'capacitor', 'app development'],
+    name: 'Indie product building',
+    path: 'indie-products',
+    title: 'Indie product building, from idea to production',
+  },
 ]
 
 const matchesTopicKeyword = (post: BlogPostSummary, keyword: string) => {
@@ -69,6 +89,11 @@ export const getTopicPosts = (posts: BlogPostSummary[], topicPath: string) => {
 
 export const getTopicDefinition = (topicPath: string) =>
   TOPIC_DEFINITIONS.find((item) => item.path === topicPath)
+
+export const getPostTopicPaths = (post: BlogPostSummary) =>
+  TOPIC_DEFINITIONS.filter((topic) =>
+    topic.keywords.some((keyword) => matchesTopicKeyword(post, keyword))
+  ).map((topic) => topic.path)
 
 export const getFeaturedTopics = (posts: BlogPostSummary[]) =>
   TOPIC_DEFINITIONS.map((topic) => ({

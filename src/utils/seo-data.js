@@ -34,6 +34,30 @@ export const buildWebsiteJsonLd = (siteMetadata) => ({
   url: siteMetadata.siteUrl,
 })
 
+export const normalizeMetaDescription = (value = '', maxLength = 160) => {
+  let description = value.trim().replace(/\s+/g, ' ')
+  const repeatedDescription = description.match(/^(.+?)\s+\1$/)
+
+  if (repeatedDescription) {
+    description = repeatedDescription[1]
+  }
+
+  if (description.length % 2 === 0) {
+    const midpoint = description.length / 2
+    if (description.slice(0, midpoint) === description.slice(midpoint)) {
+      description = description.slice(0, midpoint)
+    }
+  }
+
+  if (description.length <= maxLength) {
+    return description
+  }
+
+  const shortened = description.slice(0, maxLength - 1)
+  const lastSpace = shortened.lastIndexOf(' ')
+  return `${shortened.slice(0, lastSpace > 100 ? lastSpace : shortened.length).trimEnd()}…`
+}
+
 export const buildSeoMetaTags = ({
   canonical,
   description,
@@ -42,15 +66,21 @@ export const buildSeoMetaTags = ({
   imageHeight,
   imageType,
   imageWidth,
+  modifiedTime,
   meta = [],
+  publishedTime,
   siteMetadata,
   title,
   type = 'website',
-}) =>
-  [
+}) => {
+  const metaDescription = normalizeMetaDescription(
+    description || siteMetadata.description
+  )
+
+  return [
     {
       name: 'description',
-      content: description || siteMetadata.description,
+      content: metaDescription,
     },
     image
       ? {
@@ -64,7 +94,7 @@ export const buildSeoMetaTags = ({
     },
     {
       property: 'og:description',
-      content: description || siteMetadata.description,
+      content: metaDescription,
     },
     {
       property: 'og:type',
@@ -102,6 +132,18 @@ export const buildSeoMetaTags = ({
       ? {
           property: 'og:url',
           content: canonical,
+        }
+      : null,
+    type === 'article' && publishedTime
+      ? {
+          property: 'article:published_time',
+          content: publishedTime,
+        }
+      : null,
+    type === 'article' && modifiedTime
+      ? {
+          property: 'article:modified_time',
+          content: modifiedTime,
         }
       : null,
     {
@@ -144,14 +186,16 @@ export const buildSeoMetaTags = ({
       : null,
     {
       name: 'twitter:description',
-      content: description || siteMetadata.description,
+      content: metaDescription,
     },
     ...meta,
   ].filter(Boolean)
+}
 
 export default {
   buildPageTitle,
   buildSeoMetaTags,
   buildWebsiteJsonLd,
+  normalizeMetaDescription,
   resolveCanonicalUrl,
 }

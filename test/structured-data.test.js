@@ -22,10 +22,27 @@ test('structured data helpers build absolute URLs and social links', async () =>
     'https://aaron-russell.co.uk/#person'
   )
   assert.deepEqual(structuredData.getPersonSameAs(author), [
-    'https://aaron-russell.co.uk',
+    'https://aaron-russell.co.uk/',
     'https://twitter.com/example',
     'https://github.com/example',
   ])
+})
+
+test('structured data helpers normalize profile handles into valid URLs', async () => {
+  const { default: structuredData } = await import('../src/utils/structured-data.js')
+
+  assert.deepEqual(
+    structuredData.getPersonSameAs({
+      website: 'https://aaron-russell.co.uk',
+      github: 'aaron-russell',
+      linkedIn: 'aaron-russell',
+    }),
+    [
+      'https://aaron-russell.co.uk/',
+      'https://github.com/aaron-russell',
+      'https://www.linkedin.com/in/aaron-russell',
+    ]
+  )
 })
 
 test('structured data helpers produce stable schema output', async () => {

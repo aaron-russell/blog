@@ -2,15 +2,20 @@
 import BaseLayout from '../layouts/BaseLayout.astro'
 import Hero from '../components/Hero.astro'
 import Container from '../components/Container.astro'
-import { getAuthor } from '../lib/contentful'
-import { buildContentfulImageUrl, buildContentfulSocialImageUrl } from '../lib/contentful-images'
-import { CONTENTFUL_SOCIAL_IMAGE_TYPE } from '../lib/contentful-images'
+import { getAllBlogPosts, getAuthor } from '../lib/contentful'
+import type { BlogPostSummary } from '../lib/contentful'
+import { buildContentfulImageUrl } from '../lib/contentful-images'
 import { OG_IMAGE_HEIGHT, OG_IMAGE_WIDTH } from '../lib/og'
-import { absoluteUrl, buildPersonJsonLd, buildProfilePageJsonLd } from '../utils/structured-data'
+import {
+  absoluteUrl,
+  buildPersonJsonLd,
+  buildProfilePageJsonLd,
+  getPersonSameAs,
+} from '../utils/structured-data'
 import styles from './about.module.css'
 
-const author = await getAuthor()
-const seoImage = buildContentfulSocialImageUrl(author.heroImage?.url)
+const [author, posts] = await Promise.all([getAuthor(), getAllBlogPosts()])
+const seoImage = absoluteUrl(author.website, '/og/about.png')
 const profileImage = author.profilePhoto?.url
   ? absoluteUrl(
       author.website,
@@ -23,20 +28,51 @@ const locations = author.currentLocations?.filter(Boolean) || []
 const employers = author.worksFor?.filter((item) => item?.companyName) || []
 const affiliations = author.affiliatedWith?.filter((item) => item?.companyName) || []
 const alumni = author.alumniOf?.filter((item) => item?.companyName) || []
-const sameAs = [author.github, author.linkedIn, author.twitter, author.facebook].filter(Boolean)
+const sameAs = getPersonSameAs(author)
+  .filter(
+    (url): url is string =>
+      typeof url === 'string' && url !== absoluteUrl(author.website, '/')
+  )
+  .map((url) => ({
+    label: url.includes('github.com')
+      ? 'GitHub'
+      : url.includes('linkedin.com')
+        ? 'LinkedIn'
+        : url.includes('stackoverflow.com')
+          ? 'Stack Overflow'
+          : url.includes('x.com') || url.includes('twitter.com')
+            ? 'X / Twitter'
+            : 'Social profile',
+    url,
+  }))
+const pitCrewPost = posts.find((post) => post.title.toLowerCase().includes('pit crew'))
+const keyPosts = [
+  pitCrewPost,
+  posts.find((post) => post.title.toLowerCase().includes('cloudflare')),
+  posts.find(
+    (post) =>
+      post.title.toLowerCase().includes('angular') &&
+      post.title.toLowerCase().includes('firestore')
+  ),
+  posts.find((post) => post.title.toLowerCase().includes('pagespeed')),
+]
+  .filter((post): post is BlogPostSummary => Boolean(post))
+  .filter(
+    (post, index, items) => items.findIndex((item) => item.slug === post.slug) === index
+  )
 ---
 
 <BaseLayout
   seo={{
     alt: 'Aaron Russell about page social card',
-    canonical: `${author.website}/about/`,
-    description: author.description?.description || 'Background, current work, and links for Aaron Russell.',
+    canonical: absoluteUrl(author.website, '/about/'),
+    description: 'Aaron Russell is a Leeds-based software developer, Russell Tech Limited director, and creator of Pit Crew, writing about modern product engineering.',
+    documentTitle: 'About Aaron Russell – Developer in Leeds, UK',
     image: seoImage,
     imageHeight: OG_IMAGE_HEIGHT,
-    imageType: CONTENTFUL_SOCIAL_IMAGE_TYPE,
+    imageType: 'image/png',
     imageWidth: OG_IMAGE_WIDTH,
     structuredData: [personJsonLd, profilePageJsonLd],
-    title: 'About',
   }}
 >
   <Hero
@@ -50,26 +86,76 @@ const sameAs = [author.github, author.linkedIn, author.twitter, author.facebook]
   <Container>
     <section class={styles.grid}>
       <article class={`${styles.panel} surface`}>
-        <h2>What I work on</h2>
+        <h2>Developer, technical lead, and product builder</h2>
+        <p>
+          I’m a software developer in Leeds, UK, with hands-on experience building and leading
+          web products across Angular, Firebase, Node.js, Contentful, Astro, and Cloudflare. I
+          care about systems that are understandable in production: clear architecture,
+          accessible interfaces, useful tests, sensible performance budgets, and delivery
+          workflows that do not become a second product.
+        </p>
         <p>{author.description?.description}</p>
         {author.jobTitle ? <p><strong>Role:</strong> {author.jobTitle}</p> : null}
-        {locations.length > 0 ? (
-          <p>
-            <strong>Based in:</strong>{' '}
-            {locations
-              .map((location) => [location.city, location.region, location.country].filter(Boolean).join(', '))
-              .join(' · ')}
-          </p>
+        <p>
+          <strong>Based in:</strong>{' '}
+          {locations.length > 0
+            ? locations
+                .map((location) =>
+                  [location.city, location.region, location.country].filter(Boolean).join(', ')
+                )
+                .join(' · ')
+            : 'Leeds, West Yorkshire, UK'}
+        </p>
+      </article>
+
+      <article class={`${styles.panel} surface`}>
+        <h2>Russell Tech Limited and Pit Crew</h2>
+        <p>
+          Through Russell Tech Limited, I turn product ideas into maintainable software and
+          practical delivery systems. My current indie product is{' '}
+          <a href="https://pitcrew.team/" rel="noopener noreferrer">Pit Crew</a>, a fantasy
+          motorsport application that brings together product design, Angular, Firebase, data
+          modelling, performance, and the less glamorous operational work needed to ship a real
+          service.
+        </p>
+        {pitCrewPost ? (
+          <p><a href={`/blog/${pitCrewPost.slug}/`}>Read the Pit Crew build case study</a>.</p>
         ) : null}
       </article>
+
+      <article class={`${styles.panel} surface`}>
+        <h2>What this blog covers</h2>
+        <p>
+          This is my working notebook for Astro and Cloudflare, Angular and Firebase, Contentful
+          publishing, AI-assisted development, performance and technical SEO, and the trade-offs
+          involved in building indie products. Posts are strongest when they include the
+          decision, the implementation, what failed, and what I would change next time.
+        </p>
+        <p>
+          Start with the <a href="/topics/cloudflare/">Astro and Cloudflare</a>,{' '}
+          <a href="/topics/angular/">Angular and Firebase</a>, or{' '}
+          <a href="/topics/performance/">performance and SEO</a> reading paths.
+        </p>
+      </article>
+
+      {keyPosts.length > 0 ? (
+        <article class={`${styles.panel} surface`}>
+          <h2>Selected writing</h2>
+          <ul class={styles.linkList}>
+            {keyPosts.map((post) => (
+              <li><a href={`/blog/${post.slug}/`}>{post.title}</a></li>
+            ))}
+          </ul>
+        </article>
+      ) : null}
 
       <article class={`${styles.panel} surface`}>
         <h2>Find me elsewhere</h2>
         <ul class={styles.linkList}>
           <li><a href="/contact/">Contact</a></li>
           <li><a href="/editorial-policy/">Editorial policy</a></li>
-          {sameAs.map((url) => (
-            <li><a href={url} rel="me noopener noreferrer">{url}</a></li>
+          {sameAs.map((profile) => (
+            <li><a href={profile.url} rel="me noopener noreferrer">{profile.label}</a></li>
           ))}
         </ul>
       </article>

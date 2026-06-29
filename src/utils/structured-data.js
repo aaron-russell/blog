@@ -1,7 +1,35 @@
 export const CONTENTFUL_PERSON_ID = '4Ff1pPPUTdU7JI822TLc7O'
 export const PERSON_SCHEMA_ID = '#person'
 
-const PERSON_SOCIAL_FIELDS = ['website', 'twitter', 'github', 'linkedIn', 'facebook']
+const PERSON_SOCIAL_FIELDS = [
+  'website',
+  'twitter',
+  'github',
+  'linkedIn',
+  'facebook',
+  'stackOverflow',
+]
+
+const PROFILE_BASE_URLS = {
+  facebook: 'https://www.facebook.com/',
+  github: 'https://github.com/',
+  linkedIn: 'https://www.linkedin.com/in/',
+  stackOverflow: 'https://stackoverflow.com/users/',
+  twitter: 'https://x.com/',
+}
+
+const normalizeProfileUrl = (field, value) => {
+  if (!value) {
+    return undefined
+  }
+
+  try {
+    return new URL(value).toString()
+  } catch {
+    const baseUrl = PROFILE_BASE_URLS[field]
+    return baseUrl ? new URL(String(value).replace(/^@/, ''), baseUrl).toString() : undefined
+  }
+}
 
 export const absoluteUrl = (baseUrl, path) => {
   if (!path) {
@@ -12,7 +40,7 @@ export const absoluteUrl = (baseUrl, path) => {
 }
 
 export const getPersonSameAs = (author) =>
-  PERSON_SOCIAL_FIELDS.map((field) => author?.[field]).filter(Boolean)
+  PERSON_SOCIAL_FIELDS.map((field) => normalizeProfileUrl(field, author?.[field])).filter(Boolean)
 
 export const buildPersonSchemaId = (baseUrl) => absoluteUrl(baseUrl, PERSON_SCHEMA_ID)
 
@@ -115,7 +143,7 @@ export const buildBlogPostingJsonLd = (post, locationHref, imageUrl) => ({
   datePublished: post.rawDate,
   inLanguage: 'en-GB',
   isFamilyFriendly: true,
-  copyrightYear: new Date().getFullYear(),
+  copyrightYear: post.rawDate ? new Date(post.rawDate).getFullYear() : undefined,
   copyrightHolder: post.author?.name,
   accountablePerson: {
     '@type': 'Person',

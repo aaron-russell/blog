@@ -4,10 +4,6 @@ import Container from '../components/Container.astro'
 import BaseLayout from '../layouts/BaseLayout.astro'
 import { getAuthor, getHomePagePosts } from '../lib/contentful'
 import { buildContentfulImageUrl } from '../lib/contentful-images'
-import {
-  buildContentfulSocialImageUrl,
-  CONTENTFUL_SOCIAL_IMAGE_TYPE,
-} from '../lib/contentful-images'
 import { OG_IMAGE_HEIGHT, OG_IMAGE_WIDTH } from '../lib/og'
 import { homeConfig } from '../lib/site-config'
 import { getFeaturedTopics } from '../lib/topics'
@@ -16,7 +12,7 @@ import styles from './index.module.css'
 
 const [author, posts] = await Promise.all([getAuthor(), getHomePagePosts()])
 const featuredTopics = getFeaturedTopics(posts).slice(0, 4)
-const seoImage = buildContentfulSocialImageUrl(author.heroImage?.url)
+const seoImage = absoluteUrl(author.website, '/og/site.png')
 const profileImage = author.profilePhoto?.url
   ? absoluteUrl(
       author.website,
@@ -29,11 +25,12 @@ const personJsonLd = buildPersonJsonLd(author, profileImage)
 <BaseLayout
   seo={{
     alt: 'Aaron Russell home page social card',
-    canonical: author.website,
+    canonical: absoluteUrl(author.website, '/'),
     description: homeConfig.hero.intro,
+    documentTitle: 'Aaron Russell – Software Engineering, AI Workflows & Static Web Notes',
     image: seoImage,
     imageHeight: OG_IMAGE_HEIGHT,
-    imageType: CONTENTFUL_SOCIAL_IMAGE_TYPE,
+    imageType: 'image/png',
     imageWidth: OG_IMAGE_WIDTH,
     structuredData: [personJsonLd],
   }}
@@ -44,9 +41,9 @@ const personJsonLd = buildPersonJsonLd(author, profileImage)
         <span class="eyebrow">{homeConfig.hero.eyebrow}</span>
         <p class={styles.leadIn}>Bold ideas, production-minded notes, and a sharper publishing surface.</p>
         <h1 class={styles.statement}>
-          Calm systems,
-          <span class="gradient-text"> sharper tools, </span>
-          and notes from the workbench.
+          Software engineering for products,
+          <span class="gradient-text"> static-first websites, </span>
+          and AI-assisted delivery.
         </h1>
         <p class={styles.intro}>{homeConfig.hero.intro}</p>
         <div class={styles.signalRow}>
@@ -112,7 +109,7 @@ const personJsonLd = buildPersonJsonLd(author, profileImage)
       </div>
       <p>Recent writing, experiments, and practical implementation details.</p>
     </div>
-    <ArticlePreview posts={posts.slice(0, 3)} wholeCardLink linkTagsToFilter={false} />
+    <ArticlePreview posts={posts.slice(0, 3)} linkTagsToFilter={false} />
   </section>
 
   <section class={styles.section}>

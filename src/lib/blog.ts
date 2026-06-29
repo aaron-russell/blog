@@ -1,4 +1,5 @@
 import type { BlogPostSummary } from './contentful'
+import { getPostTopicPaths } from './topics'
 
 type TocHeading = {
   depth: number
@@ -115,10 +116,17 @@ export const getRelatedPosts = (
     .filter((post) => post.slug !== currentPost.slug)
     .map((post) => {
       const sharedTags = post.tags.filter((tag) => currentPost.tags.includes(tag)).length
+      const currentTopics = getPostTopicPaths(currentPost)
+      const sharedTopics = getPostTopicPaths(post).filter((topic) =>
+        currentTopics.includes(topic)
+      ).length
 
       return {
         post,
-        score: sharedTags * 10 + (post.category && post.category === currentPost.category ? 3 : 0),
+        score:
+          sharedTags * 10 +
+          sharedTopics * 6 +
+          (post.category && post.category === currentPost.category ? 3 : 0),
       }
     })
     .filter((entry) => entry.score > 0)
