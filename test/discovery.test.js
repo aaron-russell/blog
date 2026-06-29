@@ -50,6 +50,7 @@ test('static headers include discovery links on the homepage', async () => {
   assert.match(headersFile, /\/openapi\.json/)
   assert.match(headersFile, /\/status\.json/)
   assert.match(headersFile, /\/\.well-known\/mcp\/server-card\.json/)
+  assert.match(headersFile, /script-src[^;]*https:\/\/static\.cloudflareinsights\.com/)
 })
 
 test('openapi and status documents back the API catalog links', async () => {

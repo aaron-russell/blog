@@ -8,6 +8,7 @@ test('astro config keeps Cloudflare Pages friendly static output', async () => {
   assert.equal(config.output, 'static')
   assert.equal(config.publicDir, './static')
   assert.equal(config.trailingSlash, 'always')
+  assert.equal(config.build?.inlineStylesheets, 'always')
   assert.deepEqual(config.image?.remotePatterns, [
     {
       protocol: 'https',
