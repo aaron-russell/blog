@@ -35,19 +35,32 @@ jobs:
       CONTENTFUL_ACCESS_TOKEN: ${{ secrets.CONTENTFUL_ACCESS_TOKEN }}
       CONTENTFUL_SPACE_ID: ${{ secrets.CONTENTFUL_SPACE_ID }}
       CONTENTFUL_HOST: ${{ secrets.CONTENTFUL_HOST }}
-    if: ${{ secrets.CONTENTFUL_ACCESS_TOKEN != '' && secrets.CONTENTFUL_SPACE_ID != '' }}
     steps:
+      - name: Check Contentful secrets
+        id: contentful
+        shell: bash
+        run: |
+          if [ -n "$CONTENTFUL_ACCESS_TOKEN" ] && [ -n "$CONTENTFUL_SPACE_ID" ]; then
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Check out repository
+        if: steps.contentful.outputs.enabled == 'true'
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
 
       - name: Set up Node.js
+        if: steps.contentful.outputs.enabled == 'true'
         uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e
         with:
           node-version-file: .nvmrc
           cache: npm
 
       - name: Install dependencies
+        if: steps.contentful.outputs.enabled == 'true'
         run: npm ci
 
       - name: Build
+        if: steps.contentful.outputs.enabled == 'true'
         run: npm run build:contentful
