@@ -33,9 +33,11 @@ const { seo = {} } = Astro.props
     <Footer />
     <script>
       // Initialize WebMCP for agent tool access
-      import('../lib/webmcp').catch(err => 
-        console.warn('WebMCP not available:', err)
-      )
+      if ('modelContext' in navigator) {
+        import('../lib/webmcp').catch(err => 
+          console.warn('WebMCP not available:', err)
+        )
+      }
     </script>
   </body>
 </html>
