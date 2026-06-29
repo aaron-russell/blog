@@ -20,6 +20,7 @@ type TurnstileResponse = {
 }
 
 const RATE_LIMIT_TTL_SECONDS = 300
+const estimateTokens = (value: string) => Math.max(1, Math.ceil(value.trim().length / 4))
 
 export const DISCOVERY_LINKS = [
   '</.well-known/agent-card.json>; rel="agent"',
@@ -39,6 +40,7 @@ export const addDiscoveryHeaders = async (response: Response, request: Request):
   const newResponse = new Response(response.body, response)
 
   newResponse.headers.append('Link', DISCOVERY_LINKS.join(', '))
+  newResponse.headers.append('Vary', 'Accept')
   
   // Handle Markdown for Agents content negotiation
   const acceptHeader = request.headers.get('accept') || ''
@@ -64,6 +66,8 @@ export const addDiscoveryHeaders = async (response: Response, request: Request):
       markdownResponse.headers.set('Content-Type', 'text/markdown; charset=utf-8')
       markdownResponse.headers.set('X-Markdown-Version', '1.0')
       markdownResponse.headers.set('X-Markdown-From-Html', 'true')
+      markdownResponse.headers.set('X-Markdown-Tokens', String(estimateTokens(markdown)))
+      markdownResponse.headers.set('X-Original-Tokens', String(estimateTokens(htmlText)))
       
       return markdownResponse
     } catch (error) {

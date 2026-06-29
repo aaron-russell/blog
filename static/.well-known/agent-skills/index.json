@@ -6,14 +6,14 @@
       "type": "resource",
       "description": "Discover blog posts, articles, and technical content",
       "url": "https://aaron-russell.co.uk/blog/",
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      "sha256": "2e0e54941739c05b00249df74cd82032cbeed0a88b239c509885b2fd4290d0ae"
     },
     {
       "name": "contact-form",
       "type": "action",
       "description": "Submit contact form inquiries",
       "url": "https://aaron-russell.co.uk/contact/",
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      "sha256": "220ba5d7e5c14f53f3006b074d5bb8b17f7653e095db0306d7288b93c55f0e4c"
     }
   ]
 }

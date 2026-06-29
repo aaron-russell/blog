@@ -25,6 +25,19 @@ This is a personal development blog built with Astro and deployed on Cloudflare 
 
 This site is publicly accessible and does not expose a live OAuth or OpenID Connect login flow today.
 
+## Agent Registration
+
+There is no self-service OAuth client registration flow for this blog today.
+
+Agents that need anything beyond public reading access should register manually by sending:
+- agent name
+- operator or organization
+- intended use
+- callback or contact URL
+- contact email
+
+Registration requests can be made through the [contact form](/contact/) or by emailing [aaron@aaron-russell.co.uk](mailto:aaron@aaron-russell.co.uk).
+
 ### For Protected Actions
 
 If you need anything beyond public reading access, use the [contact form](/contact/) or email [aaron@aaron-russell.co.uk](mailto:aaron@aaron-russell.co.uk).

@@ -14,8 +14,8 @@ Your blog is now configured for public AI agent discovery and interaction withou
 - `static/robots.txt` - Content-Signal directives
 
 ### New Discovery Endpoints
-- `src/pages/.well-known/api-catalog.ts` - RFC 9727
-- `src/pages/.well-known/mcp/server-card.json.ts` - SEP-1649
+- `static/.well-known/api-catalog` - RFC 9727
+- `static/.well-known/mcp/server-card.json` - SEP-1649
 - `static/.well-known/agent-skills/index.json` - Agent Skills Discovery v0.2.0
 - `static/auth.md` - Agent authentication guide
 

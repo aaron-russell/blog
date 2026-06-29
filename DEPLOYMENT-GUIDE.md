@@ -15,8 +15,8 @@ Your blog has been configured to be fully AI-agent ready with the following impl
 - **static/auth.md** - Public access guidance for agents
 
 #### Dynamic Endpoints (Astro)
-- **src/pages/.well-known/api-catalog.ts** - API Catalog (RFC 9727)
-- **src/pages/.well-known/mcp/server-card.json.ts** - MCP Server Card (SEP-1649)
+- **static/.well-known/api-catalog** - API Catalog (RFC 9727)
+- **static/.well-known/mcp/server-card.json** - MCP Server Card (SEP-1649)
 
 #### Documentation
 - **AI-READY-FEATURES.md** - Complete feature documentation

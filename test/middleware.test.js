@@ -126,3 +126,26 @@ test('contact middleware handles failed turnstile verification', async () => {
     global.fetch = originalFetch
   }
 })
+
+test('discovery middleware converts html responses to markdown when requested', async () => {
+  const { default: middleware } = await import('../functions/_middleware.ts')
+  const { addDiscoveryHeaders } = middleware
+
+  const response = await addDiscoveryHeaders(
+    new Response('<main><h1>Hello</h1><p>This is a test.</p></main>', {
+      headers: { 'content-type': 'text/html; charset=utf-8' },
+    }),
+    new Request('https://aaron-russell.co.uk/', {
+      headers: { accept: 'text/markdown' },
+    })
+  )
+
+  const body = await response.text()
+
+  assert.equal(response.headers.get('content-type'), 'text/markdown; charset=utf-8')
+  assert.equal(response.headers.get('x-markdown-version'), '1.0')
+  assert.equal(response.headers.get('x-markdown-from-html'), 'true')
+  assert.match(response.headers.get('vary') || '', /Accept/)
+  assert.match(response.headers.get('x-markdown-tokens') || '', /^[0-9]+$/)
+  assert.match(body, /# Hello/)
+})

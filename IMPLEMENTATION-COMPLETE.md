@@ -15,8 +15,8 @@ Your blog has been fully configured for AI agent discovery and interaction. Here
 - [static/auth.md](static/auth.md) - Public access guide for agents
 
 **New Astro Endpoints:**
-- [src/pages/.well-known/api-catalog.ts](src/pages/.well-known/api-catalog.ts) - RFC 9727 API catalog
-- [src/pages/.well-known/mcp/server-card.json.ts](src/pages/.well-known/mcp/server-card.json.ts) - MCP server card
+- [static/.well-known/api-catalog](static/.well-known/api-catalog) - RFC 9727 API catalog
+- [static/.well-known/mcp/server-card.json](static/.well-known/mcp/server-card.json) - MCP server card
 
 **Documentation:**
 - [AI-READY-FEATURES.md](AI-READY-FEATURES.md) - Complete feature reference

@@ -47,18 +47,18 @@ Access at: `https://aaron-russell.co.uk/.well-known/agent-skills/index.json`
 
 ### 4. API Catalog (RFC 9727)
 **Status**: ✅ Implemented  
-**Location**: [src/pages/.well-known/api-catalog.ts](src/pages/.well-known/api-catalog.ts)
+**Location**: [static/.well-known/api-catalog](static/.well-known/api-catalog)
 
 Published RFC 9727 compliant API catalog in linkset+json format:
-- Anchors point to your APIs/resources
-- Includes relation types for service documentation
-- Links to agent-skills index
+- Anchors point to your public site resource
+- Includes `service-desc`, `service-doc`, and `status` relations
+- Links agents to public access guidance in `auth.md`
 
 Access at: `https://aaron-russell.co.uk/.well-known/api-catalog`
 
 ### 5. MCP Server Card (SEP-1649)
 **Status**: ✅ Implemented  
-**Location**: [src/pages/.well-known/mcp/server-card.json.ts](src/pages/.well-known/mcp/server-card.json.ts)
+**Location**: [static/.well-known/mcp/server-card.json](static/.well-known/mcp/server-card.json)
 
 Published Model Context Protocol (MCP) server card with:
 - Server metadata (name, version, description)
@@ -80,15 +80,14 @@ Created auth.md file with:
 Access at: `https://aaron-russell.co.uk/auth.md`
 
 ### 8. Markdown for Agents
-**Status**: ✅ Partially Implemented  
+**Status**: ✅ Implemented  
 **Location**: [functions/_middleware.ts](functions/_middleware.ts)
 
 Added support for content negotiation:
 - Middleware detects `Accept: text/markdown` header
-- Sets `Content-Type: text/markdown` in response
-- Adds `X-Markdown-Version: 1.0` header
-
-For full implementation, content should be served in markdown format when requested. Currently returns HTML content with markdown headers.
+- Converts HTML responses into markdown
+- Sets `Content-Type: text/markdown; charset=utf-8`
+- Adds `X-Markdown-Version: 1.0` and token-estimate headers
 
 ## Optional Features (Not Yet Implemented)
 

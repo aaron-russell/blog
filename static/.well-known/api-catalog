@@ -1,0 +1,33 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://aaron-russell.co.uk",
+      "service-desc": [
+        {
+          "href": "https://aaron-russell.co.uk/openapi.json",
+          "type": "application/openapi+json"
+        }
+      ],
+      "status": [
+        {
+          "href": "https://aaron-russell.co.uk/status.json",
+          "type": "application/json"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://aaron-russell.co.uk/",
+          "type": "text/html",
+          "title": "Blog Home"
+        }
+      ],
+      "service-meta": [
+        {
+          "href": "https://aaron-russell.co.uk/auth.md",
+          "type": "text/markdown",
+          "title": "Agent registration and public access guidance"
+        }
+      ]
+    }
+  ]
+}
