@@ -1,0 +1,39 @@
+---
+import PageIntro from '../components/PageIntro.astro'
+import BaseLayout from '../layouts/BaseLayout.astro'
+import { siteMetadata, usesConfig } from '../lib/site-config'
+import { OG_IMAGE_HEIGHT, OG_IMAGE_TYPE, OG_IMAGE_WIDTH } from '../lib/og'
+import styles from './lab-page.module.css'
+
+const description = 'The software, platforms, and development tools Aaron Russell uses to build products and publish this site.'
+const canonical = `${siteMetadata.siteUrl}/uses/`
+const pageJsonLd = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Uses — Aaron Russell', description, url: canonical }
+const seoImage = `${siteMetadata.siteUrl}/og/site.png`
+---
+
+<BaseLayout seo={{ alt: 'Tools and technology used by Aaron Russell', canonical, description, image: seoImage, imageHeight: OG_IMAGE_HEIGHT, imageType: OG_IMAGE_TYPE, imageWidth: OG_IMAGE_WIDTH, structuredData: [pageJsonLd], title: 'Uses' }}>
+  <PageIntro
+    eyebrow="Uses"
+    title="The tools behind the work."
+    description="A practical inventory of the stack I use for product engineering, static publishing, and AI-assisted delivery. No affiliate links, no performative desk setup."
+    actions={[{ href: '/projects/', label: 'See what I build' }, { href: '/topics/cloudflare/', label: 'Read the stack notes' }]}
+  />
+  <section class={styles.section}>
+    <div class={styles.wideGrid}>
+      {usesConfig.map((section) => (
+        <article class={`${styles.panel} surface`}>
+          <span class={styles.meta}>Toolbox</span>
+          <h2>{section.title}</h2>
+          <ul>{section.items.map((item) => <li>{item}</li>)}</ul>
+        </article>
+      ))}
+    </div>
+  </section>
+  <section class={styles.section}>
+    <div class={`${styles.panel} surface`}>
+      <span class="eyebrow">A useful constraint</span>
+      <h2>Tools should earn their place.</h2>
+      <p>I prefer a smaller stack with clear responsibilities: static output where possible, edge functions where useful, and client-side JavaScript where the interaction actually needs it.</p>
+    </div>
+  </section>
+</BaseLayout>

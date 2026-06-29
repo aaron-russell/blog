@@ -41,6 +41,21 @@
   color: var(--primary);
 }
 
+.reasons {
+  border-top: 1px solid var(--border);
+  margin-top: var(--space-2xl);
+  padding-top: var(--space-2xl);
+}
+
+.reasons h3,
+.formPanel h2 { margin: 0 0 var(--space-lg); }
+.reasons ul { display: grid; gap: .6rem; margin: 0; padding-left: 1.2rem; }
+.reasons li { color: var(--text-muted); }
+.expectation { border-left: 2px solid var(--primary); margin-top: var(--space-2xl) !important; padding-left: var(--space-lg); }
+.contextLinks { display: flex; flex-wrap: wrap; gap: var(--space-lg); }
+.contextLinks a { font-size: var(--text-sm); font-weight: var(--bold); }
+.formPanel > h2 { font-size: clamp(2rem, 3vw, 3rem); }
+
 .form {
   display: grid;
   gap: 0.9rem;

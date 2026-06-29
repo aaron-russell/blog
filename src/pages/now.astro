@@ -1,0 +1,40 @@
+---
+import PageIntro from '../components/PageIntro.astro'
+import BaseLayout from '../layouts/BaseLayout.astro'
+import { nowConfig, siteMetadata } from '../lib/site-config'
+import { OG_IMAGE_HEIGHT, OG_IMAGE_TYPE, OG_IMAGE_WIDTH } from '../lib/og'
+import styles from './lab-page.module.css'
+
+const description = 'What Aaron Russell is currently building, writing, learning, and experimenting with.'
+const canonical = `${siteMetadata.siteUrl}/now/`
+const pageJsonLd = { '@context': 'https://schema.org', '@type': 'WebPage', name: 'Now — Aaron Russell', description, url: canonical, dateModified: '2026-06-29' }
+const seoImage = `${siteMetadata.siteUrl}/og/site.png`
+---
+
+<BaseLayout seo={{ alt: 'What Aaron Russell is doing now', canonical, description, image: seoImage, imageHeight: OG_IMAGE_HEIGHT, imageType: OG_IMAGE_TYPE, imageWidth: OG_IMAGE_WIDTH, structuredData: [pageJsonLd], title: 'Now' }}>
+  <PageIntro
+    eyebrow="Now"
+    title="What I’m focused on right now."
+    description="A lightweight snapshot of the products, questions, and tools currently taking up space on my workbench."
+    note={`Last updated ${nowConfig.updated} · Leeds, UK`}
+    actions={[{ href: '/projects/', label: 'See the projects' }, { href: '/blog/', label: 'Read the notes' }]}
+  />
+  <section class={styles.section}>
+    <div class={styles.wideGrid}>
+      {nowConfig.sections.map((section) => (
+        <article class={`${styles.panel} surface`}>
+          <span class={styles.meta}>Current / {section.title}</span>
+          <h2>{section.title}</h2>
+          <ul>{section.items.map((item) => <li>{item}</li>)}</ul>
+        </article>
+      ))}
+    </div>
+  </section>
+  <section class={styles.section}>
+    <div class={`${styles.panel} surface`}>
+      <h2>A note on “now”</h2>
+      <p>This is intentionally less polished than a CV. It changes as the work changes — which is the useful bit.</p>
+      <div class={styles.linkList}><a href="/about/">The longer story →</a><a href="/contact/">Get in touch →</a></div>
+    </div>
+  </section>
+</BaseLayout>

@@ -3,19 +3,16 @@ import BaseLayout from '../layouts/BaseLayout.astro'
 import Hero from '../components/Hero.astro'
 import Container from '../components/Container.astro'
 import { getAllBlogPosts, getAuthor } from '../lib/contentful'
-import type { BlogPostSummary } from '../lib/contentful'
-import { buildContentfulImageUrl } from '../lib/contentful-images'
+import { findPostByTerms } from '../lib/content-links'
+import { projects, startHere } from '../lib/site-config'
+import { buildContentfulImageUrl, buildContentfulSocialImageUrl } from '../lib/contentful-images'
+import { CONTENTFUL_SOCIAL_IMAGE_TYPE } from '../lib/contentful-images'
 import { OG_IMAGE_HEIGHT, OG_IMAGE_WIDTH } from '../lib/og'
-import {
-  absoluteUrl,
-  buildPersonJsonLd,
-  buildProfilePageJsonLd,
-  getPersonSameAs,
-} from '../utils/structured-data'
+import { absoluteUrl, buildPersonJsonLd, buildProfilePageJsonLd } from '../utils/structured-data'
 import styles from './about.module.css'
 
 const [author, posts] = await Promise.all([getAuthor(), getAllBlogPosts()])
-const seoImage = absoluteUrl(author.website, '/og/about.png')
+const seoImage = buildContentfulSocialImageUrl(author.heroImage?.url)
 const profileImage = author.profilePhoto?.url
   ? absoluteUrl(
       author.website,
@@ -28,136 +25,90 @@ const locations = author.currentLocations?.filter(Boolean) || []
 const employers = author.worksFor?.filter((item) => item?.companyName) || []
 const affiliations = author.affiliatedWith?.filter((item) => item?.companyName) || []
 const alumni = author.alumniOf?.filter((item) => item?.companyName) || []
-const sameAs = getPersonSameAs(author)
-  .filter(
-    (url): url is string =>
-      typeof url === 'string' && url !== absoluteUrl(author.website, '/')
+const socialProfiles = [
+  { label: 'GitHub', url: author.github },
+  { label: 'LinkedIn', url: author.linkedIn },
+  { label: 'Twitter / X', url: author.twitter },
+].filter((item) => item.url)
+const selectedWriting = startHere
+  .map((item) => findPostByTerms(posts, item.terms))
+  .filter((post, index, items): post is NonNullable<typeof post> =>
+    Boolean(post && items.findIndex((item) => item?.slug === post.slug) === index)
   )
-  .map((url) => ({
-    label: url.includes('github.com')
-      ? 'GitHub'
-      : url.includes('linkedin.com')
-        ? 'LinkedIn'
-        : url.includes('stackoverflow.com')
-          ? 'Stack Overflow'
-          : url.includes('x.com') || url.includes('twitter.com')
-            ? 'X / Twitter'
-            : 'Social profile',
-    url,
-  }))
-const pitCrewPost = posts.find((post) => post.title.toLowerCase().includes('pit crew'))
-const keyPosts = [
-  pitCrewPost,
-  posts.find((post) => post.title.toLowerCase().includes('cloudflare')),
-  posts.find(
-    (post) =>
-      post.title.toLowerCase().includes('angular') &&
-      post.title.toLowerCase().includes('firestore')
-  ),
-  posts.find((post) => post.title.toLowerCase().includes('pagespeed')),
-]
-  .filter((post): post is BlogPostSummary => Boolean(post))
-  .filter(
-    (post, index, items) => items.findIndex((item) => item.slug === post.slug) === index
-  )
+  .slice(0, 3)
+const locationLabel = locations.length > 0
+  ? locations.map((location) => [location.city, location.region, location.country].filter(Boolean).join(', ')).join(' · ')
+  : 'Leeds, UK'
 ---
 
 <BaseLayout
   seo={{
     alt: 'Aaron Russell about page social card',
-    canonical: absoluteUrl(author.website, '/about/'),
-    description: 'Aaron Russell is a Leeds-based software developer, Russell Tech Limited director, and creator of Pit Crew, writing about modern product engineering.',
-    documentTitle: 'About Aaron Russell – Developer in Leeds, UK',
+    canonical: `${author.website}/about/`,
+    description: author.description?.description || 'Background, current work, and links for Aaron Russell.',
     image: seoImage,
     imageHeight: OG_IMAGE_HEIGHT,
-    imageType: 'image/png',
+    imageType: CONTENTFUL_SOCIAL_IMAGE_TYPE,
     imageWidth: OG_IMAGE_WIDTH,
     structuredData: [personJsonLd, profilePageJsonLd],
+    title: 'About',
   }}
 >
   <Hero
     eyebrow="About"
-    image={author.heroImage}
-    imageAlt={author.heroImage?.description || `${author.name} hero image`}
+    image={author.profilePhoto || author.heroImage}
+    imageAlt={author.profilePhoto?.description || author.heroImage?.description || `${author.name} portrait`}
     title={author.name}
-    contentHtml={author.shortBioHtml || `<p>${author.description?.description || ''}</p>`}
+    contentHtml="<p>UK-based software developer, product builder, and practical engineering writer.</p>"
   />
 
   <Container>
     <section class={styles.grid}>
       <article class={`${styles.panel} surface`}>
-        <h2>Developer, technical lead, and product builder</h2>
-        <p>
-          I’m a software developer in Leeds, UK, with hands-on experience building and leading
-          web products across Angular, Firebase, Node.js, Contentful, Astro, and Cloudflare. I
-          care about systems that are understandable in production: clear architecture,
-          accessible interfaces, useful tests, sensible performance budgets, and delivery
-          workflows that do not become a second product.
-        </p>
-        <p>{author.description?.description}</p>
+        <span class="eyebrow">The short version</span>
+        <h2>I build software that has to work outside the demo.</h2>
+        <p>{author.description?.description || 'I work across product engineering, delivery, and the web platform — from Angular and Firebase applications to static-first Astro and Cloudflare sites.'}</p>
+        <p>I’m most interested in the point where sound engineering meets useful product delivery: making the right trade-offs, shipping the work, and learning from what happens next.</p>
         {author.jobTitle ? <p><strong>Role:</strong> {author.jobTitle}</p> : null}
-        <p>
-          <strong>Based in:</strong>{' '}
-          {locations.length > 0
-            ? locations
-                .map((location) =>
-                  [location.city, location.region, location.country].filter(Boolean).join(', ')
-                )
-                .join(' · ')
-            : 'Leeds, West Yorkshire, UK'}
-        </p>
+        <p><strong>Based in:</strong> {locationLabel}</p>
       </article>
 
       <article class={`${styles.panel} surface`}>
-        <h2>Russell Tech Limited and Pit Crew</h2>
-        <p>
-          Through Russell Tech Limited, I turn product ideas into maintainable software and
-          practical delivery systems. My current indie product is{' '}
-          <a href="https://pitcrew.team/" rel="noopener noreferrer">Pit Crew</a>, a fantasy
-          motorsport application that brings together product design, Angular, Firebase, data
-          modelling, performance, and the less glamorous operational work needed to ship a real
-          service.
-        </p>
-        {pitCrewPost ? (
-          <p><a href={`/blog/${pitCrewPost.slug}/`}>Read the Pit Crew build case study</a>.</p>
-        ) : null}
-      </article>
-
-      <article class={`${styles.panel} surface`}>
-        <h2>What this blog covers</h2>
-        <p>
-          This is my working notebook for Astro and Cloudflare, Angular and Firebase, Contentful
-          publishing, AI-assisted development, performance and technical SEO, and the trade-offs
-          involved in building indie products. Posts are strongest when they include the
-          decision, the implementation, what failed, and what I would change next time.
-        </p>
-        <p>
-          Start with the <a href="/topics/cloudflare/">Astro and Cloudflare</a>,{' '}
-          <a href="/topics/angular/">Angular and Firebase</a>, or{' '}
-          <a href="/topics/performance/">performance and SEO</a> reading paths.
-        </p>
-      </article>
-
-      {keyPosts.length > 0 ? (
-        <article class={`${styles.panel} surface`}>
-          <h2>Selected writing</h2>
-          <ul class={styles.linkList}>
-            {keyPosts.map((post) => (
-              <li><a href={`/blog/${post.slug}/`}>{post.title}</a></li>
-            ))}
-          </ul>
-        </article>
-      ) : null}
-
-      <article class={`${styles.panel} surface`}>
-        <h2>Find me elsewhere</h2>
+        <span class="eyebrow">Elsewhere</span>
+        <h2>Profiles and contact</h2>
         <ul class={styles.linkList}>
-          <li><a href="/contact/">Contact</a></li>
+          <li><a href="/contact/">Contact me</a></li>
+          {socialProfiles.map((profile) => <li><a href={profile.url} rel="me noopener noreferrer">{profile.label} ↗</a></li>)}
           <li><a href="/editorial-policy/">Editorial policy</a></li>
-          {sameAs.map((profile) => (
-            <li><a href={profile.url} rel="me noopener noreferrer">{profile.label}</a></li>
-          ))}
         </ul>
+      </article>
+
+      <article class={`${styles.panel} surface`}>
+        <span class="eyebrow">Experience</span>
+        <h2>Products, platforms, and delivery.</h2>
+        <p>My background spans software engineering and product delivery, including work on public-sector digital services and independent products.</p>
+        <div class={styles.techList} aria-label="Main technologies">
+          {['Angular', 'React', 'Node.js', 'Firebase', 'Cloudflare', 'Astro', 'Contentful', 'TypeScript'].map((item) => <span>{item}</span>)}
+        </div>
+      </article>
+
+      <article class={`${styles.panel} surface`}>
+        <span class="eyebrow">Current interests</span>
+        <h2>What I’m exploring</h2>
+        <ul class={styles.linkList}>
+          <li>AI-assisted development workflows that improve real delivery</li>
+          <li>Indie product building and maintainable product systems</li>
+          <li>Performance, accessibility, SEO, and the modern web platform</li>
+          <li>Static-first architecture with useful edge capabilities</li>
+        </ul>
+        <a class={styles.textLink} href="/now/">See what I’m doing now →</a>
+      </article>
+
+      <article class={`${styles.panel} surface`}>
+        <span class="eyebrow">This site</span>
+        <h2>An engineering notebook with receipts.</h2>
+        <p>I write about Astro, Cloudflare, Angular, Firebase, Contentful, AI-assisted delivery, performance, SEO, and the awkward middle between “it works” and “it is ready”.</p>
+        <div class={styles.linkRow}><a href="/blog/">Browse the writing →</a><a href="/uses/">See the tools I use →</a></div>
       </article>
 
       {employers.length > 0 ? (
@@ -202,6 +153,31 @@ const keyPosts = [
           </ul>
         </article>
       ) : null}
+    </section>
+
+    <section class={styles.sectionBlock}>
+      <div class={styles.sectionHeader}><span class="eyebrow">Selected projects</span><h2>Work I can point to.</h2></div>
+      <div class={styles.grid}>
+        {projects.map((project) => (
+          <article class={`${styles.panel} surface`}><span class={styles.status}>{project.status}</span><h3><a href={project.href}>{project.name}</a></h3><p>{project.description}</p><a class={styles.textLink} href={project.href}>View project →</a></article>
+        ))}
+      </div>
+    </section>
+
+    {selectedWriting.length > 0 ? (
+      <section class={styles.sectionBlock}>
+        <div class={styles.sectionHeader}><span class="eyebrow">Selected writing</span><h2>A few useful places to start.</h2></div>
+        <div class={styles.writingGrid}>
+          {selectedWriting.map((post) => (
+            <a class={`${styles.writingCard} surface`} href={`/blog/${post.slug}/`}><span>{post.category || 'Engineering note'}</span><h3>{post.title}</h3><p>{post.descriptionPlainText}</p></a>
+          ))}
+        </div>
+      </section>
+    ) : null}
+
+    <section class={`${styles.contactPanel} surface`}>
+      <div><span class="eyebrow">Say hello</span><h2>Have a specific problem worth discussing?</h2><p>Product engineering, app architecture, AI-assisted delivery, or something I wrote — useful context is always welcome.</p></div>
+      <a href="/contact/">Contact me →</a>
     </section>
   </Container>
 </BaseLayout>

@@ -1,0 +1,35 @@
+---
+import styles from './page-intro.module.css'
+
+type Props = {
+  actions?: Array<{ href: string; label: string; external?: boolean }>
+  description: string
+  eyebrow: string
+  note?: string
+  title: string
+}
+
+const { actions = [], description, eyebrow, note, title } = Astro.props as Props
+---
+
+<header class={styles.wrap}>
+  <div class={`${styles.panel} surface`}>
+    <span class="eyebrow">{eyebrow}</span>
+    <h1>{title}</h1>
+    <p class={styles.description}>{description}</p>
+    {note ? <p class={styles.note}>{note}</p> : null}
+    {actions.length > 0 ? (
+      <div class={styles.actions}>
+        {actions.map((action, index) => (
+          <a
+            class:list={[styles.action, { [styles.primary]: index === 0 }]}
+            href={action.href}
+            rel={action.external ? 'noopener noreferrer' : undefined}
+          >
+            {action.label}{action.external ? ' ↗' : ''}
+          </a>
+        ))}
+      </div>
+    ) : null}
+  </div>
+</header>

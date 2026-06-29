@@ -1,0 +1,65 @@
+.wrap {
+  margin: 0 auto;
+  max-width: var(--size-max-width);
+  padding: var(--size-gutter) var(--size-gutter) 0;
+  width: 100%;
+}
+
+.panel {
+  background:
+    linear-gradient(120deg, rgba(255, 122, 24, 0.16), transparent 35%),
+    linear-gradient(300deg, rgba(168, 85, 247, 0.18), transparent 40%),
+    var(--gradient-glass);
+  padding: clamp(1.6rem, 4vw, 4.5rem);
+}
+
+.panel h1 {
+  font-size: clamp(3rem, 7vw, 7rem);
+  letter-spacing: -0.06em;
+  line-height: 0.88;
+  margin: 0;
+  max-width: 11ch;
+}
+
+.description {
+  color: var(--text-muted);
+  font-size: var(--text-lead);
+  margin: var(--space-2xl) 0 0;
+  max-width: 48rem;
+}
+
+.note {
+  color: var(--text-subtle);
+  font-size: var(--text-sm);
+  margin: var(--space-lg) 0 0;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-lg);
+  margin-top: var(--space-2xl);
+}
+
+.action {
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-pill);
+  font-size: var(--text-sm);
+  font-weight: var(--bold);
+  padding: 0.9rem 1.15rem;
+}
+
+.action:hover {
+  border-color: var(--border-accent);
+  transform: translateY(-2px);
+}
+
+.primary {
+  background: var(--gradient-brand);
+  border-color: transparent;
+  color: var(--text-inverse);
+}
+
+.primary:hover {
+  color: var(--text-inverse);
+}
