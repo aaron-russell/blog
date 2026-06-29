@@ -12,7 +12,7 @@ const { seo = {} } = Astro.props
 <!doctype html>
 <html lang="en">
   <head>
-    <script is:inline>
+    <script is:inline data-cfasync="false">
       (() => {
         const savedTheme = localStorage.getItem('site-theme')
         if (savedTheme) {
@@ -31,7 +31,7 @@ const { seo = {} } = Astro.props
       <slot />
     </main>
     <Footer />
-    <script>
+    <script data-cfasync="false">
       // Initialize WebMCP for agent tool access
       import('../lib/webmcp').catch(err => 
         console.warn('WebMCP not available:', err)

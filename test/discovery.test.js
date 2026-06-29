@@ -52,6 +52,23 @@ test('static headers include discovery links on the homepage', async () => {
   assert.match(headersFile, /\/\.well-known\/mcp\/server-card\.json/)
 })
 
+test('static headers allow the Cloudflare features enabled on the live site', async () => {
+  const headersFile = await readStatic('_headers')
+
+  assert.match(headersFile, /script-src[^;\n]*https:\/\/ajax\.cloudflare\.com/)
+  assert.match(headersFile, /script-src[^;\n]*https:\/\/static\.cloudflareinsights\.com/)
+  assert.match(headersFile, /connect-src[^;\n]*https:\/\/cloudflareinsights\.com/)
+})
+
+test('astro-owned scripts opt out of Rocket Loader rewrites', async () => {
+  const analytics = await readFile(path.join(__dirname, '..', 'src', 'components', 'Analytics.astro'), 'utf8')
+  const baseLayout = await readFile(path.join(__dirname, '..', 'src', 'layouts', 'BaseLayout.astro'), 'utf8')
+
+  assert.match(analytics, /<script data-cfasync="false">/)
+  assert.match(baseLayout, /<script is:inline data-cfasync="false">/)
+  assert.match(baseLayout, /<script data-cfasync="false">\s*\/\/ Initialize WebMCP/)
+})
+
 test('openapi and status documents back the API catalog links', async () => {
   const openapi = JSON.parse(await readStatic('openapi.json'))
   const status = JSON.parse(await readStatic('status.json'))
