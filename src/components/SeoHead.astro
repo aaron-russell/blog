@@ -6,10 +6,14 @@ type Props = {
   alt?: string
   canonical?: string
   description?: string
+  documentTitle?: string
   image?: string
   imageHeight?: number
   imageType?: string
   imageWidth?: number
+  modifiedTime?: string
+  publishedTime?: string
+  robots?: string
   structuredData?: Array<Record<string, unknown>>
   title?: string
   turnstile?: boolean
@@ -20,17 +24,21 @@ const {
   alt,
   canonical,
   description = '',
+  documentTitle,
   image,
   imageHeight,
   imageType,
   imageWidth,
+  modifiedTime,
+  publishedTime,
+  robots,
   structuredData = [],
   title,
   turnstile = false,
   type = 'website',
 } = Astro.props as Props
 
-const pageTitle = buildPageTitle(title, siteMetadata.title)
+const pageTitle = documentTitle || buildPageTitle(title, siteMetadata.title)
 const metaTags = buildSeoMetaTags({
   canonical,
   description,
@@ -39,8 +47,10 @@ const metaTags = buildSeoMetaTags({
   imageHeight,
   imageType,
   imageWidth,
+  modifiedTime,
+  publishedTime,
   siteMetadata,
-  title,
+  title: documentTitle || title,
   type,
 })
 const websiteLdJson = buildWebsiteJsonLd(siteMetadata)
@@ -49,6 +59,7 @@ const websiteLdJson = buildWebsiteJsonLd(siteMetadata)
 <title>{pageTitle}</title>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+{robots ? <meta name="robots" content={robots} /> : null}
 {canonical ? <link rel="canonical" href={canonical} /> : null}
 <link rel="alternate" type="application/rss+xml" title={`${siteMetadata.title} RSS`} href="/rss.xml" />
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />

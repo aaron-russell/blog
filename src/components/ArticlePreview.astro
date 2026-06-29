@@ -6,7 +6,7 @@ import styles from './article-preview.module.css'
 import { createExcerpt } from '../lib/blog'
 import { isWithinLastSixMonths } from '../lib/date'
 
-const { linkTagsToFilter = true, posts = [], wholeCardLink = false } = Astro.props
+const { linkTagsToFilter = true, posts = [] } = Astro.props
 ---
 
 {
@@ -17,36 +17,27 @@ const { linkTagsToFilter = true, posts = [], wholeCardLink = false } = Astro.pro
           <li class={`${styles.card} surface`}>
             <article class={styles.article}>
               {
-                wholeCardLink ? (
-                  <a
-                    href={`/blog/${post.slug}/`}
-                    class={styles.cardLink}
-                    aria-label={`Read ${post.title}`}
-                  ></a>
+                isWithinLastSixMonths(post.rawDate) ? (
+                  <span class={styles.badge}>Fresh note</span>
                 ) : null
               }
-              <a href={`/blog/${post.slug}/`} class={styles.link}>
-                {
-                  isWithinLastSixMonths(post.rawDate) ? (
-                    <span class={styles.badge}>Fresh note</span>
-                  ) : null
-                }
-                <ResponsiveImage
-                  asset={post.heroImage}
-                  alt={post.heroImage?.description || post.title}
-                  class={styles.image}
-                  fallbackAlt={post.title}
-                  loading="lazy"
-                  sizes="(min-width: 1140px) 424px, (min-width: 720px) 45vw, 100vw"
-                  transform={{ fit: 'fill', h: 240, q: 72, w: 424 }}
-                  widths={[320, 424, 640, 848]}
-                />
-                <div class={styles.heading}>
-                  <p class={styles.kicker}>Latest writing</p>
-                  <span class={styles.readMore}>Read article</span>
-                </div>
-                <h2 class={styles.title}>{post.title}</h2>
-              </a>
+              <ResponsiveImage
+                asset={post.heroImage}
+                alt=""
+                class={styles.image}
+                fallbackAlt=""
+                loading="lazy"
+                sizes="(min-width: 1140px) 424px, (min-width: 720px) 45vw, 100vw"
+                transform={{ fit: 'fill', h: 240, q: 72, w: 424 }}
+                widths={[320, 424, 640, 848]}
+              />
+              <div class={styles.heading}>
+                <p class={styles.kicker}>Latest writing</p>
+                <span class={styles.readMore}>Read article</span>
+              </div>
+              <h2 class={styles.title}>
+                <a href={`/blog/${post.slug}/`} class={styles.link}>{post.title}</a>
+              </h2>
               <p class={styles.excerpt}>
                 {createExcerpt(post.descriptionPlainText || post.bodyPlainText || '', 156)}
               </p>

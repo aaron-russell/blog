@@ -3,10 +3,10 @@ import Container from '../components/Container.astro'
 import BaseLayout from '../layouts/BaseLayout.astro'
 ---
 
-<BaseLayout seo={{ title: 'Page not found' }}>
+<BaseLayout seo={{ documentTitle: 'Page not found | Aaron Russell', robots: 'noindex, follow' }}>
   <Container>
     <h1>Page not found</h1>
     <p>The page you requested could not be found.</p>
-    <p><a href="/">Return home</a></p>
+    <p>Try the <a href="/blog/">blog archive</a>, browse an <a href="/topics/cloudflare/">engineering topic</a>, or <a href="/">return home</a>.</p>
   </Container>
 </BaseLayout>

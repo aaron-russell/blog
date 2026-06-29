@@ -30,18 +30,6 @@
   position: relative;
 }
 
-.cardLink {
-  border-radius: inherit;
-  inset: 0;
-  position: absolute;
-  z-index: 1;
-}
-
-.article > *:not(.cardLink) {
-  position: relative;
-  z-index: 2;
-}
-
 .badge {
   align-items: center;
   background:

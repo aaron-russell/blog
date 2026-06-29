@@ -20,6 +20,7 @@ type ContentfulAuthor = {
   nationality?: string
   profilePhoto?: ReturnType<typeof createContentfulImage>
   shortBioHtml?: string
+  stackOverflow?: string
   twitter?: string
   website: string
   worksFor?: Array<{ companyName?: string; website?: string }>
@@ -76,7 +77,7 @@ const mapAuthor = async (entry: any): Promise<ContentfulAuthor> => ({
     description: entry?.fields?.description,
   },
   facebook: entry?.fields?.facebook,
-  github: entry?.fields?.github,
+  github: entry?.fields?.github || 'https://github.com/aaron-russell',
   heroImage: createContentfulImage(entry?.fields?.image),
   jobTitle: entry?.fields?.jobTitle,
   linkedIn: entry?.fields?.linkedIn,
@@ -84,6 +85,7 @@ const mapAuthor = async (entry: any): Promise<ContentfulAuthor> => ({
   nationality: entry?.fields?.nationality,
   profilePhoto: createContentfulImage(entry?.fields?.profilePhoto),
   shortBioHtml: await renderRichText(entry?.fields?.shortBio),
+  stackOverflow: 'https://stackoverflow.com/users/1774043/aaron-russell',
   twitter: entry?.fields?.twitter,
   website: entry?.fields?.website || '',
   worksFor: mapLinkedCompany(entry?.fields?.worksFor),

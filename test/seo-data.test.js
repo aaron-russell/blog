@@ -32,6 +32,8 @@ test('seo data helpers produce stable metadata for social and canonical tags', a
     imageHeight: 630,
     imageType: 'image/png',
     imageWidth: 1200,
+    modifiedTime: '2026-06-29T10:00:00.000Z',
+    publishedTime: '2026-06-28T10:00:00.000Z',
     siteMetadata: {
       title: "Aaron Russell's Development Blog",
       description: 'Default description',
@@ -92,6 +94,20 @@ test('seo data helpers produce stable metadata for social and canonical tags', a
         tag.name === 'twitter:creator' && tag.content === '@aaron'
     )
   )
+  assert.ok(
+    tags.some(
+      (tag) =>
+        tag.property === 'article:published_time' &&
+        tag.content === '2026-06-28T10:00:00.000Z'
+    )
+  )
+  assert.ok(
+    tags.some(
+      (tag) =>
+        tag.property === 'article:modified_time' &&
+        tag.content === '2026-06-29T10:00:00.000Z'
+    )
+  )
 })
 
 test('seo data helpers omit empty twitter account tags', async () => {
@@ -109,6 +125,19 @@ test('seo data helpers omit empty twitter account tags', async () => {
 
   assert.equal(tags.some((tag) => tag.name === 'twitter:creator'), false)
   assert.equal(tags.some((tag) => tag.name === 'twitter:site'), false)
+})
+
+test('meta descriptions are deduplicated and shortened at a word boundary', async () => {
+  const { default: seoData } = await import('../src/utils/seo-data.js')
+  const repeated = 'A practical engineering note. A practical engineering note.'
+  const long = Array.from({ length: 40 }, (_, index) => `engineering${index}`).join(' ')
+
+  assert.equal(
+    seoData.normalizeMetaDescription(repeated),
+    'A practical engineering note.'
+  )
+  assert.ok(seoData.normalizeMetaDescription(long).length <= 160)
+  assert.match(seoData.normalizeMetaDescription(long), /…$/)
 })
 
 test('canonical URLs match the trailing-slash article URL served by Astro', async () => {

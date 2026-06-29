@@ -6,10 +6,6 @@ import ArticlePreview from '../../components/ArticlePreview.astro'
 import Tags from '../../components/Tags.astro'
 import { getAllBlogPosts, getAuthor } from '../../lib/contentful'
 import { annotateArticleHtml, getRelatedPosts } from '../../lib/blog'
-import {
-  buildContentfulSocialImageUrl,
-  CONTENTFUL_SOCIAL_IMAGE_TYPE,
-} from '../../lib/contentful-images'
 import { OG_IMAGE_HEIGHT, OG_IMAGE_WIDTH } from '../../lib/og'
 import { resolveCanonicalUrl } from '../../utils/seo-data'
 import {
@@ -43,7 +39,7 @@ const canonicalUrl = resolveCanonicalUrl({
   pathname: `/blog/${post.slug}/`,
   siteUrl: author.website,
 })
-const seoImage = absoluteUrl(author.website, buildContentfulSocialImageUrl(post.heroImage?.url))
+const seoImage = absoluteUrl(author.website, `/og/blog/${post.slug}.png`)
 const blogPostingJsonLd = buildBlogPostingJsonLd(post, canonicalUrl, seoImage)
 const breadcrumbJsonLd = buildBreadcrumbListJsonLd(
   [
@@ -60,10 +56,13 @@ const breadcrumbJsonLd = buildBreadcrumbListJsonLd(
     alt: `${post.title} social card`,
     canonical: canonicalUrl,
     description: post.descriptionPlainText,
+    documentTitle: `${post.title} | Aaron Russell`,
     image: seoImage,
     imageHeight: OG_IMAGE_HEIGHT,
-    imageType: CONTENTFUL_SOCIAL_IMAGE_TYPE,
+    imageType: 'image/png',
     imageWidth: OG_IMAGE_WIDTH,
+    modifiedTime: post.rawUpdatedDate || post.rawDate,
+    publishedTime: post.rawDate,
     structuredData: [blogPostingJsonLd, breadcrumbJsonLd],
     title: post.title,
     type: 'article',

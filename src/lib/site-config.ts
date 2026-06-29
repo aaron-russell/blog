@@ -1,6 +1,6 @@
 export const siteMetadata = {
   description:
-    'Building software, experimenting with AI, and documenting what actually works.',
+    'Practical notes on software engineering, AI-assisted development, static web architecture, performance, and indie product building.',
   siteUrl: 'https://aaron-russell.co.uk',
   social: {
     twitter: '',
@@ -12,8 +12,8 @@ export const homeConfig = {
   hero: {
     eyebrow: 'Engineering notebook',
     intro:
-      'Building software, experimenting with AI, and documenting what actually works.',
-    title: 'Calm systems, sharper tools, and notes from the workbench.',
+      'I build products with Angular, Firebase, Astro, Contentful, and Cloudflare, then write down the implementation details, AI-assisted workflows, trade-offs, and lessons that survive contact with production.',
+    title: 'Software engineering notes from the product workbench.',
   },
   workbench: [
     {
