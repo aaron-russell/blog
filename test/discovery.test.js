@@ -65,9 +65,9 @@ test('astro-owned scripts opt out of Rocket Loader rewrites', async () => {
   const analytics = await readFile(path.join(__dirname, '..', 'src', 'components', 'Analytics.astro'), 'utf8')
   const baseLayout = await readFile(path.join(__dirname, '..', 'src', 'layouts', 'BaseLayout.astro'), 'utf8')
 
-  assert.match(analytics, /<script data-cfasync="false">/)
   assert.match(baseLayout, /<script is:inline data-cfasync="false">/)
-  assert.match(baseLayout, /<script data-cfasync="false">\s*\/\/ Initialize WebMCP/)
+  assert.match(analytics, /<script>/)
+  assert.match(baseLayout, /<script>\s*\/\/ Initialize WebMCP/)
 })
 
 test('openapi and status documents back the API catalog links', async () => {

@@ -31,7 +31,7 @@ const { seo = {} } = Astro.props
       <slot />
     </main>
     <Footer />
-    <script data-cfasync="false">
+    <script>
       // Initialize WebMCP for agent tool access
       import('../lib/webmcp').catch(err => 
         console.warn('WebMCP not available:', err)
