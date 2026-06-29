@@ -1,0 +1,59 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Aaron Russell Blog Public Discovery API",
+    "version": "1.0.0",
+    "description": "Publicly discoverable site metadata and contact entry points for aaron-russell.co.uk."
+  },
+  "servers": [
+    {
+      "url": "https://aaron-russell.co.uk"
+    }
+  ],
+  "paths": {
+    "/.well-known/api-catalog": {
+      "get": {
+        "summary": "Fetch the RFC 9727 API catalog",
+        "operationId": "getApiCatalog",
+        "responses": {
+          "200": {
+            "description": "API catalog returned successfully"
+          }
+        }
+      }
+    },
+    "/.well-known/mcp/server-card.json": {
+      "get": {
+        "summary": "Fetch the public MCP server card",
+        "operationId": "getMcpServerCard",
+        "responses": {
+          "200": {
+            "description": "MCP server card returned successfully"
+          }
+        }
+      }
+    },
+    "/contact/": {
+      "get": {
+        "summary": "Open the public contact form",
+        "operationId": "getContactPage",
+        "responses": {
+          "200": {
+            "description": "Contact page returned successfully"
+          }
+        }
+      }
+    },
+    "/status.json": {
+      "get": {
+        "summary": "Read the public status document",
+        "operationId": "getStatus",
+        "responses": {
+          "200": {
+            "description": "Status document returned successfully"
+          }
+        }
+      }
+    }
+  }
+}

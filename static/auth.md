@@ -1,4 +1,6 @@
-# Agent Discovery & Access
+# Auth.md
+
+## Agent Discovery & Access
 
 This site publishes public, machine-readable discovery metadata for AI agents and crawlers.
 

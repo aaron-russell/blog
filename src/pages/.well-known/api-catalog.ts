@@ -11,6 +11,18 @@ export async function GET() {
             title: 'Blog Home',
           },
           {
+            rel: 'service-desc',
+            href: 'https://aaron-russell.co.uk/openapi.json',
+            type: 'application/openapi+json',
+            title: 'Public discovery OpenAPI description',
+          },
+          {
+            rel: 'status',
+            href: 'https://aaron-russell.co.uk/status.json',
+            type: 'application/json',
+            title: 'Public status document',
+          },
+          {
             rel: 'service-meta',
             href: 'https://aaron-russell.co.uk/auth.md',
             type: 'text/markdown',

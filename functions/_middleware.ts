@@ -25,6 +25,8 @@ export const DISCOVERY_LINKS = [
   '</.well-known/agent-card.json>; rel="agent"',
   '</.well-known/agent-skills/index.json>; rel="agent-skills"',
   '</.well-known/api-catalog>; rel="api-catalog"',
+  '</openapi.json>; rel="service-desc"',
+  '</status.json>; rel="status"',
   '</auth.md>; rel="service-auth"',
   '</.well-known/mcp/server-card.json>; rel="mcp-server-card"',
 ]
