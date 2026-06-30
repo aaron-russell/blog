@@ -1,3 +1,18 @@
+type HomeConfig = {
+  hero: {
+    eyebrow: string
+    intro: string
+    title: string
+  }
+  workbench: Array<{
+    description: string
+    href: string
+    title: string
+  }>
+  exploring: string[]
+  stack: string[]
+}
+
 export const siteMetadata = {
   description:
     'Aaron Russell is a UK-based software developer building practical web apps, AI-assisted workflows, and indie products.',
@@ -8,7 +23,7 @@ export const siteMetadata = {
   title: 'Aaron Russell',
 }
 
-export const homeConfig = {
+export const homeConfig: HomeConfig = {
   hero: {
     eyebrow: 'Software developer · Leeds, UK',
     intro:
