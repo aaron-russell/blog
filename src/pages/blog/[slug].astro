@@ -144,7 +144,7 @@ const faqJsonLd = buildFAQPageJsonLd(
         <h2 id="key-findings" class={styles.metaLabel}>Key findings</h2>
       </div>
       <ul>
-        {summaryPoints.map((point) => <li>{point}</li>)}
+        {summaryPoints.map((point: string) => <li>{point}</li>)}
       </ul>
     </section>
     <div class={styles.article}>
