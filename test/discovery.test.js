@@ -43,20 +43,19 @@ test('auth metadata explicitly documents no-login public access', async () => {
   assert.match(authDoc, /There is no self-service OAuth client registration flow/i)
 })
 
-test('static headers include discovery links on the homepage', async () => {
+test('static headers apply the site-wide security policy', async () => {
   const headersFile = await readStatic('_headers')
 
-  assert.match(headersFile, /\/\.well-known\/api-catalog/)
-  assert.match(headersFile, /\/openapi\.json/)
-  assert.match(headersFile, /\/status\.json/)
-  assert.match(headersFile, /\/\.well-known\/mcp\/server-card\.json/)
+  assert.match(headersFile, /^\/\*/m)
+  assert.match(headersFile, /Strict-Transport-Security: max-age=31536000; includeSubDomains; preload/)
+  assert.match(headersFile, /X-Frame-Options: DENY/)
   assert.match(headersFile, /script-src[^;]*https:\/\/static\.cloudflareinsights\.com/)
+  assert.match(headersFile, /upgrade-insecure-requests/)
 })
 
 test('static headers allow the Cloudflare features enabled on the live site', async () => {
   const headersFile = await readStatic('_headers')
 
-  assert.match(headersFile, /script-src[^;\n]*https:\/\/ajax\.cloudflare\.com/)
   assert.match(headersFile, /script-src[^;\n]*https:\/\/static\.cloudflareinsights\.com/)
   assert.match(headersFile, /connect-src[^;\n]*https:\/\/cloudflareinsights\.com/)
 })
