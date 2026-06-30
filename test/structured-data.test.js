@@ -87,21 +87,31 @@ test('structured data helpers produce stable schema output', async () => {
       category: 'engineering',
     },
     'https://aaron-russell.co.uk/blog/testing-gatsby/',
-    'https://aaron-russell.co.uk/images/testing.png'
+    'https://aaron-russell.co.uk/images/testing.png',
+    {
+      speakable: structuredData.buildSpeakableSpecification([
+        'h1',
+        '[data-article-body] > p:first-of-type',
+      ]),
+    }
   )
 
   assert.equal(person['@type'], 'Person')
   assert.equal(person['@id'], 'https://aaron-russell.co.uk/#person')
   assert.equal(person.image, 'https://aaron-russell.co.uk/profile.png')
-  assert.equal(post['@type'], 'BlogPosting')
+  assert.deepEqual(post['@type'], ['Article', 'BlogPosting'])
   assert.equal(post.image, 'https://aaron-russell.co.uk/images/testing.png')
   assert.equal(post.author['@id'], 'https://aaron-russell.co.uk/#person')
   assert.equal(post.author.url, 'https://aaron-russell.co.uk/about/')
-  assert.equal(post.publisher['@id'], 'https://aaron-russell.co.uk/#person')
+  assert.equal(post.publisher['@id'], 'https://aaron-russell.co.uk/#organization')
   assert.equal(
     post.mainEntityOfPage,
     'https://aaron-russell.co.uk/blog/testing-gatsby/'
   )
+  assert.deepEqual(post.speakable.cssSelector, [
+    'h1',
+    '[data-article-body] > p:first-of-type',
+  ])
 })
 
 test('structured data helpers build profile and breadcrumb schema', async () => {
@@ -146,7 +156,39 @@ test('structured data helpers build blog schema', async () => {
 
   assert.equal(blog['@type'], 'Blog')
   assert.equal(blog.author['@id'], 'https://aaron-russell.co.uk/#person')
-  assert.equal(blog.publisher.url, 'https://aaron-russell.co.uk/about/')
+  assert.equal(blog.publisher['@id'], 'https://aaron-russell.co.uk/#organization')
+  assert.equal(blog.publisher.url, 'https://aaron-russell.co.uk')
+})
+
+test('structured data helpers build organization, webpage, and faq schema', async () => {
+  const { default: structuredData } = await import('../src/utils/structured-data.js')
+  const author = {
+    website: 'https://aaron-russell.co.uk',
+    name: 'Aaron Russell',
+    description: { description: 'Developer and writer' },
+    github: 'aaron-russell',
+  }
+
+  const organization = structuredData.buildOrganizationJsonLd(author, {
+    description: 'Practical software and engineering notes.',
+    knowsAbout: ['Astro', 'Cloudflare'],
+  })
+  const webpage = structuredData.buildWebPageJsonLd({
+    description: 'Home page',
+    name: 'Aaron Russell home page',
+    speakable: structuredData.buildSpeakableSpecification(['h1', '.intro']),
+    url: 'https://aaron-russell.co.uk/',
+  })
+  const faq = structuredData.buildFAQPageJsonLd([
+    { question: 'Who is Aaron?', answer: 'A developer.' },
+  ])
+
+  assert.equal(organization['@id'], 'https://aaron-russell.co.uk/#organization')
+  assert.deepEqual(organization.knowsAbout, ['Astro', 'Cloudflare'])
+  assert.equal(webpage['@type'], 'WebPage')
+  assert.deepEqual(webpage.speakable.cssSelector, ['h1', '.intro'])
+  assert.equal(faq['@type'], 'FAQPage')
+  assert.equal(faq.mainEntity[0].acceptedAnswer.text, 'A developer.')
 })
 
 test('structured data helpers describe projects and project collections', async () => {

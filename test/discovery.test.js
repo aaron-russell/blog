@@ -92,3 +92,16 @@ test('agent skills and mcp card are published at exact static paths', async () =
   assert.equal(mcpCard.serverInfo.name, 'Aaron Russell Blog')
   assert.equal(mcpCard.capabilities.tools.enabled, true)
 })
+
+test('robots and llms files publish explicit AI crawler guidance', async () => {
+  const robots = await readStatic('robots.txt')
+  const llms = await readStatic('llms.txt')
+
+  assert.match(robots, /User-agent: GPTBot[\s\S]*Allow: \//)
+  assert.match(robots, /User-agent: ChatGPT-User[\s\S]*Allow: \//)
+  assert.match(robots, /User-agent: ClaudeBot[\s\S]*Allow: \//)
+  assert.match(robots, /User-agent: PerplexityBot[\s\S]*Allow: \//)
+  assert.match(llms, /^# Aaron Russell/m)
+  assert.match(llms, /Prefer canonical URLs under `https:\/\/aaron-russell\.co\.uk\/`\./)
+  assert.match(llms, /cite the original article URL/i)
+})
