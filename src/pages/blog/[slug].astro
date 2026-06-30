@@ -107,7 +107,7 @@ const faqJsonLd = buildFAQPageJsonLd(
         <li aria-current="page">{post.title}</li>
       </ol>
     </nav>
-    <div class={`${styles.metaPanel} surface`}>
+    <div class={`${styles.metaPanel} ${styles.metaPanelLead} surface`}>
       <div class={styles.metaGroup}>
         <span class={styles.metaLabel}>Written by</span>
         <span>{post.author?.name}</span>
@@ -139,7 +139,7 @@ const faqJsonLd = buildFAQPageJsonLd(
         <a href={relatedProject.href}>Explore the project →</a>
       </aside>
     ) : null}
-    <section class={`${styles.metaPanel} surface`} aria-labelledby="key-findings">
+    <section class={`${styles.metaPanel} ${styles.summaryPanel} surface`} aria-labelledby="key-findings">
       <div class={styles.metaGroup}>
         <h2 id="key-findings" class={styles.metaLabel}>Key findings</h2>
       </div>

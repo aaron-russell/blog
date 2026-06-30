@@ -62,14 +62,26 @@
   grid-template-columns: minmax(0, 1fr);
   margin: 0 auto;
   max-width: var(--size-max-width);
+  width: min(100%, var(--size-max-width));
   padding: clamp(1.2rem, 2vw, 1.8rem);
   position: relative;
   top: 0;
 }
 
+.summaryPanel {
+  margin-top: var(--space-xl);
+}
+
 .metaGroup {
   display: grid;
   gap: 0.25rem;
+}
+
+.metaGroup > :is(span:not(.metaLabel), time) {
+  font-size: clamp(1.02rem, 1.05vw, 1.18rem);
+  font-weight: var(--semibold);
+  letter-spacing: -0.01em;
+  line-height: 1.35;
 }
 
 .metaLabel {
@@ -84,17 +96,24 @@
 }
 
 .projectLink {
-  align-items: center;
+  align-items: start;
   display: grid;
   gap: var(--space-lg);
   margin: var(--space-xl) auto 0;
-  max-width: calc(var(--size-max-width) - (var(--size-gutter) * 2));
-  padding: var(--space-xl);
+  max-width: var(--size-max-width);
+  width: min(100%, var(--size-max-width));
+  padding: clamp(1.2rem, 2vw, 1.8rem);
 }
 
 .projectLink div { display: grid; gap: .3rem; }
 .projectLink p { color: var(--text-muted); margin: 0; }
-.projectLink a { font-weight: var(--bold); }
+.projectLink a { font-weight: var(--bold); justify-self: start; }
+
+.summaryPanel ul {
+  margin: 0;
+  max-width: 78ch;
+  padding-left: 1.2rem;
+}
 
 .body {
   font-family: var(--font-serif);
@@ -388,9 +407,18 @@
     margin: 0 auto;
   }
 
-  .metaPanel {
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    top: -1rem;
+  .metaPanelLead {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .metaTags {
+    border-top: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
+    grid-column: 1 / -1;
+    padding-top: var(--space-md);
+  }
+
+  .summaryPanel {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .article {
@@ -401,7 +429,26 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .projectLink { grid-template-columns: minmax(180px, .5fr) minmax(0, 1fr) auto; }
+  .projectLink {
+    align-items: center;
+    grid-template-columns: minmax(220px, 0.42fr) minmax(0, 1fr) auto;
+  }
+
+  .projectLink > div {
+    grid-column: 1;
+  }
+
+  .projectLink > p {
+    grid-column: 2;
+    margin: 0;
+  }
+
+  .projectLink > a {
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
+    white-space: nowrap;
+  }
 
   .nextOnly {
     grid-column: 2;
@@ -409,6 +456,15 @@
 }
 
 @media (min-width: 1024px) {
+  .breadcrumbs,
+  .metaPanel,
+  .projectLink {
+    margin-left: auto;
+    margin-right: var(--size-gutter);
+    max-width: none;
+    width: calc(100% - var(--size-gutter) * 2);
+  }
+
   .article {
     gap: var(--space-3xl);
     grid-template-columns: minmax(220px, 17rem) minmax(0, 1fr);
