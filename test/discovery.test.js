@@ -63,10 +63,14 @@ test('static headers allow the Cloudflare features enabled on the live site', as
 test('astro-owned scripts opt out of Rocket Loader rewrites', async () => {
   const analytics = await readFile(path.join(__dirname, '..', 'src', 'components', 'Analytics.astro'), 'utf8')
   const baseLayout = await readFile(path.join(__dirname, '..', 'src', 'layouts', 'BaseLayout.astro'), 'utf8')
+  const seoHead = await readFile(path.join(__dirname, '..', 'src', 'components', 'SeoHead.astro'), 'utf8')
 
   assert.match(baseLayout, /<script is:inline data-cfasync="false">/)
   assert.match(analytics, /<script>/)
   assert.match(baseLayout, /<script>\s*\/\/ Initialize WebMCP/)
+  assert.match(baseLayout, /if \('modelContext' in navigator\)/)
+  assert.match(seoHead, /rel="preload"/)
+  assert.match(seoHead, /href="\/fonts\/Inter-roman\.var\.woff2\?v=3\.19"/)
 })
 
 test('openapi and status documents back the API catalog links', async () => {
