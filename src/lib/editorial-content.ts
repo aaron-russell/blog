@@ -122,6 +122,17 @@ export const overrides: Record<string, EditorialOverride> = {
     tags: ['Angular', 'React', 'Vue', 'Frontend architecture'],
     title: 'Angular vs React vs Vue in 2026: A Senior Developer’s Practical View',
   }),
+  'building-pit-crew-creating-a-fantasy-motorsport-prediction-game-from-scratch': createOverride({
+    contentGroup: 'Current guides',
+    descriptionPlainText:
+      'A recent build story about creating Pit Crew, a fantasy motorsport prediction game, and the product and engineering choices behind the first version.',
+    displayDateLabel: 'Reviewed',
+    noticeHtml:
+      '<p><strong>Recent article:</strong> This is a current build story about Pit Crew and does not need an archive or historical warning.</p>',
+    reviewedDate: '2026-07-01',
+    status: 'current',
+    tags: ['Pit Crew', 'Product building', 'Angular', 'Firebase'],
+  }),
   'firebase-vs-supabase-vs-aws-amplify-vs-appwrite': createOverride({
     bodyHtml: readBody('firebase-vs-supabase-vs-aws-amplify-vs-appwrite'),
     category: 'Architecture',

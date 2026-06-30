@@ -101,6 +101,18 @@ const faqJsonLd = buildFAQPageJsonLd(
     title={post.title}
     contentHtml={post.descriptionHtml}
   />
+  <ArticleFreshnessNotice
+    contentHtml={post.editorialNoticeHtml}
+    tone={
+      post.editorialStatus === 'archived'
+        ? 'archived'
+        : post.editorialStatus === 'historical'
+          ? 'historical'
+          : post.editorialStatus === 'current'
+            ? 'current'
+            : 'review'
+    }
+  />
   <div class={styles.container}>
     <nav aria-label="Breadcrumb" class={styles.breadcrumbs}>
       <ol class={styles.breadcrumbList}>
@@ -134,18 +146,6 @@ const faqJsonLd = buildFAQPageJsonLd(
         <Tags linkToFilter tags={post.tags} />
       </div>
     </div>
-    <ArticleFreshnessNotice
-      contentHtml={post.editorialNoticeHtml}
-      tone={
-        post.editorialStatus === 'archived'
-          ? 'archived'
-          : post.editorialStatus === 'historical'
-            ? 'historical'
-            : post.editorialStatus === 'current'
-              ? 'current'
-              : 'review'
-      }
-    />
     {relatedProject ? (
       <aside class={`${styles.projectLink} surface`}>
         <div><span class={styles.metaLabel}>Related project</span><strong>{relatedProject.name}</strong></div>

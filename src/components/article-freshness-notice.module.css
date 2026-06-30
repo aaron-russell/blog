@@ -2,7 +2,7 @@
   border: 1px solid color-mix(in srgb, var(--border) 70%, var(--border-accent));
   border-radius: var(--radius-lg);
   color: var(--text-muted);
-  margin: var(--space-xl) auto 0;
+  margin: calc(var(--space-xl) * -0.35) auto var(--space-xl);
   max-width: var(--size-max-width);
   padding: 1rem 1.1rem;
   width: min(100%, var(--size-max-width));
