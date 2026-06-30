@@ -4,6 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro'
 import Hero from '../../components/Hero.astro'
 import ArticlePreview from '../../components/ArticlePreview.astro'
 import Tags from '../../components/Tags.astro'
+import { getAiSummaryPoints } from '../../lib/ai-summaries'
 import { getAllBlogPosts, getAuthor } from '../../lib/contentful'
 import {
   annotateArticleHtml,
@@ -64,7 +65,9 @@ const breadcrumbJsonLd = buildBreadcrumbListJsonLd(
   author.website
 )
 const relatedProject = projects.find((project) => findPostByTerms([post], project.relatedPostTerms))
-const summaryPoints = buildArticleSummaryPoints({ headings, post, relatedProject, timeToRead })
+const summaryPoints =
+  getAiSummaryPoints(post) ||
+  buildArticleSummaryPoints({ headings, post, relatedProject, timeToRead })
 const faqJsonLd = buildFAQPageJsonLd(
   buildArticleFaqs({ headings, post, relatedProject, timeToRead })
 )
