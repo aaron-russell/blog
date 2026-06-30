@@ -1,0 +1,30 @@
+.notice {
+  border: 1px solid color-mix(in srgb, var(--border) 70%, var(--border-accent));
+  border-radius: var(--radius-lg);
+  color: var(--text-muted);
+  margin: var(--space-xl) auto 0;
+  max-width: var(--size-max-width);
+  padding: 1rem 1.1rem;
+  width: min(100%, var(--size-max-width));
+}
+
+.notice :global(p) {
+  margin: 0;
+}
+
+.notice :global(strong) {
+  color: var(--text-color);
+}
+
+.current {
+  background: linear-gradient(135deg, rgba(40, 160, 112, 0.12), rgba(255, 255, 255, 0.03));
+}
+
+.review {
+  background: linear-gradient(135deg, rgba(255, 122, 24, 0.12), rgba(255, 255, 255, 0.03));
+}
+
+.historical,
+.archived {
+  background: linear-gradient(135deg, rgba(122, 134, 160, 0.14), rgba(255, 255, 255, 0.03));
+}

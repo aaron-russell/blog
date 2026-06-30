@@ -1,0 +1,49 @@
+<p>Ionic and hybrid apps have changed a lot since the Cordova-first days. The reason I still reach for Capacitor in 2026 is not nostalgia. It is that the model feels more honest about what a modern mobile app actually is: a web app with real native projects attached to it, not a magic wrapper that hides the platform from you.</p>
+
+<h2>Why Cordova feels dated now</h2>
+<p>Cordova was important, but it belongs to an earlier era of hybrid development. The promise was “write once, wrap it, and keep thinking mostly like a web developer.” The problem is that iOS and Android stores, permissions, native SDK expectations, and plugin maintenance have all become more demanding.</p>
+<p>That is where Cordova starts to feel brittle. It can still work, but it often feels like you are negotiating with old abstractions instead of building with the platforms as they exist today.</p>
+
+<h2>Why Capacitor still works for me</h2>
+<h3>1. The native project model is better</h3>
+<p>Capacitor embraces the fact that you have a real iOS project and a real Android project. That is a good thing. When app-store rules change, native permissions evolve, or a plugin needs native configuration, you are not fighting a pretend abstraction layer.</p>
+
+<h3>2. Ionic integration is still strong</h3>
+<p>If you are using Ionic, Capacitor is the obvious fit. The tooling, docs, and workflow line up properly. You can build a polished mobile UI with web skills and still keep a realistic handle on native concerns.</p>
+
+<h3>3. Angular integration is straightforward</h3>
+<p>I spend a lot of time around Angular, so this matters to me. Angular plus Ionic plus Capacitor is still a productive stack when you want a browser-first codebase that can also ship to the stores. It is not the right answer for every app, but it remains a good answer for the right ones.</p>
+
+<h3>4. The plugin story is more maintainable</h3>
+<p>No plugin ecosystem is perfect, but Capacitor’s model feels cleaner. When you need camera access, push notifications, deep links, storage, or other device capabilities, you are working with a model that feels current rather than preserved from an earlier mobile-web compromise.</p>
+
+<h3>5. It fits the kinds of apps I would actually build this way</h3>
+<p>Internal tools, event apps, field apps, account dashboards, membership products, and content-heavy products can all work well with Capacitor. If most of the product is still UI, forms, data sync, and moderate device integration, hybrid remains a practical choice.</p>
+
+<h2>Migration gotchas from Cordova</h2>
+<ul>
+  <li>Do not assume every Cordova plugin has a clean Capacitor replacement.</li>
+  <li>Re-check permissions and platform configuration.</li>
+  <li>Treat the native projects as real source code, not generated debris.</li>
+  <li>Test the app-store build process early, not at the end.</li>
+</ul>
+
+<h2>Store and platform realities</h2>
+<p>This is where teams get caught out. The real work is often not “can the UI render in a web view?” It is background behaviour, notifications, permissions, deep linking, authentication flows, performance under load, and app-store review expectations.</p>
+<p>Capacitor does not remove those realities, but it makes them easier to deal with honestly.</p>
+
+<h2>When Capacitor is a good choice</h2>
+<p>I would choose it when:</p>
+<ul>
+  <li>the team already has strong web skills</li>
+  <li>the app is form-heavy, dashboard-heavy, or content-heavy</li>
+  <li>the product benefits from a shared web/mobile codebase</li>
+  <li>native APIs are needed, but not at the level of a deeply custom mobile product</li>
+</ul>
+
+<h2>When I would choose something else</h2>
+<p>If the product is animation-heavy, deeply device-native, or highly performance-sensitive in ways that push against the web view model, I would look harder at React Native or Flutter. If the app’s identity depends on a very native interaction model, hybrid may be the wrong compromise.</p>
+
+<h2>My view in 2026</h2>
+<p>I still prefer Capacitor to Cordova because it feels like it was designed for the mobile ecosystem we actually have now, not the one we had years ago. It gives web teams a realistic path into app-store delivery without pretending native details no longer matter.</p>
+<p>If that trade-off matches the app, it is still a solid choice.</p>

@@ -1,0 +1,100 @@
+<p>Most framework comparisons are written as if the goal is to avoid offending anyone. That is not very useful. Angular, React, and Vue are all capable. The interesting part is what kind of project, team, and maintenance shape each one tends to suit.</p>
+<p>Also, they are not interchangeable categories. Angular is a full framework. React is a UI library with a large ecosystem around it. Vue sits somewhere in the middle with a cohesive core and a lighter adoption curve.</p>
+
+<h2>Quick comparison</h2>
+<ul>
+  <li><strong>Angular:</strong> strongest fit for large apps, explicit architecture, and teams needing consistency. Main caution: more up-front framework buy-in.</li>
+  <li><strong>React:</strong> strongest fit for flexible product teams and ecosystem-driven app building. Main caution: you need to choose and maintain more of the stack yourself.</li>
+  <li><strong>Vue:</strong> strongest fit for small to mid-sized teams wanting a pleasant framework experience. Main caution: less ecosystem gravity than React and fewer enterprise defaults than Angular.</li>
+</ul>
+
+<h2>Angular</h2>
+<p>I still think Angular is underrated by people who only experience it through stale opinions. Modern Angular is not the same framework many people remember from years ago. Standalone components, signals, new template control flow, and the wider shift away from mandatory NgModule-heavy patterns have made it far more pleasant.</p>
+<p>What Angular still does best is team-scale structure. If you want conventions, dependency injection, strong tooling, and a framework that tries hard to keep a large codebase coherent, Angular remains a serious option.</p>
+
+<h3>Strengths</h3>
+<ul>
+  <li>Clear architecture for larger teams</li>
+  <li>Strong TypeScript story</li>
+  <li>Integrated tooling and testing expectations</li>
+  <li>Good fit for complex internal apps and long-lived products</li>
+</ul>
+
+<h3>Weaknesses</h3>
+<ul>
+  <li>More framework to learn up front</li>
+  <li>Not the lightest choice for content-heavy or very small projects</li>
+  <li>You need to like explicit structure rather than resist it</li>
+</ul>
+
+<h2>React</h2>
+<p>React is still the most ecosystem-heavy option. That is both why people love it and why React comparisons go wrong. React itself is not the whole application architecture. You are usually really choosing React plus a router, plus state management, plus data-fetching patterns, plus a framework such as Next.js or Remix-style tooling.</p>
+<p>That flexibility is valuable when a product team wants freedom. It is less valuable when every team ends up building its own local religion around state, routing, forms, and server/client boundaries.</p>
+
+<h3>Strengths</h3>
+<ul>
+  <li>Huge ecosystem and hiring pool</li>
+  <li>Flexible enough for many product shapes</li>
+  <li>Excellent fit with meta-frameworks like Next.js</li>
+</ul>
+
+<h3>Weaknesses</h3>
+<ul>
+  <li>Architecture drift is common</li>
+  <li>“React knowledge” does not always mean consistent app knowledge</li>
+  <li>You often need more team discipline than the framework itself provides</li>
+</ul>
+
+<h2>Vue</h2>
+<p>Vue is still the easiest one to like. It is approachable, clean, and productive without feeling flimsy. For many teams, that is enough reason to choose it. It also has a more settled official story now than some older posts reflect, including Pinia as the recommended state management path for modern Vue apps rather than defaulting to Vuex.</p>
+
+<h3>Strengths</h3>
+<ul>
+  <li>Gentle learning curve</li>
+  <li>Nice developer experience</li>
+  <li>Good balance between structure and flexibility</li>
+  <li>Works well with Nuxt when you want a fuller framework story</li>
+</ul>
+
+<h3>Weaknesses</h3>
+<ul>
+  <li>Smaller ecosystem gravity than React</li>
+  <li>Fewer “this is the standard at my company” defaults than Angular</li>
+  <li>Can be overlooked for teams that optimise too much around hiring volume</li>
+</ul>
+
+<h2>SSR and meta-framework context</h2>
+<p>The framework decision is often really a platform decision now.</p>
+<ul>
+  <li>React usually means considering Next.js or another React framework.</li>
+  <li>Vue often means considering Nuxt.</li>
+  <li>Angular has its own SSR story and is improving, but it is less central to the public conversation.</li>
+  <li>For content-heavy sites, Astro is often a better answer than any of the three if most of the site does not need a client app runtime.</li>
+</ul>
+
+<h2>What I would choose for different scenarios</h2>
+<h3>Enterprise app</h3>
+<p>Angular.</p>
+
+<h3>Small product</h3>
+<p>React or Vue, depending on team familiarity and how much structure you want.</p>
+
+<h3>Content-heavy site</h3>
+<p>Astro first. If one of the three is mandatory, probably Vue or React with the lightest reasonable setup.</p>
+
+<h3>Mobile or hybrid app</h3>
+<p>Angular still pairs well with Ionic and Capacitor for teams already in that ecosystem. See <a href="/blog/5-reasons-i-have-changed-to-capacitor/">my Capacitor article</a>.</p>
+
+<h3>Solo indie project</h3>
+<p>Vue or React. I would optimise for momentum and tolerance, not ideology.</p>
+
+<h3>Team with mixed experience</h3>
+<p>Angular if you need stronger guardrails. Vue if you want a gentler ramp. React only if the team is prepared to define its own conventions clearly.</p>
+
+<h2>Hiring, maintainability, testing, and performance</h2>
+<p>React wins on sheer hiring volume. Angular often wins on consistency once a team is inside the codebase. Vue is frequently the easiest for people to enjoy working with.</p>
+<p>Testing quality depends more on team discipline than framework choice, but Angular tends to encourage clearer structure. Performance depends more on architecture, rendering strategy, and JavaScript weight than logo choice. A badly structured React app can be slower than a well-designed Angular app, and vice versa.</p>
+
+<h2>My recommendation</h2>
+<p>If I were building a large, long-lived business application with multiple developers, I would still take Angular seriously and often choose it. If I wanted the broadest product ecosystem and did not mind composing more of the stack, I would choose React. If I wanted the most pleasant balance of clarity and flexibility, I would pick Vue.</p>
+<p>The best choice is not the one with the loudest online fan base. It is the one your team can keep healthy a year from now.</p>

@@ -114,7 +114,11 @@ export const buildArticleSummaryPoints = ({
           .join(', ')}.`
       : undefined,
     post.tags?.length ? `Key topics: ${post.tags.slice(0, 4).join(', ')}.` : undefined,
-    `Published ${post.publishDate}${post.updatedDate ? ` and updated ${post.updatedDate}` : ''}.`,
+    `Published ${post.publishDate}${
+      post.displayDate && post.displayDateLabel
+        ? ` and ${post.displayDateLabel.toLowerCase()} ${post.displayDate}`
+        : ''
+    }.`,
     relatedProject ? `Connected project: ${relatedProject.name}.` : `${Math.max(1, Math.round(timeToRead))} minute read.`,
   ]
 
@@ -151,9 +155,9 @@ export const buildArticleFaqs = ({
         : `The article covers the main implementation details, trade-offs, and practical notes from the work.`,
     },
     {
-      question: 'When was this article published or updated?',
-      answer: post.updatedDate
-        ? `It was published on ${post.publishDate} and updated on ${post.updatedDate}.`
+      question: 'When was this article published or reviewed?',
+      answer: post.displayDate && post.displayDateLabel
+        ? `It was published on ${post.publishDate} and ${post.displayDateLabel.toLowerCase()} on ${post.displayDate}.`
         : `It was published on ${post.publishDate}.`,
     },
     {

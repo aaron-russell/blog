@@ -1,0 +1,78 @@
+<p>The most common Firestore security mistake is assuming the frontend is part of the security boundary. It is not. Angular guards, hidden buttons, and client-side role checks can improve the user experience, but they do not protect your data. Real protection lives in Firebase Auth, Firestore Security Rules, App Check, server-side validation, and tests that prove the rules behave the way you think they do.</p>
+<p>If I were reviewing an Angular and Firestore app in 2026, this is the order I would work in.</p>
+
+<h2>Start with the real security boundary</h2>
+<p>Anything running in the browser belongs to the user. They can inspect it, bypass it, or replay requests against your backend. That means route guards, disabled UI controls, or “only show this button to admins” logic are not security measures on their own.</p>
+<p>They are useful for navigation and product flow. They are not authorisation.</p>
+
+<h2>Use Firebase Auth as the identity layer</h2>
+<p>You need a clear authentication model first. Know who the user is, what providers you support, how sessions are managed, and whether admin or privileged roles are expressed through custom claims or through data your rules can safely inspect.</p>
+<p>Auth should answer identity. Rules should answer access.</p>
+
+<h2>Write Firestore Security Rules like they matter</h2>
+<p>Security Rules are the real gatekeeper for Firestore reads and writes. This is where document ownership, tenant boundaries, roles, and field-level restrictions should live.</p>
+<p>At a minimum, I want to see:</p>
+<ul>
+  <li>no broad public read or write rules by accident</li>
+  <li>ownership checks for user-scoped documents</li>
+  <li>role or claim checks for elevated actions</li>
+  <li>validation around fields users are allowed to write</li>
+  <li>separation between “can create”, “can update”, and “can delete” where needed</li>
+</ul>
+
+<h2>Do not trust Angular guards for data protection</h2>
+<p>Angular guards are still useful. I use them for routing decisions, onboarding flow, feature access, and making sure users do not wander into pages that make no sense for their current state. But they are not a substitute for backend enforcement.</p>
+<p>If a user can still call Firestore directly and your rules allow it, the guard has not protected anything.</p>
+
+<h2>Use App Check, but understand what it does</h2>
+<p>App Check is worth enabling because it helps reduce abuse from unauthorised clients and scripted misuse. It is a good additional layer. It is not a replacement for Security Rules and it should not be treated as one.</p>
+<p>Think of it as making abuse harder, not making bad rules safe.</p>
+
+<h2>Be deliberate with custom claims and admin actions</h2>
+<p>If you need admin or staff permissions, custom claims are often the cleanest route. The main thing is to keep privilege assignment controlled and auditable. Avoid inventing role logic purely in frontend state or loosely trusted profile documents.</p>
+<p>For sensitive operations, I often prefer moving the action into a trusted backend path such as Cloud Functions or another server-side layer, especially when validation or side effects are non-trivial.</p>
+
+<h2>Validate writes, not just reads</h2>
+<p>A lot of teams think about “who can read this document?” and forget to ask “what exactly can they write?”</p>
+<p>Good rules often need to restrict:</p>
+<ul>
+  <li>which fields can be created</li>
+  <li>which fields can be changed later</li>
+  <li>whether ownership fields can be reassigned</li>
+  <li>whether status transitions are allowed</li>
+  <li>whether timestamps and server-controlled values are client-writable</li>
+</ul>
+
+<h2>Test rules with the emulator</h2>
+<p>If the rules are not tested, they are usually less trustworthy than the team thinks. The Firebase Emulator Suite is the right place to prove access behaviour for normal users, admins, anonymous users, cross-tenant access attempts, and malformed writes.</p>
+<p>I want tests for both the allowed path and the denied path. Security rules that are only “visually inspected” tend to drift into unsafe territory over time.</p>
+
+<h2>Use server-side validation when the workflow is sensitive</h2>
+<p>Not every operation should be a direct client write. If an action affects billing, moderation, access control, invitations, approvals, or anything with business-critical consequences, a trusted backend flow is often the safer design. Firestore is powerful, but not every business rule belongs in direct client mutations.</p>
+
+<h2>Common mistakes I still see</h2>
+<ul>
+  <li>assuming hidden UI equals protection</li>
+  <li>allowing authenticated users to read or write too broadly</li>
+  <li>storing roles in documents without protecting how those roles are changed</li>
+  <li>forgetting to validate updated fields, not just document existence</li>
+  <li>never testing rules against the emulator</li>
+  <li>treating App Check as the main defence</li>
+</ul>
+
+<h2>How this fits with platform choice</h2>
+<p>This is one of the trade-offs that matters in the broader Firebase conversation. Firebase is still excellent for shipping quickly, but its security model rewards teams that take the rules layer seriously. If your team wants a more relational backend with conventional server boundaries, that is one reason a platform like Supabase may feel more natural. I cover that in <a href="/blog/firebase-vs-supabase-vs-aws-amplify-vs-appwrite/">my BaaS comparison</a>.</p>
+
+<h2>What I would do on a real project</h2>
+<ul>
+  <li>Define auth and user roles clearly.</li>
+  <li>Model document ownership and tenant boundaries explicitly.</li>
+  <li>Write Firestore Security Rules first for sensitive collections.</li>
+  <li>Use Angular guards for UX, not trust.</li>
+  <li>Enable App Check.</li>
+  <li>Move high-risk mutations behind server-side logic.</li>
+  <li>Test the rules in the emulator and keep those tests in CI.</li>
+</ul>
+
+<h2>Bottom line</h2>
+<p>Securing an Angular app that uses Firestore is mostly about respecting where the trust boundary actually is. The browser is not trusted. The rules layer is. Once a team internalises that, the architecture gets much safer very quickly.</p>

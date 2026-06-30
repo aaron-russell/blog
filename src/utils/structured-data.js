@@ -220,7 +220,7 @@ export const buildBlogPostingJsonLd = (post, locationHref, imageUrl, options = {
   image: imageUrl || post.heroImage?.resize?.src,
   url: locationHref,
   headline: post.title,
-  dateModified: post.rawUpdatedDate || post.rawDate,
+  dateModified: post.rawDisplayDate || post.rawDate,
   datePublished: post.rawDate,
   inLanguage: 'en-GB',
   isFamilyFriendly: true,

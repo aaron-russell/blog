@@ -1,0 +1,52 @@
+<p><strong>This URL originally held a list of Gulp plugins from an earlier frontend era.</strong> I’m keeping the URL because it still gets impressions, but the useful question in 2026 is not “which Gulp plugins should I install?” It is “does Gulp still make sense at all?”</p>
+
+<h2>The short answer</h2>
+<p>Sometimes, yes. Usually, no.</p>
+<p>Modern frontend tooling has absorbed a lot of what Gulp used to do. If you are building a new site with Astro, Vite, Next.js, Nuxt, or even a well-kept set of npm scripts, you probably do not need Gulp as the centre of your workflow.</p>
+
+<h2>Why Gulp mattered</h2>
+<p>Gulp was useful because it made repetitive build work feel scriptable and understandable. Compile Sass, minify CSS, optimise images, fingerprint assets, watch files, reload the browser, move outputs around. At the time, that was a huge quality-of-life improvement.</p>
+<p>The problem is that most of those jobs are now built into the tools people already use.</p>
+
+<h2>Where Gulp still makes sense</h2>
+<ul>
+  <li>legacy projects that already depend on it and are otherwise stable</li>
+  <li>very custom pipelines where a task-runner model is still clearer than framework plumbing</li>
+  <li>small internal projects that need a few scripted file tasks without adopting a bigger app framework</li>
+</ul>
+
+<h2>Where modern tooling is better</h2>
+<h3>Sass compilation</h3>
+<p>Handled comfortably by Vite, Astro, framework tooling, or a direct Sass CLI step.</p>
+
+<h3>Minification</h3>
+<p>Usually built into the bundler or framework.</p>
+
+<h3>Image optimisation</h3>
+<p>Often better handled by the site framework, CDN, or dedicated build step than by a Gulp pipeline trying to do everything itself.</p>
+
+<h3>Live reload and dev server</h3>
+<p>Built into modern dev servers by default.</p>
+
+<h3>Bundling</h3>
+<p>Vite, esbuild, Rollup, and framework-native pipelines have replaced most old Gulp bundling needs.</p>
+
+<h3>Cache busting</h3>
+<p>Hashed asset filenames are now standard behaviour in modern build tooling.</p>
+
+<h2>What I would use today instead</h2>
+<ul>
+  <li><strong>Astro</strong> for content-first sites</li>
+  <li><strong>Vite</strong> for modern frontend apps and lighter builds</li>
+  <li><strong>Next.js</strong> or another full framework when the product shape needs it</li>
+  <li><strong>npm scripts</strong> for simple automation where a framework would be overkill</li>
+</ul>
+
+<h2>Migration advice</h2>
+<p>If you have an old Gulp project, do not rewrite it all in one go just because Gulp is unfashionable. First identify what the pipeline actually does. You will usually find that some tasks can disappear, some can move to npm scripts, and some are better replaced by framework tooling when the app itself is modernised.</p>
+
+<h2>Historical note</h2>
+<p>The original plugin-list version of this article came from a time when frontend workflows were more manually assembled. That context still matters. Gulp was not a bad idea. It was the right answer to the shape of the ecosystem then.</p>
+
+<h2>Bottom line</h2>
+<p>People still use Gulp, but it is no longer the default modern answer for frontend build workflows. In 2026 I would only choose it deliberately for a narrow reason. For new projects, I would usually rather let the framework, bundler, or a few plain scripts handle the job.</p>

@@ -1,0 +1,102 @@
+<p>Most database performance advice gets weirdly mystical very quickly. In practice, the fastest route to a better database is usually less glamorous: measure first, find the actual slow path, and only then change schema, indexes, or query shape.</p>
+<p>This guide is the practical version. It is the checklist I would want a team to work through before anyone starts adding random indexes or calling the whole thing a scaling problem.</p>
+
+<h2>Start with measurement, not guesses</h2>
+<p>The first question is not “how do we optimise the database?” It is “what is actually slow?” That might be one expensive query, a badly chosen index, N+1 behaviour in the application layer, poor pagination, slow network round-trips, connection churn, or background work running on the same hot path.</p>
+<p>If your database supports slow query logging, turn it on. Then correlate slow queries with the actual user-facing action. You need the query text, frequency, timing, and context. A query that is slow once a day is a different problem from a query that is slightly slow on every request.</p>
+
+<h2>Use query plans properly</h2>
+<p>If you are on Postgres or MySQL, learn to read <code>EXPLAIN</code> and <code>EXPLAIN ANALYZE</code>. You do not need to become a database internals expert, but you do need to spot the difference between an index scan, a sequential scan, a bad join order, and an accidental sort over too much data.</p>
+<p>The habit I like is simple:</p>
+<ul>
+  <li>capture the slow query</li>
+  <li>run it with realistic parameters</li>
+  <li>inspect the plan before changing anything</li>
+  <li>make one change at a time</li>
+  <li>measure again</li>
+</ul>
+
+<h2>Indexing basics that still matter</h2>
+<p>Most performance work still comes back to indexing. The basics are boring because they work.</p>
+<ul>
+  <li>Index columns you filter on frequently.</li>
+  <li>Consider composite indexes when you filter and sort on the same fields together.</li>
+  <li>Check whether the query can use the index in the order you expect.</li>
+  <li>Do not keep adding indexes without checking write cost and overlap.</li>
+</ul>
+
+<h3>Composite indexes</h3>
+<p>Composite indexes are often the real fix. If you filter by <code>tenant_id</code> and <code>status</code>, then sort by <code>created_at</code>, a single-field index on each column might still be worse than one index designed for the full access pattern.</p>
+
+<h3>Over-indexing</h3>
+<p>Every index helps reads and taxes writes. Too many indexes make inserts, updates, and vacuuming heavier, and they can hide the fact that the real problem is a badly shaped query.</p>
+
+<h2>N+1 queries</h2>
+<p>N+1 problems are still one of the easiest ways to make a healthy database look broken. If your application loads a list of records and then fetches related data one row at a time, the issue is usually above the database rather than inside it.</p>
+<p>Batch related reads. Join where it makes sense. Preload relationship data intentionally. Profile the application layer, not just the database.</p>
+
+<h2>Pagination, filtering, and sorting</h2>
+<p>Offset pagination is fine until it is not. On large datasets, big offsets become expensive because the database still has to walk past rows you are skipping. Cursor-based or keyset pagination is often the better choice when you care about consistency and scale.</p>
+<p>Sorting is also easy to underestimate. If you sort on a field that is not supported by the right index, you may force a large in-memory or on-disk sort. That is especially painful when combined with filters that return more rows than the final page actually needs.</p>
+
+<h2>Avoid full table scans where they hurt</h2>
+<p>A full table scan is not automatically evil. It is a problem when it happens on a large, frequently hit table for a latency-sensitive request. Sometimes the answer is indexing. Sometimes it is reducing the result set earlier. Sometimes it is materialising a smaller reporting shape for a specific use case.</p>
+
+<h2>Caching and replicas</h2>
+<p>Cache after you understand the query. Do not use caching to avoid learning why something is slow.</p>
+<p>Useful cache targets include:</p>
+<ul>
+  <li>expensive read-mostly lookups</li>
+  <li>aggregated dashboard numbers</li>
+  <li>derived lists that do not need perfect immediacy</li>
+</ul>
+<p>Read replicas help when you have real read pressure, but they also add lag and operational complexity. They are not a substitute for poor schema or poor queries.</p>
+
+<h2>Connection pooling and background work</h2>
+<p>If the database is constantly paying the cost of opening new connections, pooling can make a visible difference. This shows up a lot in serverless or bursty environments where application instances churn faster than a traditional server setup.</p>
+<p>Also check whether the request path is doing work that should be offloaded: report generation, large exports, expensive recalculations, and fan-out updates often belong in background jobs or queues, not inside a user request.</p>
+
+<h2>Schema design and denormalisation</h2>
+<p>Normalisation is still a good default. Denormalisation is a targeted performance tool, not a religion. If a workload repeatedly needs a precomputed value, a summary table, or a flattened read model, that can be a sensible optimisation. Just make the write and sync rules explicit.</p>
+
+<h2>Database-specific notes</h2>
+<h3>Postgres</h3>
+<p>Great general-purpose default. Learn query plans, vacuum behaviour, composite indexes, and how to spot sort or join pain early.</p>
+
+<h3>MySQL</h3>
+<p>Still common, still capable. The same fundamentals apply: indexes, query plans, and making sure the application is not causing the pain upstream.</p>
+
+<h3>MongoDB</h3>
+<p>Document shape and index design matter a lot. Avoid pretending every reporting or relational question belongs in the same document pattern.</p>
+
+<h3>Firestore</h3>
+<p>Firestore performance is often really a query-shape and index-planning problem. Keep reads shallow, avoid over-fetching, design collections around access patterns, and remember that security rules are not a performance strategy. My <a href="/blog/firebase-vs-supabase-vs-aws-amplify-vs-appwrite/">BaaS comparison</a> and <a href="/blog/securing-angular-when-using-firestore/">Firestore security article</a> both connect back to this.</p>
+
+<h3>DynamoDB</h3>
+<p>DynamoDB rewards teams that model around access patterns up front. It punishes teams that assume they can discover those patterns later without redesign.</p>
+
+<h2>Common mistakes</h2>
+<ul>
+  <li>adding indexes without reading the query plan</li>
+  <li>optimising the database when the real issue is application-side N+1 behaviour</li>
+  <li>using offset pagination on very large datasets without questioning it</li>
+  <li>caching bad queries instead of fixing them</li>
+  <li>treating replicas or sharding as step one</li>
+  <li>ignoring the write cost of every “helpful” index</li>
+</ul>
+
+<h2>Practical checklist</h2>
+<ul>
+  <li>Identify the slow request, not just the slow database.</li>
+  <li>Enable slow query logging.</li>
+  <li>Inspect the execution plan.</li>
+  <li>Verify the right indexes exist for the real filter and sort pattern.</li>
+  <li>Look for N+1 queries in the application.</li>
+  <li>Review pagination strategy.</li>
+  <li>Move expensive non-request work into background jobs.</li>
+  <li>Add caching only where the data shape and freshness needs justify it.</li>
+  <li>Measure again after every change.</li>
+</ul>
+
+<h2>Bottom line</h2>
+<p>Database optimisation is rarely about one trick. It is usually about getting disciplined: measure, inspect, simplify, index intentionally, and only escalate to more complex infrastructure when the workload actually proves you need it.</p>

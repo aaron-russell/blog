@@ -1,0 +1,75 @@
+<p>Cloudflare is one of those platforms that looks almost suspiciously good when you first meet it. Cheap CDN, DNS, edge functions, WAF, static hosting, image tooling, storage, queues, and now email. For a personal site or small product, that stack can remove a lot of operational drag.</p>
+<p>It is also not magic. Some parts are brilliantly lightweight. Some parts still feel like platform primitives you need to shape carefully yourself. This is what I would actually use Cloudflare for in 2026, where it is strong, and where I would deliberately look elsewhere.</p>
+
+<h2>Quick summary</h2>
+<ul>
+  <li><strong>Pages:</strong> excellent for static sites, previews, and lightweight full-stack delivery. Watch out for trying to turn it into a heavy server platform.</li>
+  <li><strong>Workers and Pages Functions:</strong> strong for edge APIs, middleware, and small services. Watch out for runtime differences from traditional Node backends.</li>
+  <li><strong>KV:</strong> great for cached lookups and lightweight state. Watch out for eventual consistency.</li>
+  <li><strong>D1:</strong> useful for smaller relational workloads on the same platform. Watch out for pretending every production database problem is now a SQLite problem.</li>
+  <li><strong>R2:</strong> strong for object storage and generated assets. Watch out for the surrounding lifecycle, processing, and permission work.</li>
+  <li><strong>Queues:</strong> useful for background jobs and async processing. Watch out for retries, deduplication, and failure visibility.</li>
+  <li><strong>Turnstile:</strong> good low-friction bot protection. Watch out for treating it as your only abuse control.</li>
+  <li><strong>Email Routing and sending:</strong> practical for lightweight inbound and transactional workflows. Watch out for outbound verification and quota constraints.</li>
+</ul>
+
+<h2>Where Cloudflare is genuinely useful</h2>
+<p>For publishing sites, Cloudflare is easy to like. Pages is fast, previews are simple, and the platform wants you to keep things static until there is a good reason not to. That matches how I prefer to build content sites anyway. My own blog is a good example: static pages first, small server-side additions where they earn their keep, and edge delivery doing the boring part well.</p>
+<p>The same pattern works nicely for small app surfaces. Workers and Pages Functions are good when you want a small API, auth-adjacent middleware, webhooks, caching layers, form handling, or request-level logic without spinning up a full server estate.</p>
+
+<h2>Pages, Workers, and Pages Functions</h2>
+<p>Pages is still the easiest win. Cloudflare describes Pages as a way to create full-stack applications that are instantly deployed to the global network, and Pages Functions as server-side code for dynamic functionality without a dedicated server. That is exactly the sweet spot: static delivery with selective server-side logic, not a giant monolith hidden behind marketing language.</p>
+<p>Workers is the broader runtime. I like it for APIs, scheduled jobs, content transforms, proxy endpoints, and small product features where fast cold starts and edge placement actually matter. I like it less when a team expects a conventional long-running Node service with every familiar library and debugging pattern.</p>
+
+<h2>Storage and data products</h2>
+<h3>KV</h3>
+<p>KV is useful for cached lookups, feature flags, search manifests, rate-limit support data, and “read often, write carefully” state. I would not treat it as a transactional source of truth.</p>
+
+<h3>D1</h3>
+<p>D1 is appealing because it keeps simple relational work on the same platform. For small products, admin tools, and internal workflows, that can be enough. I would still be cautious about pretending every production app problem is now a SQLite-at-the-edge problem. If the write profile, relational complexity, or reporting needs are serious, I would still consider a more conventional Postgres setup.</p>
+
+<h3>R2</h3>
+<p>R2 is one of Cloudflare’s clearest wins. File storage without the usual egress anxiety is a strong offer, especially for user uploads, generated assets, backups, and media that needs to be served through the rest of the Cloudflare stack.</p>
+
+<h3>Queues</h3>
+<p>Queues make Cloudflare much more usable for “real app” jobs: email sends, indexing, image processing, retries, event fan-out, and anything you do not want directly on the request path. The caveat is architectural, not product-marketing: once you add background work, you need good retry behaviour, deduping, visibility, and failure handling.</p>
+
+<h2>Security and performance features</h2>
+<p>Cloudflare’s WAF, rate limiting, bot controls, and cache tooling are a big reason I keep using it. Even on small projects, there is value in having sane defaults around TLS, redirects, abuse mitigation, and caching without bolting together separate vendors.</p>
+<p>Turnstile is especially good for forms and public endpoints because it is less annoying than old-school CAPTCHAs. I use it when I want to raise the cost of spam without punishing legitimate users.</p>
+<p>On the performance side, cache rules, image optimisation, and the global edge are all useful, but only if the underlying site is already disciplined. Cloudflare will help a good site more than it will rescue a bloated one. If your JavaScript bundle is huge, your fonts are poorly loaded, and your layout shifts all over the place, you still need the work discussed in <a href="/blog/pagespeed-insights/">my PageSpeed Insights guide</a> and <a href="/blog/9-ways-to-improve-your-page-speed/">my page speed checklist</a>.</p>
+
+<h2>Email Routing and sending</h2>
+<p>Email Routing is the mature, easy part: route incoming mail to another address or into Workers logic. For a contact form, support inbox, or lightweight automation, that is very practical.</p>
+<p>Email Sending is more nuanced. Cloudflare now offers outbound transactional email, but it is still a product area where I would read the limits and verification rules before promising anything ambitious. In practice, it is a strong fit for app emails, confirmations, and notifications. I would not assume it replaces a specialised email platform for every high-volume or marketing-heavy workload.</p>
+
+<h2>Pricing and free-tier value</h2>
+<p>Cloudflare’s free tier is still unusually generous for personal sites and prototypes. That matters. A lot of developers do not need a platform that can theoretically scale to millions; they need a platform that makes a side project cheap enough to keep alive.</p>
+<p>The risk is the usual one: once you combine enough products, you can still end up with platform-specific assumptions everywhere. Cheap entry is great. Quiet lock-in is less great.</p>
+
+<h2>Local development and debugging trade-offs</h2>
+<p>This is one of the few places where I think Cloudflare enthusiasts are sometimes too polite. Local development is decent, but it is not the same as debugging a plain Node server and Postgres app on your machine. Durable local parity across bindings, queues, edge behaviour, and platform-specific limits still takes care.</p>
+<p>If your team is happiest with conventional backend tooling, cloud databases they already know, and familiar observability stacks, Cloudflare can feel “clever” faster than it feels calm.</p>
+
+<h2>Observability and lock-in</h2>
+<p>Cloudflare has improved here, but observability is still one of the main trade-offs I weigh. For a blog or indie app, the current tooling is usually enough. For a serious production system with multiple engineers, incident expectations, and deep debugging needs, I want to evaluate logging, tracing, and operational visibility early, not after launch.</p>
+<p>Lock-in is real too. Workers code, bindings, KV usage, D1 assumptions, queue wiring, and platform APIs all add up. That does not make Cloudflare a bad choice. It means you should treat it as a strategic choice, not a reversible convenience.</p>
+
+<h2>What I would recommend</h2>
+<h3>For a static blog</h3>
+<p>Yes. Strong recommendation. Pages, cache control, image delivery, redirects, and a small amount of server logic are an excellent fit. My <a href="/blog/from-wordpress-to-gatsby-contentful-and-cloudflare-pages/">site migration write-up</a> and <a href="/blog/wordpress-vs-contentful-vs-ghost-vs-medium/">CMS comparison</a> both connect back to this.</p>
+
+<h3>For a small SaaS or indie app</h3>
+<p>Often yes, especially if you want a fast public web surface, edge APIs, uploads, queues, and a low-ops footprint. I would choose it when simplicity matters more than cloud-provider neutrality.</p>
+
+<h3>For a serious production app</h3>
+<p>Maybe. I would absolutely consider Cloudflare, but I would make the call feature by feature. It can be a great edge and delivery layer even when your core data platform lives elsewhere.</p>
+
+<h3>For a team that wants AWS or GCP-style breadth</h3>
+<p>Probably not as the only platform. Cloudflare is best when you want focused primitives, fast delivery, and less infrastructure ceremony. If your team expects the full shape of AWS or GCP, they may spend more time adapting than benefiting.</p>
+
+<h2>When I would not choose Cloudflare</h2>
+<p>I would think twice if the project needs deep relational reporting, heavy internal-platform customisation, conventional backend assumptions, or enterprise-grade observability from day one. I would also think twice if the team does not want to learn Cloudflare’s runtime model and limits properly.</p>
+
+<h2>Bottom line</h2>
+<p>Cloudflare is one of the best platforms I know for static publishing, edge delivery, lightweight APIs, and low-friction public web projects. It is not automatically the best home for every application tier. Used deliberately, it can remove a lot of operational weight. Used uncritically, it can turn into a platform-shaped compromise you keep defending because the first deploy was easy.</p>

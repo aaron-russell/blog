@@ -1,0 +1,43 @@
+<p>If your site feels slow, do not start with obscure tuning. Most wins still come from a handful of practical decisions: smaller images, less JavaScript, fewer third parties, better caching, and a rendering model that does not make content pages work harder than they need to.</p>
+<p>If you want the metric definitions first, read <a href="/blog/pagespeed-insights/">What Does My PageSpeed Insights Score Mean in 2026?</a>. This article is the practical follow-on.</p>
+
+<h2>1. Fix your biggest images first</h2>
+<p>Hero images still break more pages than almost anything else. Serve the right size, compress them properly, and use modern formats like AVIF or WebP where they actually help. A giant JPEG shrunk in CSS is still a giant JPEG.</p>
+
+<h2>2. Use responsive images</h2>
+<p>Do not send desktop-sized assets to a mobile viewport. Use <code>srcset</code>, <code>sizes</code>, and explicit dimensions so the browser can choose sensibly and avoid layout shifts.</p>
+
+<h2>3. Lazy-load the things that are genuinely below the fold</h2>
+<p>Images, embeds, and non-critical widgets should not compete with above-the-fold content. The caveat is important: do not lazy-load your LCP image or the main content you actually want users to see first.</p>
+
+<h2>4. Reduce JavaScript before you optimise JavaScript</h2>
+<p>The fastest script is the one you never send. Remove unnecessary client-side frameworks from content pages, cut dead packages, and question every interactive dependency. On many sites, static-first delivery does more for performance than clever bundler tricks.</p>
+
+<h2>5. Be ruthless about third-party scripts</h2>
+<p>Chat widgets, analytics, tag managers, A/B tools, ad scripts, and social embeds all add cost. If a third party does not clearly earn its place, remove it. If it does, defer it, lazy-load it, or isolate it so it hurts less.</p>
+
+<h2>6. Load fonts like you actually care about performance</h2>
+<p>Limit font families and weights, preload only what is critical, and avoid font setups that cause visible layout shift or long blank text. A nice type system is worth having. A font tax on every page is not.</p>
+
+<h2>7. Cache static assets aggressively</h2>
+<p>Immutable hashed assets should have long cache lifetimes. HTML can stay fresher. The point is to stop making repeat visits pay the full cost again. If you are on a CDN or platform like Cloudflare, use it properly.</p>
+
+<h2>8. Keep rendering simple</h2>
+<p>For blogs, docs, and marketing pages, static-first rendering is usually the right default. If the page can be HTML at build time, let it be HTML at build time. That is one reason I prefer lightweight publishing stacks over full client-heavy apps for content work.</p>
+
+<h2>9. Fix layout shifts and slow server starts</h2>
+<p>Reserve space for images and embeds. Keep banners from jumping into the page late. Watch TTFB if you are doing too much on the server. Even a visually simple site can feel poor if it moves around or waits too long before painting.</p>
+
+<h2>What I would do first</h2>
+<p>On most small sites I would check, in order:</p>
+<ul>
+  <li>hero image weight and dimensions</li>
+  <li>third-party scripts</li>
+  <li>JavaScript bundle size and hydration</li>
+  <li>font loading</li>
+  <li>cache headers</li>
+  <li>layout stability</li>
+</ul>
+
+<h2>Bottom line</h2>
+<p>Page speed work is rarely about nine secret tricks. It is usually about removing unnecessary work from the critical path and letting the browser do less. That is not glamorous, but it is the kind of optimisation that keeps paying off.</p>

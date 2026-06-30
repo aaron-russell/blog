@@ -7,6 +7,15 @@ import { createExcerpt } from '../lib/blog'
 import { isWithinLastSixMonths } from '../lib/date'
 
 const { linkTagsToFilter = true, posts = [] } = Astro.props
+const getBadge = (post: any) => {
+  if (post.editorialStatus === 'archived') return 'Archive'
+  if (post.editorialStatus === 'historical') return 'Historical'
+  if (post.editorialStatus === 'needs-review') return 'Needs review'
+  if (post.displayDateLabel === 'Updated' && post.rawDisplayDate) {
+    return `Reviewed ${new Date(post.rawDisplayDate).getUTCFullYear()}`
+  }
+  return isWithinLastSixMonths(post.rawDate) ? 'Fresh note' : undefined
+}
 ---
 
 {
@@ -17,8 +26,8 @@ const { linkTagsToFilter = true, posts = [] } = Astro.props
           <li class={`${styles.card} surface`}>
             <article class={styles.article}>
               {
-                isWithinLastSixMonths(post.rawDate) ? (
-                  <span class={styles.badge}>Fresh note</span>
+                getBadge(post) ? (
+                  <span class={styles.badge}>{getBadge(post)}</span>
                 ) : null
               }
               <ResponsiveImage
@@ -32,7 +41,7 @@ const { linkTagsToFilter = true, posts = [] } = Astro.props
                 widths={[320, 424, 640, 848]}
               />
               <div class={styles.heading}>
-                <p class={styles.kicker}>Latest writing</p>
+                <p class={styles.kicker}>{post.contentGroup || 'Latest writing'}</p>
                 <span class={styles.readMore}>Read article</span>
               </div>
               <h2 class={styles.title}>

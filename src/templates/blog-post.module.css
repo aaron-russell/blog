@@ -115,6 +115,33 @@
   padding-left: 1.2rem;
 }
 
+.body :global(.table-scroll) {
+  margin: 2rem 0;
+  overflow-x: auto;
+}
+
+.body :global(table) {
+  border-collapse: collapse;
+  min-width: 42rem;
+  width: 100%;
+}
+
+.body :global(th),
+.body :global(td) {
+  border: 1px solid var(--border);
+  padding: 0.8rem 0.9rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.body :global(th) {
+  background: color-mix(in srgb, var(--surface-strong) 88%, transparent);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
 .body {
   font-family: var(--font-serif);
   font-size: clamp(1.08rem, 1.4vw, 1.26rem);

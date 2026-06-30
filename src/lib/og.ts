@@ -302,10 +302,13 @@ export const buildPostOgImagePath = (slug: string) => `/og/blog/${slug}.png`
 export const buildStaticOgImagePath = (name: string) => `/og/${name}.png`
 export const buildOgImageUrl = (baseUrl: string, path: string) => absoluteUrl(baseUrl, path)
 
-export const createOgImageResponse = (input: OgImageInput) =>
-  new Response(renderOgImage(input), {
+export const createOgImageResponse = (input: OgImageInput) => {
+  const png = renderOgImage(input)
+
+  return new Response(new Uint8Array(png), {
     headers: {
       'Cache-Control': 'public, max-age=31536000, immutable',
       'Content-Type': OG_IMAGE_TYPE,
     },
   })
+}

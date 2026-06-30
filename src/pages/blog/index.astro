@@ -11,6 +11,7 @@ import styles from './index.module.css'
 const [author, posts] = await Promise.all([getAuthor(), getAllBlogPosts()])
 const topTags = getTopTags(posts, 8)
 const featuredTopics = getFeaturedTopics(posts)
+const contentGroups = ['Current guides', 'Build notes', 'Personal writing', 'Archive']
 const seoImage = absoluteUrl(author.website, '/og/blog.png')
 const blogJsonLd = buildBlogJsonLd({
   author,
@@ -57,6 +58,11 @@ const blogJsonLd = buildBlogJsonLd({
           <button class={styles.topicButton} data-active="true" data-topic-filter="" type="button">
             All topics
           </button>
+          {contentGroups.map((group) => (
+            <button class={styles.topicButton} data-group-filter={group} type="button">
+              {group}
+            </button>
+          ))}
           {topTags.map(({ tag }) => (
             <button class={styles.topicButton} data-topic-filter={tag} type="button">
               {tag}
@@ -95,12 +101,14 @@ const blogJsonLd = buildBlogJsonLd({
   <script is:inline>
     const searchInput = document.querySelector('[data-blog-search]')
     const filterButtons = Array.from(document.querySelectorAll('[data-topic-filter]'))
+    const groupButtons = Array.from(document.querySelectorAll('[data-group-filter]'))
     const cards = Array.from(document.querySelectorAll('[data-blog-results] li'))
     const resultsCount = document.querySelector('[data-results-count]')
     const emptyState = document.querySelector('[data-empty-state]')
     const params = new URLSearchParams(window.location.search)
 
     let activeTopic = params.get('topic') || ''
+    let activeGroup = params.get('group') || ''
 
     const getCardData = (card) => {
       const text = card.textContent?.toLowerCase() || ''
@@ -114,8 +122,9 @@ const blogJsonLd = buildBlogJsonLd({
       cards.forEach((card) => {
         const haystack = getCardData(card)
         const matchesTopic = !activeTopic || haystack.includes(activeTopic.toLowerCase())
+        const matchesGroup = !activeGroup || haystack.includes(activeGroup.toLowerCase())
         const matchesQuery = !query || haystack.includes(query)
-        const isVisible = matchesTopic && matchesQuery
+        const isVisible = matchesTopic && matchesGroup && matchesQuery
 
         card.style.display = isVisible ? '' : 'none'
         if (isVisible) {
@@ -128,10 +137,15 @@ const blogJsonLd = buildBlogJsonLd({
         button.setAttribute('data-active', isActive ? 'true' : 'false')
       })
 
+      groupButtons.forEach((button) => {
+        const isActive = (button.getAttribute('data-group-filter') || '') === activeGroup
+        button.setAttribute('data-active', isActive ? 'true' : 'false')
+      })
+
       if (resultsCount) {
         resultsCount.textContent = visibleCount === cards.length
           ? `Showing all ${cards.length} posts.`
-          : `Showing ${visibleCount} of ${cards.length} posts${activeTopic ? ` in ${activeTopic}` : ''}.`
+          : `Showing ${visibleCount} of ${cards.length} posts${activeGroup ? ` in ${activeGroup}` : ''}${activeTopic ? ` for ${activeTopic}` : ''}.`
       }
 
       if (emptyState instanceof HTMLElement) {
@@ -147,6 +161,20 @@ const blogJsonLd = buildBlogJsonLd({
           url.searchParams.set('topic', activeTopic)
         } else {
           url.searchParams.delete('topic')
+        }
+        history.replaceState({}, '', url)
+        applyFilters()
+      })
+    })
+
+    groupButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        activeGroup = button.getAttribute('data-group-filter') || ''
+        const url = new URL(window.location.href)
+        if (activeGroup) {
+          url.searchParams.set('group', activeGroup)
+        } else {
+          url.searchParams.delete('group')
         }
         history.replaceState({}, '', url)
         applyFilters()

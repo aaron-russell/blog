@@ -1,0 +1,16 @@
+---
+import styles from './article-freshness-notice.module.css'
+
+type Props = {
+  contentHtml?: string
+  tone?: 'current' | 'historical' | 'archived' | 'review'
+}
+
+const { contentHtml, tone = 'review' } = Astro.props as Props
+---
+
+{
+  contentHtml ? (
+    <aside class={`${styles.notice} ${styles[tone]}`} aria-label="Article status" set:html={contentHtml} />
+  ) : null
+}

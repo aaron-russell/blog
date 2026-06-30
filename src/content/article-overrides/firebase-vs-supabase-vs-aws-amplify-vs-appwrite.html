@@ -1,0 +1,112 @@
+<p>If you want the fastest route from idea to working product, these four platforms all look attractive. They package the tedious parts of app-building into a friendlier starting point: auth, data, storage, functions, hosting, and enough tooling to get a real product moving.</p>
+<p>The problem is that they are not really the same thing. Firebase is a deeply integrated Google platform with a strong mobile and web story. Supabase is a Postgres-first developer platform with a very different data model. Amplify is much more AWS-shaped, and Gen 2 is explicitly code-first and TypeScript-heavy. Appwrite now sits in the middle as a platform you can use via Appwrite Cloud or self-host when you want more control.</p>
+
+<h2>Quick comparison</h2>
+<ul>
+  <li><strong>Firebase:</strong> best for fast mobile and web products with realtime UX and broad app tooling. Main trade-off: meaningful lock-in.</li>
+  <li><strong>Supabase:</strong> best for teams that want Postgres first and less database abstraction. Main trade-off: you inherit more database responsibility.</li>
+  <li><strong>AWS Amplify:</strong> best for teams already comfortable with AWS or needing deeper AWS reach. Main trade-off: complexity shows up faster.</li>
+  <li><strong>Appwrite:</strong> best for teams wanting a friendlier BaaS with Cloud or self-hosting options. Main trade-off: smaller ecosystem and mindshare.</li>
+</ul>
+
+<h2>Firebase</h2>
+<p>Firebase is still one of the fastest ways to get a serious app moving. Auth is straightforward, Firestore is productive when your data shape matches it, storage and functions are easy to add, and the surrounding ecosystem is still strong. For mobile and browser-first products, it remains very hard to beat for momentum.</p>
+<p>The trade-off is lock-in. Firestore is not “just a database swap away” later. Your security rules, data access patterns, indexing habits, and client architecture all end up tied to how Firebase wants you to think. That is fine if the speed is worth it. It is a problem if you pretend it is temporary and design carelessly.</p>
+<p>I still like Firebase a lot for app teams that value delivery speed, realtime sync, auth, analytics, and an integrated platform. My <a href="/blog/securing-angular-when-using-firestore/">Firestore security article</a> exists because the platform is powerful enough that bad assumptions can survive for far too long.</p>
+
+<h3>Best for</h3>
+<p>MVPs, mobile apps, browser-first SaaS products, and teams that want to ship fast.</p>
+
+<h3>Watch-outs</h3>
+<p>Lock-in, cost surprises when usage grows in the wrong shape, and Firestore schema/query decisions that feel easy at the start but awkward later.</p>
+
+<h2>Supabase</h2>
+<p>Supabase is not just “open-source Firebase”. The important difference is that it starts from Postgres. That changes everything. You get a relational database, SQL, migrations, extensions, row-level security, and a data model that feels much more natural for many business applications.</p>
+<p>That also means Supabase is better when the data model matters more than raw prototyping speed. If you already think in tables, relations, constraints, and SQL queries, Supabase often feels more honest than a document database pretending not to be opinionated.</p>
+
+<h3>Best for</h3>
+<p>Small SaaS products, dashboards, internal tools, and teams that want Postgres from day one.</p>
+
+<h3>Watch-outs</h3>
+<p>You still need to care about schema design, indexing, query plans, and relational modelling. That is a strength, but it is not beginner magic.</p>
+
+<h2>AWS Amplify</h2>
+<p>Amplify is the one people often misunderstand because they remember an older version of the product. Amplify Gen 2 is much more code-first and TypeScript-focused than the old “console-driven scaffolding” mental model suggests. That is a real improvement.</p>
+<p>The catch is that Amplify still inherits AWS energy. If you already live in AWS, that can be a strength because you get a bridge into a much larger platform. If you do not, it can feel like a friendly wrapper around a world that gets complicated quickly.</p>
+
+<h3>Best for</h3>
+<p>Teams already invested in AWS, or products that will need deeper AWS services soon.</p>
+
+<h3>Watch-outs</h3>
+<p>More cognitive load than Firebase or Supabase, and a smoother experience for TypeScript-heavy web teams than for people hoping for a no-thinking BaaS.</p>
+
+<h2>Appwrite</h2>
+<p>Appwrite is in a better place than some older comparison posts suggest. It is not only a self-hosted option anymore. You can build against Appwrite Cloud or run the same stack yourself, which makes it a genuinely interesting middle ground.</p>
+<p>I like Appwrite when a team wants a clearer sense of control without immediately dropping into raw cloud plumbing. It feels more approachable than rolling your own backend stack, but less all-in on a single vendor worldview than Firebase.</p>
+
+<h3>Best for</h3>
+<p>Teams that want optional self-hosting, a clean developer experience, and a platform that can live in managed or controlled environments.</p>
+
+<h3>Watch-outs</h3>
+<p>Smaller ecosystem, fewer battle-tested community answers, and less default momentum than Firebase in mobile-centric teams.</p>
+
+<h2>How I would choose</h2>
+<h3>Best for an MVP</h3>
+<p>Firebase, unless your app is obviously relational from day one.</p>
+
+<h3>Best for an indie app</h3>
+<p>Firebase if you care most about speed. Supabase if you care most about the data model. Appwrite if you want optional control without going fully DIY.</p>
+
+<h3>Best for a small SaaS</h3>
+<p>Supabase is usually my default here because Postgres fits a lot of SaaS work better than Firestore.</p>
+
+<h3>Best for a team already on AWS</h3>
+<p>AWS Amplify, because avoiding the rest of your estate rarely stays simple for long.</p>
+
+<h3>Best if you want Postgres</h3>
+<p>Supabase. That is its defining strength, not a side benefit.</p>
+
+<h3>Best if you want self-hosting or control</h3>
+<p>Appwrite first, Supabase second, depending on whether you want a more BaaS-shaped experience or a more database-centric one.</p>
+
+<h3>Best if you want the fastest path to a working app</h3>
+<p>Firebase still wins more often than people on the internet like to admit.</p>
+
+<h2>Practical comparison areas</h2>
+<h3>Database model</h3>
+<p>Firebase Firestore is document-oriented and excellent when your access patterns match. Supabase gives you relational Postgres. Amplify depends more on the AWS-shaped backend pattern you are adopting. Appwrite sits closer to a classic BaaS mental model.</p>
+
+<h3>Auth</h3>
+<p>All four can handle mainstream auth flows. Firebase has the most familiar “just get moving” experience. Supabase and Appwrite are solid. Amplify is strongest when you are comfortable with AWS-flavoured identity concepts.</p>
+
+<h3>Hosting and functions</h3>
+<p>Firebase and Amplify both cover the “one platform for frontend and backend” story well. Supabase is good if you are happy composing your frontend separately. Appwrite is capable, but I would evaluate deployment shape carefully for the exact product.</p>
+
+<h3>Local development</h3>
+<p>Supabase and Appwrite feel better if local parity matters to you. Firebase is productive locally too, but the emulator story works best when your team actually commits to using it. Amplify’s local story is improving, but it still feels closer to cloud-backed development than pure local comfort.</p>
+
+<h3>Pricing and lock-in</h3>
+<p>Firebase can become expensive in specific usage shapes. Supabase is easier to reason about if you already understand databases. Amplify pricing follows AWS-style complexity. Appwrite gives you the clearest escape hatch if you genuinely care about platform portability.</p>
+
+<h2>FAQs</h2>
+<h3>Firebase vs Supabase</h3>
+<p>Pick Firebase for speed and integrated app tooling. Pick Supabase for Postgres, SQL, and a more traditional data layer.</p>
+
+<h3>Firebase vs AWS Amplify</h3>
+<p>Firebase is simpler to start. Amplify makes more sense when AWS is already your home.</p>
+
+<h3>Supabase vs Appwrite</h3>
+<p>Supabase is the better Postgres-first choice. Appwrite is the better “managed BaaS with optional self-hosting” choice.</p>
+
+<h3>AWS Amplify alternatives</h3>
+<p>Firebase and Supabase are the obvious alternatives for teams that want less AWS overhead. Appwrite is worth a look if control matters.</p>
+
+<h3>Is Firebase still worth using in 2026?</h3>
+<p>Yes. Absolutely. Just use it for the right reasons, not because you assume every backend problem is a Firestore problem.</p>
+
+<h3>Is Supabase better than Firebase?</h3>
+<p>Not universally. It is better for teams that want Postgres, SQL, and a more conventional data model. It is not automatically better for speed of delivery.</p>
+
+<h2>My personal view</h2>
+<p>If I wanted the fastest route to a working app, I would still pick Firebase more often than not. If I wanted a small SaaS with relational data and fewer long-term regrets, I would usually pick Supabase. If I were already deep in AWS, I would let that fact matter and use Amplify intentionally. If I wanted more hosting/control flexibility, I would seriously consider Appwrite.</p>
+<p>The biggest mistake is comparing these tools as if they are identical BaaS products with slightly different logos. They are not. Choose the one whose trade-offs match the product you are actually building.</p>

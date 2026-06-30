@@ -21,7 +21,7 @@ export async function GET() {
   const posts = await getAllBlogPosts()
   const featuredTopics = getFeaturedTopics(posts)
   const latestPostDate = posts
-    .map((post) => post.rawUpdatedDate || post.rawDate)
+    .map((post) => post.rawDisplayDate || post.rawDate)
     .filter(Boolean)
     .sort((left, right) => right.localeCompare(left))[0]
 
@@ -61,7 +61,7 @@ export async function GET() {
     })),
     ...posts.map((post) => ({
       loc: toAbsoluteUrl(`/blog/${post.slug}/`),
-      lastmod: toIsoDate(post.rawUpdatedDate || post.rawDate),
+      lastmod: toIsoDate(post.rawDisplayDate || post.rawDate),
     })),
   ]
 

@@ -3,6 +3,7 @@ import readingTime from 'reading-time'
 import BaseLayout from '../../layouts/BaseLayout.astro'
 import Hero from '../../components/Hero.astro'
 import ArticlePreview from '../../components/ArticlePreview.astro'
+import ArticleFreshnessNotice from '../../components/ArticleFreshnessNotice.astro'
 import Tags from '../../components/Tags.astro'
 import { getAiSummaryPoints } from '../../lib/ai-summaries'
 import { getAllBlogPosts, getAuthor } from '../../lib/contentful'
@@ -82,8 +83,9 @@ const faqJsonLd = buildFAQPageJsonLd(
     imageHeight: OG_IMAGE_HEIGHT,
     imageType: CONTENTFUL_SOCIAL_IMAGE_TYPE,
     imageWidth: OG_IMAGE_WIDTH,
-    modifiedTime: post.rawUpdatedDate || post.rawDate,
+    modifiedTime: post.rawDisplayDate || post.rawDate,
     publishedTime: post.rawDate,
+    robots: post.robots,
     structuredData: [blogPostingJsonLd, breadcrumbJsonLd, faqJsonLd],
     title: post.title,
     type: 'article',
@@ -117,10 +119,10 @@ const faqJsonLd = buildFAQPageJsonLd(
         <time datetime={post.rawDate}>{post.publishDate}</time>
       </div>
       {
-        post.updatedDate ? (
+        post.displayDate && post.displayDateLabel ? (
           <div class={styles.metaGroup}>
-            <span class={styles.metaLabel}>Updated</span>
-            <time datetime={post.rawUpdatedDate}>{post.updatedDate}</time>
+            <span class={styles.metaLabel}>{post.displayDateLabel}</span>
+            <time datetime={post.reviewedDate ? post.rawDisplayDate : post.rawUpdatedDate}>{post.displayDate}</time>
           </div>
         ) : null
       }
@@ -132,6 +134,18 @@ const faqJsonLd = buildFAQPageJsonLd(
         <Tags linkToFilter tags={post.tags} />
       </div>
     </div>
+    <ArticleFreshnessNotice
+      contentHtml={post.editorialNoticeHtml}
+      tone={
+        post.editorialStatus === 'archived'
+          ? 'archived'
+          : post.editorialStatus === 'historical'
+            ? 'historical'
+            : post.editorialStatus === 'current'
+              ? 'current'
+              : 'review'
+      }
+    />
     {relatedProject ? (
       <aside class={`${styles.projectLink} surface`}>
         <div><span class={styles.metaLabel}>Related project</span><strong>{relatedProject.name}</strong></div>

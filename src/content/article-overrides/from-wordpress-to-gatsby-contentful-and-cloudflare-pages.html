@@ -1,0 +1,44 @@
+<p><strong>This article started as a write-up of my move from WordPress to Gatsby, Contentful and Cloudflare Pages. I’ve updated it to explain how the site has evolved since then.</strong></p>
+<p>The original move made sense at the time. WordPress had done its job, but I wanted more control over performance, a cleaner publishing workflow, and a site that felt more like an engineering project than a collection of plugins I was carefully hoping not to break.</p>
+
+<h2>Why I moved away from WordPress</h2>
+<p>WordPress was productive, but it also came with the usual trade-offs: plugin maintenance, performance drift, theme complexity, and a general feeling that I was optimising around the platform rather than around the site I actually wanted.</p>
+<p>I did not leave because WordPress is bad. I left because I wanted a different shape of ownership and a more deliberate publishing stack.</p>
+
+<h2>What Gatsby solved at the time</h2>
+<p>At the time, Gatsby gave me a clear static-site story. Fast pages, React-based control, modern build tooling, and a decent path into a more performance-focused site. For that phase of the web, it was a sensible choice.</p>
+<p>The main thing Gatsby gave me was confidence that the public site could be static-first without feeling limited.</p>
+
+<h2>What Contentful added</h2>
+<p>Contentful separated content from presentation in a way I liked. It gave me structured publishing, cleaner modelling, and a better foundation for future changes than editing everything through a traditional blog engine.</p>
+<p>If you are choosing between blog platforms today, that distinction still matters. I cover the wider trade-offs in <a href="/blog/wordpress-vs-contentful-vs-ghost-vs-medium/">my CMS comparison</a>.</p>
+
+<h2>Why Cloudflare Pages was useful</h2>
+<p>Cloudflare Pages gave me exactly what I wanted from hosting: fast static delivery, straightforward deploys, previews, and a platform that did not demand much operational ceremony. That part of the decision still holds up well.</p>
+<p>It is one reason I still rate Cloudflare highly for content-heavy sites and lightweight public web surfaces. I explain the broader trade-offs in <a href="/blog/pros-and-cons-of-using-cloudflare/">my Cloudflare pros and cons article</a>.</p>
+
+<h2>What changed later</h2>
+<p>The stack did not stop evolving after Gatsby. The current site uses Astro rather than Gatsby, still leans on Contentful for publishing, and still deploys through Cloudflare Pages. That change was not about chasing novelty. It was about preferring a lighter, more content-friendly static-first architecture.</p>
+<p>Astro fits the site better because it lets content pages stay mostly content pages. Less client-side weight, less framework ceremony, and a clearer separation between the parts that need JavaScript and the parts that do not.</p>
+
+<h2>What the current stack is</h2>
+<ul>
+  <li>Astro for the site architecture</li>
+  <li>Contentful for structured publishing</li>
+  <li>Cloudflare Pages and small Pages Functions for delivery</li>
+  <li>Static-first rendering with selective dynamic features where they earn their keep</li>
+</ul>
+
+<h2>What I would choose now</h2>
+<p>If I were starting again now, I would skip Gatsby for this kind of site and go straight to Astro or a similar content-first static framework. I would still choose a structured CMS only if it genuinely improved the editing workflow. Otherwise, I would seriously consider content collections or MDX in-repo for a simpler setup.</p>
+
+<h2>Lessons learned</h2>
+<ul>
+  <li>Moving away from WordPress does not automatically make a site better. The architecture still has to stay simple.</li>
+  <li>Static-first is worth it when the site is mostly content and discovery.</li>
+  <li>Headless CMSs are powerful, but only if the extra complexity is justified.</li>
+  <li>Hosting matters less than content and frontend discipline, but a good platform removes friction.</li>
+</ul>
+
+<h2>Bottom line</h2>
+<p>This migration was never really about one framework beating another. It was about gradually getting closer to the kind of site I actually wanted: fast, maintainable, content-led, and under control. Gatsby was part of that journey. Astro is a better fit for where the site is now.</p>

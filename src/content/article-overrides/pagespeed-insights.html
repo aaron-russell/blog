@@ -1,0 +1,82 @@
+<p>PageSpeed Insights is useful, but it is easy to misuse. A lot of older explanations treat the score like a moral judgment or mix together metrics that Google has already retired. That is how teams end up chasing the wrong number instead of fixing the slow thing users actually feel.</p>
+<p>This is the 2026 version: what the report is measuring now, what matters most, and what I would actually check first on a small site or blog.</p>
+
+<h2>What PageSpeed Insights is showing you</h2>
+<p>PageSpeed Insights gives you two different views of performance.</p>
+<ul>
+  <li><strong>Field data</strong> comes from the Chrome User Experience Report and reflects how real users experienced the page over time.</li>
+  <li><strong>Lab data</strong> comes from Lighthouse running the page in a simulated environment.</li>
+</ul>
+<p>That difference matters. Field data tells you what users are experiencing. Lab data tells you how to debug and reproduce likely problems. They are related, but they are not the same thing.</p>
+
+<h2>Core Web Vitals in 2026</h2>
+<p>The current Core Web Vitals are:</p>
+<ul>
+  <li><strong>Largest Contentful Paint (LCP)</strong> for loading</li>
+  <li><strong>Interaction to Next Paint (INP)</strong> for responsiveness</li>
+  <li><strong>Cumulative Layout Shift (CLS)</strong> for visual stability</li>
+</ul>
+<p>First Input Delay is not the current responsiveness metric anymore. INP replaced it as the stable Core Web Vital. If a post still teaches Core Web Vitals as LCP, FID, and CLS, it is out of date.</p>
+
+<h2>What the score actually means</h2>
+<p>The performance score at the top is a Lighthouse score. It is useful, but it is not the same thing as real-user experience. A site can score well in Lighthouse and still have field problems. It can also score less than perfectly while still feeling fast enough for the audience and business goal.</p>
+<p>For most sites, I care more about:</p>
+<ul>
+  <li>whether field data is good for LCP, INP, and CLS</li>
+  <li>whether the page is obviously heavier than it should be</li>
+  <li>whether I can make the next meaningful improvement cheaply</li>
+</ul>
+
+<h2>The main metrics worth understanding</h2>
+<h3>Largest Contentful Paint</h3>
+<p>This is usually the best “is the page getting visible quickly enough?” signal. On content sites, LCP is often the hero image, heading block, or a large content container. If it is slow, I look first at server response time, render-blocking assets, hero image delivery, and font loading.</p>
+
+<h3>Interaction to Next Paint</h3>
+<p>INP measures responsiveness across user interactions, not just the first one. If it is poor, the usual suspects are JavaScript execution, hydration work, long tasks, expensive event handlers, and third-party scripts.</p>
+
+<h3>Cumulative Layout Shift</h3>
+<p>CLS catches the “I tried to tap something and the page jumped” problem. Missing width/height on images, late-loading banners, unstable embeds, and font swaps are common causes.</p>
+
+<h3>First Contentful Paint</h3>
+<p>FCP is still useful because it tells you when something first appears. It is not a Core Web Vital, but it is still a good leading indicator of whether the page feels blank for too long.</p>
+
+<h3>Time to First Byte</h3>
+<p>TTFB helps you spot whether the server or platform is holding the page back before rendering even starts. Static-first hosting and sensible caching help a lot here.</p>
+
+<h3>Speed Index and Total Blocking Time</h3>
+<p>These are Lighthouse-oriented diagnostics. Speed Index describes how quickly content becomes visually populated. Total Blocking Time is especially helpful for spotting heavy main-thread JavaScript during load.</p>
+
+<h2>Lab data vs field data</h2>
+<p>If the two disagree, do not panic. That is normal. PageSpeed Insights itself explains that field data is historical data from real users, while lab data is a simulated load on a fixed device and network profile.</p>
+<p>In practice:</p>
+<ul>
+  <li>Use field data to decide whether users are suffering.</li>
+  <li>Use lab data to find likely causes and test fixes.</li>
+</ul>
+
+<h2>Lighthouse vs CrUX</h2>
+<p>Lighthouse is a synthetic audit. CrUX is a real-world dataset of how Chrome users experience the web. PageSpeed Insights combines both, which is why the report can feel confusing at first. Once you know which panel is which, it becomes much easier to use properly.</p>
+
+<h2>Why scores change even when you changed nothing</h2>
+<p>Because performance measurement is noisy. Lab runs vary. Network conditions vary. Third-party scripts vary. Field data rolls over trailing periods and needs enough public traffic to be representative. A five-point swing does not always mean you broke something.</p>
+
+<h2>What I would check first on a small site or blog</h2>
+<ul>
+  <li><strong>Images:</strong> make sure the hero image is not oversized, use AVIF/WebP where appropriate, and keep dimensions explicit.</li>
+  <li><strong>JavaScript:</strong> remove client-side work that the page does not need.</li>
+  <li><strong>Third-party scripts:</strong> they often hurt more than your own code.</li>
+  <li><strong>Fonts:</strong> too many font files and late swaps are common self-inflicted damage.</li>
+  <li><strong>Caching:</strong> static assets should have aggressive cache lifetimes.</li>
+  <li><strong>Server response time:</strong> if the page is slow before rendering starts, fix that first.</li>
+  <li><strong>Layout shifts:</strong> reserve space for images, embeds, and consent UI.</li>
+  <li><strong>Hydration and client work:</strong> on content pages, static-first rendering usually wins.</li>
+</ul>
+
+<h2>Mobile vs desktop</h2>
+<p>Mobile scores are usually harsher because the simulated environment is slower and more constrained. That is not unfair; it is closer to reality for a lot of users. If a page only looks healthy on desktop, I do not consider that a pass.</p>
+
+<h2>Do you need a perfect score?</h2>
+<p>No. I would rather have a site with strong field data, clear content, and lightweight code than a site with a lab score obsession and no business sense. A score of 100 is nice. It is not the goal. A fast, stable, usable experience is the goal.</p>
+
+<h2>What to read next</h2>
+<p>If you want the practical fixes, go to <a href="/blog/9-ways-to-improve-your-page-speed/">9 Practical Ways to Improve Page Speed in 2026</a>. If you want the broader platform trade-offs around hosting and delivery, <a href="/blog/pros-and-cons-of-using-cloudflare/">my Cloudflare article</a> covers the stack side of the conversation.</p>

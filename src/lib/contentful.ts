@@ -4,6 +4,7 @@ import { normalizeTagLabel } from './blog'
 import { formatBlogDate, formatHomeDate } from './date'
 import { createContentfulImage } from './contentful-images'
 import { renderRichText, richTextToPlainText } from './contentful-rich-text'
+import { getEditorialOverride, type ContentGroup, type EditorialStatus } from './editorial-content'
 
 type ContentfulAuthor = {
   affiliatedWith?: Array<{ companyName?: string; website?: string }>
@@ -32,12 +33,20 @@ export type BlogPostSummary = {
   bodyPlainText?: string
   canonical?: string
   category?: string
+  contentGroup?: ContentGroup
   descriptionHtml?: string
   descriptionPlainText?: string
+  displayDate?: string
+  displayDateLabel?: 'Reviewed' | 'Updated'
+  editorialNoticeHtml?: string
+  editorialStatus?: EditorialStatus
   heroImage?: ReturnType<typeof createContentfulImage>
   publishDate: string
   rawDate: string
+  rawDisplayDate?: string
   rawUpdatedDate?: string
+  reviewedDate?: string
+  robots?: string
   slug: string
   tags: string[]
   title: string
@@ -93,6 +102,8 @@ const mapAuthor = async (entry: any): Promise<ContentfulAuthor> => ({
 
 const mapBlogPost = async (entry: any): Promise<BlogPostSummary> => {
   const publishDate = entry?.fields?.publishDate || ''
+  const slug = entry?.fields?.slug || ''
+  const editorial = getEditorialOverride(slug, publishDate)
   const normalizedTags = Array.from(
     new Set(
       ((entry?.fields?.tags || []) as string[])
@@ -111,17 +122,28 @@ const mapBlogPost = async (entry: any): Promise<BlogPostSummary> => {
     bodyHtml: await renderRichText(entry?.fields?.body),
     bodyPlainText: richTextToPlainText(entry?.fields?.body),
     canonical: entry?.fields?.canonical,
-    category: entry?.fields?.category,
+    category: editorial.category || entry?.fields?.category,
+    contentGroup: editorial.contentGroup,
     descriptionHtml: await renderRichText(entry?.fields?.description),
     descriptionPlainText: richTextToPlainText(entry?.fields?.description),
+    displayDate: editorial.displayDate,
+    displayDateLabel: editorial.displayDateLabel,
+    editorialNoticeHtml: editorial.noticeHtml,
+    editorialStatus: editorial.status,
     heroImage: createContentfulImage(entry?.fields?.heroImage),
     publishDate: formatBlogDate(publishDate),
     rawDate: publishDate,
+    rawDisplayDate: editorial.reviewedDate || publishDate,
     rawUpdatedDate: entry?.sys?.updatedAt,
-    slug: entry?.fields?.slug || '',
-    tags: normalizedTags,
-    title: entry?.fields?.title || '',
-    updatedDate: entry?.sys?.updatedAt ? formatBlogDate(entry.sys.updatedAt) : undefined,
+    reviewedDate: editorial.reviewedDate ? formatBlogDate(editorial.reviewedDate) : undefined,
+    robots: editorial.robots,
+    slug,
+    tags: editorial.tags || normalizedTags,
+    title: editorial.title || entry?.fields?.title || '',
+    updatedDate:
+      editorial.displayDateLabel === 'Updated' && editorial.displayDate
+        ? editorial.displayDate
+        : undefined,
   }
 }
 
