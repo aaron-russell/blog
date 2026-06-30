@@ -1,5 +1,6 @@
 export const CONTENTFUL_PERSON_ID = '4Ff1pPPUTdU7JI822TLc7O'
 export const PERSON_SCHEMA_ID = '#person'
+export const ORGANIZATION_SCHEMA_ID = '#organization'
 
 const PERSON_SOCIAL_FIELDS = [
   'website',
@@ -43,6 +44,8 @@ export const getPersonSameAs = (author) =>
   PERSON_SOCIAL_FIELDS.map((field) => normalizeProfileUrl(field, author?.[field])).filter(Boolean)
 
 export const buildPersonSchemaId = (baseUrl) => absoluteUrl(baseUrl, PERSON_SCHEMA_ID)
+export const buildOrganizationSchemaId = (baseUrl) =>
+  absoluteUrl(baseUrl, ORGANIZATION_SCHEMA_ID)
 
 export const buildPersonJsonLd = (author, imageUrl) => ({
   '@context': 'https://schema.org',
@@ -99,6 +102,56 @@ export const buildProfilePageJsonLd = (author, imageUrl) => ({
   mainEntity: buildPersonJsonLd(author, imageUrl),
 })
 
+export const buildOrganizationJsonLd = (author, { description, knowsAbout = [] } = {}) => ({
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  '@id': buildOrganizationSchemaId(author.website),
+  name: author.name,
+  url: author.website,
+  description: description || author.description?.description,
+  founder: {
+    '@type': 'Person',
+    '@id': buildPersonSchemaId(author.website),
+    name: author.name,
+    url: absoluteUrl(author.website, '/about/'),
+  },
+  sameAs: getPersonSameAs(author),
+  knowsAbout: knowsAbout.filter(Boolean),
+})
+
+export const buildSpeakableSpecification = (cssSelector = []) => ({
+  '@type': 'SpeakableSpecification',
+  cssSelector: cssSelector.filter(Boolean),
+})
+
+export const buildWebPageJsonLd = ({
+  description,
+  name,
+  speakable,
+  url,
+}) => ({
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name,
+  description,
+  url,
+  inLanguage: 'en-GB',
+  ...(speakable ? { speakable } : {}),
+})
+
+export const buildFAQPageJsonLd = (questions = []) => ({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: questions.map((item) => ({
+    '@type': 'Question',
+    name: item.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: item.answer,
+    },
+  })),
+})
+
 export const buildBreadcrumbListJsonLd = (items, baseUrl) => ({
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
@@ -125,10 +178,10 @@ export const buildBlogJsonLd = ({ author, description, name, url }) => ({
     url: absoluteUrl(author.website, '/about/'),
   },
   publisher: {
-    '@type': 'Person',
-    '@id': buildPersonSchemaId(author.website),
+    '@type': 'Organization',
+    '@id': buildOrganizationSchemaId(author.website),
     name: author.name,
-    url: absoluteUrl(author.website, '/about/'),
+    url: author.website,
   },
 })
 
@@ -156,10 +209,10 @@ export const buildSoftwareApplicationJsonLd = ({ description, name, url }) => ({
   },
 })
 
-export const buildBlogPostingJsonLd = (post, locationHref, imageUrl) => ({
+export const buildBlogPostingJsonLd = (post, locationHref, imageUrl, options = {}) => ({
   '@context': 'https://schema.org',
-  '@type': 'BlogPosting',
-  description: post.descriptionPlainText,
+  '@type': ['Article', 'BlogPosting'],
+  description: post.descriptionPlainText || post.bodyPlainText,
   image: imageUrl || post.heroImage?.resize?.src,
   url: locationHref,
   headline: post.title,
@@ -191,17 +244,21 @@ export const buildBlogPostingJsonLd = (post, locationHref, imageUrl) => ({
   keywords: post.tags,
   genre: post.category,
   publisher: {
-    '@type': 'Person',
-    '@id': buildPersonSchemaId(post.author?.website),
+    '@type': 'Organization',
+    '@id': buildOrganizationSchemaId(post.author?.website),
     name: post.author?.name,
-    url: absoluteUrl(post.author?.website, '/about/'),
+    url: post.author?.website,
   },
+  ...(options.speakable ? { speakable: options.speakable } : {}),
 })
 
 export default {
   buildBlogJsonLd,
   buildBreadcrumbListJsonLd,
+  buildFAQPageJsonLd,
+  buildOrganizationJsonLd,
   CONTENTFUL_PERSON_ID,
+  ORGANIZATION_SCHEMA_ID,
   PERSON_SCHEMA_ID,
   absoluteUrl,
   buildBlogPostingJsonLd,
@@ -209,6 +266,9 @@ export default {
   buildPersonSchemaId,
   buildPersonJsonLd,
   buildProfilePageJsonLd,
+  buildOrganizationSchemaId,
+  buildSpeakableSpecification,
   buildSoftwareApplicationJsonLd,
+  buildWebPageJsonLd,
   getPersonSameAs,
 }

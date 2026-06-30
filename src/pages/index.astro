@@ -13,7 +13,14 @@ import {
 import { OG_IMAGE_HEIGHT, OG_IMAGE_WIDTH } from '../lib/og'
 import { homeConfig, projects, startHere } from '../lib/site-config'
 import { getFeaturedTopics } from '../lib/topics'
-import { absoluteUrl, buildPersonJsonLd } from '../utils/structured-data'
+import {
+  absoluteUrl,
+  buildFAQPageJsonLd,
+  buildOrganizationJsonLd,
+  buildPersonJsonLd,
+  buildSpeakableSpecification,
+  buildWebPageJsonLd,
+} from '../utils/structured-data'
 import styles from './index.module.css'
 
 const [author, posts] = await Promise.all([getAuthor(), getHomePagePosts()])
@@ -26,6 +33,53 @@ const profileImage = author.profilePhoto?.url
     )
   : undefined
 const personJsonLd = buildPersonJsonLd(author, profileImage)
+const organizationJsonLd = buildOrganizationJsonLd(author, {
+  description: homeConfig.hero.intro,
+  knowsAbout: [
+    'Software engineering',
+    'AI-assisted workflows',
+    'Static web architecture',
+    'Astro',
+    'Cloudflare',
+    'Angular',
+    'Firebase',
+    'Contentful',
+    'TypeScript',
+  ],
+})
+const webPageJsonLd = buildWebPageJsonLd({
+  description: homeConfig.hero.intro,
+  name: 'Aaron Russell home page',
+  speakable: buildSpeakableSpecification(['h1', `.${styles.intro}`]),
+  url: author.website,
+})
+const faqJsonLd = buildFAQPageJsonLd([
+  {
+    question: 'Who is Aaron Russell?',
+    answer:
+      'Aaron Russell is a UK-based software developer who builds practical web apps, AI-assisted workflows, and indie products.',
+  },
+  {
+    question: 'What does Aaron Russell write about?',
+    answer:
+      'The site focuses on product engineering, Astro and Cloudflare publishing, Angular and Firebase apps, and AI-assisted development workflows.',
+  },
+  {
+    question: 'What is Pit Crew?',
+    answer:
+      'Pit Crew is a live fantasy motorsport product for private leagues, race-by-race podium predictions, and season standings.',
+  },
+  {
+    question: 'What technology stack powers this site?',
+    answer:
+      'The site uses Astro, TypeScript, Contentful, and Cloudflare Pages, with related work across Angular and Firebase.',
+  },
+  {
+    question: 'How can I browse the most useful content quickly?',
+    answer:
+      'Start with the homepage routes into projects, featured topics, and recent writing, then use the blog archive or topic collections to go deeper.',
+  },
+])
 const startHereLinks = startHere.map((item) => {
   const post = findPostByTerms(posts, item.terms)
   return { ...item, href: post ? `/blog/${post.slug}/` : item.fallbackHref, post }
@@ -42,7 +96,7 @@ const startHereLinks = startHere.map((item) => {
     imageHeight: OG_IMAGE_HEIGHT,
     imageType: CONTENTFUL_SOCIAL_IMAGE_TYPE,
     imageWidth: OG_IMAGE_WIDTH,
-    structuredData: [personJsonLd],
+    structuredData: [personJsonLd, organizationJsonLd, webPageJsonLd, faqJsonLd],
   }}
 >
   <section class={styles.heroSection}>
