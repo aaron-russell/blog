@@ -151,8 +151,12 @@ test('discovery middleware converts html responses to markdown when requested', 
 })
 
 test('discovery middleware applies the security headers on non-homepage routes', async () => {
-  const { default: middleware } = await import('../functions/_middleware.ts')
-  const { addDiscoveryHeaders, CONTENT_SECURITY_POLICY, PERMISSIONS_POLICY } = middleware
+  const middlewareModule = await import('../functions/_middleware.ts')
+  const {
+    addDiscoveryHeaders,
+    CONTENT_SECURITY_POLICY,
+    PERMISSIONS_POLICY,
+  } = middlewareModule
 
   const response = await addDiscoveryHeaders(
     new Response('<h1>Contact</h1>', {

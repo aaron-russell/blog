@@ -21,7 +21,7 @@ type TurnstileResponse = {
 
 const RATE_LIMIT_TTL_SECONDS = 300
 const estimateTokens = (value: string) => Math.max(1, Math.ceil(value.trim().length / 4))
-const CONTENT_SECURITY_POLICY = [
+export const CONTENT_SECURITY_POLICY = [
   "default-src 'self'",
   "base-uri 'self'",
   "connect-src 'self' https://eu.i.posthog.com https://cloudflareinsights.com",
@@ -37,7 +37,7 @@ const CONTENT_SECURITY_POLICY = [
   "style-src 'self' 'unsafe-inline'",
   "upgrade-insecure-requests",
 ].join('; ')
-const PERMISSIONS_POLICY = 'accelerometer=(), camera=(), geolocation=(), microphone=(), payment=(), usb=()'
+export const PERMISSIONS_POLICY = 'accelerometer=(), camera=(), geolocation=(), microphone=(), payment=(), usb=()'
 
 export const DISCOVERY_LINKS = [
   '</.well-known/agent-card.json>; rel="agent"',
@@ -64,7 +64,7 @@ const appendVaryValue = (headers: Headers, value: string) => {
   headers.set('Vary', Array.from(values).join(', '))
 }
 
-const applySecurityHeaders = (headers: Headers) => {
+export const applySecurityHeaders = (headers: Headers) => {
   headers.set('Content-Security-Policy', CONTENT_SECURITY_POLICY)
   headers.set('Permissions-Policy', PERMISSIONS_POLICY)
   headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
