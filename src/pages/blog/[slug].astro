@@ -5,7 +5,12 @@ import Hero from '../../components/Hero.astro'
 import ArticlePreview from '../../components/ArticlePreview.astro'
 import Tags from '../../components/Tags.astro'
 import { getAllBlogPosts, getAuthor } from '../../lib/contentful'
-import { annotateArticleHtml, getRelatedPosts } from '../../lib/blog'
+import {
+  annotateArticleHtml,
+  buildArticleFaqs,
+  buildArticleSummaryPoints,
+  getRelatedPosts,
+} from '../../lib/blog'
 import { findPostByTerms } from '../../lib/content-links'
 import { projects } from '../../lib/site-config'
 import {
@@ -18,6 +23,8 @@ import {
   absoluteUrl,
   buildBlogPostingJsonLd,
   buildBreadcrumbListJsonLd,
+  buildFAQPageJsonLd,
+  buildSpeakableSpecification,
 } from '../../utils/structured-data'
 import styles from '../../templates/blog-post.module.css'
 
@@ -46,7 +53,8 @@ const canonicalUrl = resolveCanonicalUrl({
   siteUrl: author.website,
 })
 const seoImage = absoluteUrl(author.website, buildContentfulSocialImageUrl(post.heroImage?.url))
-const blogPostingJsonLd = buildBlogPostingJsonLd(post, canonicalUrl, seoImage)
+const speakable = buildSpeakableSpecification(['h1', '[data-article-body] > p:first-of-type'])
+const blogPostingJsonLd = buildBlogPostingJsonLd(post, canonicalUrl, seoImage, { speakable })
 const breadcrumbJsonLd = buildBreadcrumbListJsonLd(
   [
     { name: 'Home', path: '/' },
@@ -56,6 +64,10 @@ const breadcrumbJsonLd = buildBreadcrumbListJsonLd(
   author.website
 )
 const relatedProject = projects.find((project) => findPostByTerms([post], project.relatedPostTerms))
+const summaryPoints = buildArticleSummaryPoints({ headings, post, relatedProject, timeToRead })
+const faqJsonLd = buildFAQPageJsonLd(
+  buildArticleFaqs({ headings, post, relatedProject, timeToRead })
+)
 ---
 
 <BaseLayout
@@ -67,7 +79,9 @@ const relatedProject = projects.find((project) => findPostByTerms([post], projec
     imageHeight: OG_IMAGE_HEIGHT,
     imageType: CONTENTFUL_SOCIAL_IMAGE_TYPE,
     imageWidth: OG_IMAGE_WIDTH,
-    structuredData: [blogPostingJsonLd, breadcrumbJsonLd],
+    modifiedTime: post.rawUpdatedDate || post.rawDate,
+    publishedTime: post.rawDate,
+    structuredData: [blogPostingJsonLd, breadcrumbJsonLd, faqJsonLd],
     title: post.title,
     type: 'article',
   }}
@@ -122,6 +136,14 @@ const relatedProject = projects.find((project) => findPostByTerms([post], projec
         <a href={relatedProject.href}>Explore the project →</a>
       </aside>
     ) : null}
+    <section class={`${styles.metaPanel} surface`} aria-labelledby="key-findings">
+      <div class={styles.metaGroup}>
+        <h2 id="key-findings" class={styles.metaLabel}>Key findings</h2>
+      </div>
+      <ul>
+        {summaryPoints.map((point) => <li>{point}</li>)}
+      </ul>
+    </section>
     <div class={styles.article}>
       {
         headings.length >= 3 ? (

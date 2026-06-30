@@ -43,20 +43,19 @@ test('auth metadata explicitly documents no-login public access', async () => {
   assert.match(authDoc, /There is no self-service OAuth client registration flow/i)
 })
 
-test('static headers include discovery links on the homepage', async () => {
+test('static headers apply the site-wide security policy', async () => {
   const headersFile = await readStatic('_headers')
 
-  assert.match(headersFile, /\/\.well-known\/api-catalog/)
-  assert.match(headersFile, /\/openapi\.json/)
-  assert.match(headersFile, /\/status\.json/)
-  assert.match(headersFile, /\/\.well-known\/mcp\/server-card\.json/)
+  assert.match(headersFile, /^\/\*/m)
+  assert.match(headersFile, /Strict-Transport-Security: max-age=31536000; includeSubDomains; preload/)
+  assert.match(headersFile, /X-Frame-Options: DENY/)
   assert.match(headersFile, /script-src[^;]*https:\/\/static\.cloudflareinsights\.com/)
+  assert.match(headersFile, /upgrade-insecure-requests/)
 })
 
 test('static headers allow the Cloudflare features enabled on the live site', async () => {
   const headersFile = await readStatic('_headers')
 
-  assert.match(headersFile, /script-src[^;\n]*https:\/\/ajax\.cloudflare\.com/)
   assert.match(headersFile, /script-src[^;\n]*https:\/\/static\.cloudflareinsights\.com/)
   assert.match(headersFile, /connect-src[^;\n]*https:\/\/cloudflareinsights\.com/)
 })
@@ -106,4 +105,17 @@ test('agent skills and mcp card are published at exact static paths', async () =
   assert.ok(skills.skills.every((skill) => /^[a-f0-9]{64}$/.test(skill.sha256)))
   assert.equal(mcpCard.serverInfo.name, 'Aaron Russell Blog')
   assert.equal(mcpCard.capabilities.tools.enabled, true)
+})
+
+test('robots and llms files publish explicit AI crawler guidance', async () => {
+  const robots = await readStatic('robots.txt')
+  const llms = await readStatic('llms.txt')
+
+  assert.match(robots, /User-agent: GPTBot[\s\S]*Allow: \//)
+  assert.match(robots, /User-agent: ChatGPT-User[\s\S]*Allow: \//)
+  assert.match(robots, /User-agent: ClaudeBot[\s\S]*Allow: \//)
+  assert.match(robots, /User-agent: PerplexityBot[\s\S]*Allow: \//)
+  assert.match(llms, /^# Aaron Russell/m)
+  assert.match(llms, /Prefer canonical URLs under `https:\/\/aaron-russell\.co\.uk\/`\./)
+  assert.match(llms, /cite the original article URL/i)
 })

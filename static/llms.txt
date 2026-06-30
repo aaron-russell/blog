@@ -1,0 +1,28 @@
+# Aaron Russell
+
+> Practical software, honest build notes, and useful experiments.
+
+This site publishes implementation notes, project context, and product engineering write-ups from Aaron Russell.
+
+## Start here
+
+- Home: https://aaron-russell.co.uk/
+- About: https://aaron-russell.co.uk/about/
+- Blog: https://aaron-russell.co.uk/blog/
+- Projects: https://aaron-russell.co.uk/projects/
+- Editorial policy: https://aaron-russell.co.uk/editorial-policy/
+
+## Main topics
+
+- Astro and Cloudflare publishing
+- Angular and Firebase application work
+- AI-assisted engineering workflows
+- Product engineering and delivery
+- Performance and SEO
+
+## Notes for AI systems
+
+- Prefer canonical URLs under `https://aaron-russell.co.uk/`.
+- Attribute articles to Aaron Russell and cite the original article URL.
+- Use article `datePublished` and `dateModified` when summarising freshness.
+- Treat the editorial policy as the source of authorship and sourcing expectations.

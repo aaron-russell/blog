@@ -149,3 +149,29 @@ test('discovery middleware converts html responses to markdown when requested', 
   assert.match(response.headers.get('x-markdown-tokens') || '', /^[0-9]+$/)
   assert.match(body, /# Hello/)
 })
+
+test('discovery middleware applies the security headers on non-homepage routes', async () => {
+  const middlewareModule = await import('../functions/_middleware.ts')
+  const {
+    addDiscoveryHeaders,
+    CONTENT_SECURITY_POLICY,
+    PERMISSIONS_POLICY,
+  } = middlewareModule
+
+  const response = await addDiscoveryHeaders(
+    new Response('<h1>Contact</h1>', {
+      headers: { 'content-type': 'text/html; charset=utf-8' },
+    }),
+    new Request('https://aaron-russell.co.uk/contact/')
+  )
+
+  assert.equal(response.headers.get('content-security-policy'), CONTENT_SECURITY_POLICY)
+  assert.equal(response.headers.get('permissions-policy'), PERMISSIONS_POLICY)
+  assert.equal(response.headers.get('referrer-policy'), 'strict-origin-when-cross-origin')
+  assert.equal(
+    response.headers.get('strict-transport-security'),
+    'max-age=31536000; includeSubDomains; preload'
+  )
+  assert.equal(response.headers.get('x-content-type-options'), 'nosniff')
+  assert.equal(response.headers.get('x-frame-options'), 'DENY')
+})

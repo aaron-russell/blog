@@ -21,6 +21,23 @@ type TurnstileResponse = {
 
 const RATE_LIMIT_TTL_SECONDS = 300
 const estimateTokens = (value: string) => Math.max(1, Math.ceil(value.trim().length / 4))
+export const CONTENT_SECURITY_POLICY = [
+  "default-src 'self'",
+  "base-uri 'self'",
+  "connect-src 'self' https://eu.i.posthog.com https://cloudflareinsights.com",
+  "font-src 'self'",
+  "form-action 'self'",
+  "frame-ancestors 'none'",
+  "frame-src https://challenges.cloudflare.com",
+  "img-src 'self' data: https:",
+  "manifest-src 'self'",
+  "media-src 'self'",
+  "object-src 'none'",
+  "script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com https://static.cloudflareinsights.com",
+  "style-src 'self' 'unsafe-inline'",
+  "upgrade-insecure-requests",
+].join('; ')
+export const PERMISSIONS_POLICY = 'accelerometer=(), camera=(), geolocation=(), microphone=(), payment=(), usb=()'
 
 export const DISCOVERY_LINKS = [
   '</.well-known/agent-card.json>; rel="agent"',
@@ -35,12 +52,34 @@ export const DISCOVERY_LINKS = [
 const redirect = (requestUrl: string, params: Record<string, string>) =>
   Response.redirect(buildRedirectUrl(requestUrl, params), 303)
 
+const appendVaryValue = (headers: Headers, value: string) => {
+  const existing = headers.get('Vary')
+  const values = new Set(
+    (existing || '')
+      .split(',')
+      .map((entry) => entry.trim())
+      .filter(Boolean)
+  )
+  values.add(value)
+  headers.set('Vary', Array.from(values).join(', '))
+}
+
+export const applySecurityHeaders = (headers: Headers) => {
+  headers.set('Content-Security-Policy', CONTENT_SECURITY_POLICY)
+  headers.set('Permissions-Policy', PERMISSIONS_POLICY)
+  headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
+  headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload')
+  headers.set('X-Content-Type-Options', 'nosniff')
+  headers.set('X-Frame-Options', 'DENY')
+}
+
 // Add Link headers for agent discovery (RFC 8288) and markdown support
 export const addDiscoveryHeaders = async (response: Response, request: Request): Promise<Response> => {
   const newResponse = new Response(response.body, response)
 
-  newResponse.headers.append('Link', DISCOVERY_LINKS.join(', '))
-  newResponse.headers.append('Vary', 'Accept')
+  newResponse.headers.set('Link', DISCOVERY_LINKS.join(', '))
+  appendVaryValue(newResponse.headers, 'Accept')
+  applySecurityHeaders(newResponse.headers)
   
   // Handle Markdown for Agents content negotiation
   const acceptHeader = request.headers.get('accept') || ''
@@ -162,6 +201,10 @@ export const onRequest: PagesFunction<Env> = async (context) => {
 }
 
 export default {
+  CONTENT_SECURITY_POLICY,
+  PERMISSIONS_POLICY,
+  applySecurityHeaders,
+  addDiscoveryHeaders,
   handleContactFormSubmission,
   onRequest,
 }

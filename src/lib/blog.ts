@@ -18,6 +18,8 @@ const stripTags = (value: string) =>
     .replace(/\s+/g, ' ')
     .trim()
 
+export const stripHtml = stripTags
+
 const slugify = (value: string) =>
   value
     .toLowerCase()
@@ -85,6 +87,86 @@ export const annotateArticleHtml = (html = '') => {
   )
 
   return { headings, html: enhancedHtml }
+}
+
+export const getFirstParagraphText = (html = '') => {
+  const match = html.match(/<p>([\s\S]*?)<\/p>/i)
+  return match ? stripTags(match[1]) : ''
+}
+
+export const buildArticleSummaryPoints = ({
+  headings = [],
+  post,
+  relatedProject,
+  timeToRead,
+}: {
+  headings?: TocHeading[]
+  post: BlogPostSummary
+  relatedProject?: { name: string } | null
+  timeToRead: number
+}) => {
+  const points = [
+    post.descriptionPlainText || createExcerpt(post.bodyPlainText || '', 150),
+    headings.length
+      ? `Covers ${headings
+          .slice(0, 3)
+          .map((heading) => heading.text)
+          .join(', ')}.`
+      : undefined,
+    post.tags?.length ? `Key topics: ${post.tags.slice(0, 4).join(', ')}.` : undefined,
+    `Published ${post.publishDate}${post.updatedDate ? ` and updated ${post.updatedDate}` : ''}.`,
+    relatedProject ? `Connected project: ${relatedProject.name}.` : `${Math.max(1, Math.round(timeToRead))} minute read.`,
+  ]
+
+  return points.filter(Boolean).slice(0, 5)
+}
+
+export const buildArticleFaqs = ({
+  headings = [],
+  post,
+  relatedProject,
+  timeToRead,
+}: {
+  headings?: TocHeading[]
+  post: BlogPostSummary
+  relatedProject?: { name: string; description?: string } | null
+  timeToRead: number
+}) => {
+  const firstHeadings = headings.slice(0, 3).map((heading) => heading.text)
+
+  return [
+    {
+      question: `What is ${post.title} about?`,
+      answer:
+        post.descriptionPlainText || createExcerpt(post.bodyPlainText || '', 220),
+    },
+    {
+      question: 'Who is this article for?',
+      answer: `It is written for developers, product engineers, and technical teams working with ${post.tags?.slice(0, 3).join(', ') || 'modern web tooling'}.`,
+    },
+    {
+      question: 'What does the article cover?',
+      answer: firstHeadings.length
+        ? `The main sections cover ${firstHeadings.join(', ')}.`
+        : `The article covers the main implementation details, trade-offs, and practical notes from the work.`,
+    },
+    {
+      question: 'When was this article published or updated?',
+      answer: post.updatedDate
+        ? `It was published on ${post.publishDate} and updated on ${post.updatedDate}.`
+        : `It was published on ${post.publishDate}.`,
+    },
+    {
+      question: 'How long will this article take to read?',
+      answer: `It should take about ${Math.max(1, Math.round(timeToRead))} minutes to read.`,
+    },
+    {
+      question: 'Is this article connected to a broader project?',
+      answer: relatedProject
+        ? `Yes. It connects back to ${relatedProject.name}, ${relatedProject.description || 'a related project discussed elsewhere on the site'}.`
+        : 'It stands on its own, but it also links into the wider project and topic collections on the site.',
+    },
+  ]
 }
 
 export const getTopTags = (posts: BlogPostSummary[], limit = 6) =>
