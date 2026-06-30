@@ -303,10 +303,6 @@ export const getContentGroup = ({
     return 'Archive'
   }
 
-  if (slug === 'building-pit-crew-creating-a-fantasy-motorsport-prediction-game-from-scratch') {
-    return 'Build notes'
-  }
-
   if (slug === 'its-okay-not-to-be-okay-my-mental-health' || slug === 'why-seo') {
     return 'Personal writing'
   }
