@@ -51,6 +51,8 @@
     "build": "ASTRO_TELEMETRY_DISABLED=1 astro build",
     "build:check": "node ./bin/check-contentful-env.js",
     "build:contentful": "npm run build:check && npm run build",
+    "ai:summaries": "node ./bin/generate-ai-summaries.js --dry-run",
+    "ai:summaries:write": "node ./bin/generate-ai-summaries.js --write",
     "contentful:fix-seo": "node ./bin/contentful-fix-seo.js --dry-run",
     "contentful:fix-seo:write": "node ./bin/contentful-fix-seo.js --write",
     "serve": "ASTRO_TELEMETRY_DISABLED=1 astro preview",
