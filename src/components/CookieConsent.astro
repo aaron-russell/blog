@@ -1,0 +1,69 @@
+---
+import styles from './cookie-consent.module.css'
+---
+
+<div class={styles.shell} data-cookie-consent hidden>
+  <section class={`${styles.panel} surface`} aria-label="Analytics consent" role="dialog">
+    <div class={styles.copy}>
+      <span class="eyebrow">Analytics</span>
+      <p class={styles.title}>A small, privacy-first analytics choice.</p>
+      <p class={styles.body}>
+        This site uses lightweight analytics to understand which notes and pages are useful.
+        Accepting enables PostHog analytics. Declining keeps analytics off.
+      </p>
+    </div>
+    <div class={styles.actions}>
+      <button type="button" class={styles.secondary} data-cookie-decline>Decline</button>
+      <button type="button" class={styles.primary} data-cookie-accept>Accept analytics</button>
+    </div>
+  </section>
+</div>
+
+<script is:inline>
+  (() => {
+    const storageKey = 'analytics-consent'
+    const root = document.querySelector('[data-cookie-consent]')
+    const acceptButton = root?.querySelector('[data-cookie-accept]')
+    const declineButton = root?.querySelector('[data-cookie-decline]')
+    const settingsButtons = Array.from(document.querySelectorAll('[data-cookie-settings]'))
+
+    if (!root || !acceptButton || !declineButton) {
+      return
+    }
+
+    const hideBanner = () => {
+      root.setAttribute('hidden', '')
+    }
+
+    const showBanner = () => {
+      root.removeAttribute('hidden')
+    }
+
+    const persistConsent = (value) => {
+      window.localStorage.setItem(storageKey, value)
+      if (value === 'granted') {
+        window.dispatchEvent(new Event('analytics-consent:granted'))
+      }
+      hideBanner()
+    }
+
+    const savedPreference = window.localStorage.getItem(storageKey)
+    if (!savedPreference) {
+      showBanner()
+    }
+
+    acceptButton.addEventListener('click', () => {
+      persistConsent('granted')
+    })
+
+    declineButton.addEventListener('click', () => {
+      persistConsent('denied')
+    })
+
+    settingsButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        showBanner()
+      })
+    })
+  })()
+</script>

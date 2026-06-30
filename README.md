@@ -48,7 +48,12 @@ For programmatic Contentful fixes and imports, also set:
 Optional analytics environment variables:
 
 - `PUBLIC_POSTHOG_API_KEY`: PostHog project API key. Leave empty to disable analytics.
-- `PUBLIC_REQUIRE_ANALYTICS_CONSENT`: Set to `true` to require `localStorage['analytics-consent'] = 'granted'` before tracking.
+
+Analytics only starts after explicit consent. Set `localStorage['analytics-consent'] = 'granted'`
+before loading the page, or dispatch `window.dispatchEvent(new Event('analytics-consent:granted'))`
+after storing that value if your consent UI grants access without a reload.
+The site now includes a subtle consent banner plus a footer `Cookie settings` control, and stores
+either `granted` or `denied` in `localStorage['analytics-consent']`.
 
 To verify that a production build has the required credentials before spending time in Astro:
 

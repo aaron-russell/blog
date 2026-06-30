@@ -1,6 +1,6 @@
 <script>
   const posthogApiKey = import.meta.env.PUBLIC_POSTHOG_API_KEY
-  const requireConsent = import.meta.env.PUBLIC_REQUIRE_ANALYTICS_CONSENT === 'true'
+  let analyticsStarted = false
 
   const hasConsent = () => {
     try {
@@ -19,13 +19,15 @@
       window.navigator?.doNotTrack || (window as Window & { doNotTrack?: string }).doNotTrack
     const isLocalhost = ['localhost', '127.0.0.1'].includes(window.location.hostname)
 
-    return doNotTrack !== '1' && !isLocalhost && (!requireConsent || hasConsent())
+    return doNotTrack !== '1' && !isLocalhost && hasConsent()
   }
 
   const initAnalytics = async () => {
-    if (!shouldTrack()) {
+    if (analyticsStarted || !shouldTrack()) {
       return
     }
+
+    analyticsStarted = true
 
     const { default: posthog } = await import('posthog-js')
 
@@ -40,6 +42,16 @@
       path: window.location.pathname,
     })
   }
+
+  window.addEventListener('analytics-consent:granted', () => {
+    void initAnalytics()
+  })
+
+  window.addEventListener('storage', (event) => {
+    if (event.key === 'analytics-consent' && event.newValue === 'granted') {
+      void initAnalytics()
+    }
+  })
 
   void initAnalytics()
 </script>

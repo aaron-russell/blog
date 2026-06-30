@@ -38,7 +38,24 @@
   font-weight: var(--semibold);
 }
 
+.settingsButton {
+  appearance: none;
+  background: none;
+  border: 0;
+  color: var(--text-color);
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: var(--semibold);
+  padding: 0;
+  text-align: left;
+}
+
 .group a:hover {
+  color: var(--primary);
+}
+
+.settingsButton:hover {
   color: var(--primary);
 }
 

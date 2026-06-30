@@ -27,6 +27,7 @@ const author = await getAuthor()
         <a href="/about/">About</a>
         <a href="/contact/">Contact</a>
         <a href="/rss.xml">RSS</a>
+        <button type="button" class={styles.settingsButton} data-cookie-settings>Cookie settings</button>
         {author.github ? <a href={author.github} rel="me noopener noreferrer">GitHub ↗</a> : null}
         {author.linkedIn ? <a href={author.linkedIn} rel="me noopener noreferrer">LinkedIn ↗</a> : null}
         <a href="https://pitcrew.team/en/" rel="noopener noreferrer">Pit Crew ↗</a>
