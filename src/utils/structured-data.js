@@ -102,7 +102,11 @@ export const buildProfilePageJsonLd = (author, imageUrl) => ({
   mainEntity: buildPersonJsonLd(author, imageUrl),
 })
 
-export const buildOrganizationJsonLd = (author, { description, knowsAbout = [] } = {}) => ({
+/**
+ * @param {any} author
+ * @param {{ description?: string, knowsAbout?: string[] }} [options]
+ */
+export const buildOrganizationJsonLd = (author, { description, knowsAbout = /** @type {string[]} */ ([]) } = {}) => ({
   '@context': 'https://schema.org',
   '@type': 'Organization',
   '@id': buildOrganizationSchemaId(author.website),
