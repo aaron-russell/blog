@@ -1,6 +1,6 @@
 import { documentToHtmlString } from '@contentful/rich-text-html-renderer'
 import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
-import { BLOCKS } from '@contentful/rich-text-types'
+import { BLOCKS, INLINES } from '@contentful/rich-text-types'
 import {
   isCodeBlockEntry,
   normalizeCodeBlockEntry,
@@ -11,6 +11,7 @@ import {
   createContentfulImage,
   resolveContentfulAltText,
 } from './contentful-images'
+import { sanitizeUrl } from './safe-url'
 
 const escapeHtml = (value: string) =>
   value
@@ -90,6 +91,10 @@ export const renderRichText = async (document: any) => {
 
   return documentToHtmlString(document, {
     renderNode: {
+      [INLINES.HYPERLINK]: (node, next) => {
+        const href = sanitizeUrl(node?.data?.uri)
+        return href ? `<a href="${escapeHtml(href)}">${next(node.content)}</a>` : next(node.content)
+      },
       [BLOCKS.EMBEDDED_ENTRY]: (node) => node?.data?.__renderedHtml || '',
       [BLOCKS.EMBEDDED_ASSET]: (node) => {
         const image = createContentfulImage(node?.data?.target)

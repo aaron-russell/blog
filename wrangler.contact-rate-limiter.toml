@@ -1,0 +1,12 @@
+name = "blog-contact-rate-limiter"
+main = "workers/contact-rate-limiter.ts"
+compatibility_date = "2026-09-02"
+
+[durable_objects]
+bindings = [
+  { name = "CONTACT_RATE_LIMITER", class_name = "ContactRateLimiter" }
+]
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["ContactRateLimiter"]

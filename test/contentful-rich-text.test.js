@@ -118,6 +118,31 @@ test('rich text renderer outputs structured highlighted code blocks and plain te
   assert.match(text, /After code/)
 })
 
+test('rich text renderer removes unsafe hyperlink schemes', async () => {
+  const { renderRichText } = await import('../src/lib/contentful-rich-text.ts')
+  const document = {
+    nodeType: 'document',
+    content: [
+      {
+        nodeType: 'paragraph',
+        content: [
+          {
+            nodeType: 'hyperlink',
+            data: { uri: 'javascript:alert(1)' },
+            content: [{ nodeType: 'text', value: 'unsafe link', marks: [] }],
+          },
+        ],
+        data: {},
+      },
+    ],
+    data: {},
+  }
+
+  const html = await renderRichText(document)
+  assert.doesNotMatch(html, /href=/)
+  assert.match(html, /unsafe link/)
+})
+
 test('rich text renderer falls back safely for unsupported languages', async () => {
   const { default: richText } = await import('../src/lib/contentful-rich-text.ts')
 

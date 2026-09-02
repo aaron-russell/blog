@@ -10,12 +10,20 @@ const createContext = (overrides = {}) => {
     },
     ...overrides.namespace,
   }
+  const rateLimiter = {
+    idFromName: () => 'contact-rate-limit-id',
+    get: () => ({
+      fetch: async () => new Response(null, { status: 204 }),
+    }),
+    ...overrides.rateLimiter,
+  }
 
   return {
     puts,
     context: {
       env: {
         NAMESPACE: namespace,
+        CONTACT_RATE_LIMITER: rateLimiter,
         SENTRY_DSN: 'https://examplePublicKey@o0.ingest.sentry.io/0',
         TURNSTILE_SECRET: 'secret',
       },
@@ -63,7 +71,8 @@ test('contact middleware redirects with success when validation and turnstile pa
       response.headers.get('location'),
       'https://aaron-russell.co.uk/contact?submitted=success'
     )
-    assert.equal(puts.length, 2)
+    assert.equal(puts.length, 1)
+    assert.equal(puts[0][2].expirationTtl, 30 * 24 * 60 * 60)
   } finally {
     global.fetch = originalFetch
   }
@@ -89,19 +98,31 @@ test('contact middleware rejects malformed submissions before calling turnstile'
 test('contact middleware rate limits repeated submissions', async () => {
   const { default: middleware } = await import('../functions/_middleware.ts')
   const { handleContactFormSubmission } = middleware
-  const { context, puts } = createContext({
-    namespace: {
-      get: async () => 'already-submitted',
-    },
-  })
-  const response = await handleContactFormSubmission(context, createFormData())
+  const originalFetch = global.fetch
+  global.fetch = async () =>
+    new Response(JSON.stringify({ success: true }), {
+      headers: { 'content-type': 'application/json' },
+    })
 
-  assert.equal(response.status, 303)
-  assert.equal(
-    response.headers.get('location'),
-    'https://aaron-russell.co.uk/contact?error=rate_limited'
-  )
-  assert.equal(puts.length, 0)
+  try {
+    const { context, puts } = createContext({
+      rateLimiter: {
+        get: () => ({
+          fetch: async () => new Response(null, { status: 409 }),
+        }),
+      },
+    })
+    const response = await handleContactFormSubmission(context, createFormData())
+
+    assert.equal(response.status, 303)
+    assert.equal(
+      response.headers.get('location'),
+      'https://aaron-russell.co.uk/contact?error=rate_limited'
+    )
+    assert.equal(puts.length, 0)
+  } finally {
+    global.fetch = originalFetch
+  }
 })
 
 test('contact middleware handles failed turnstile verification', async () => {

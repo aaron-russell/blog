@@ -1,6 +1,7 @@
 ---
 import { siteMetadata } from '../lib/site-config'
 import { buildPageTitle, buildSeoMetaTags, buildWebsiteJsonLd } from '../utils/seo-data'
+import { serializeJsonLd } from '../utils/structured-data'
 
 type Props = {
   alt?: string
@@ -78,9 +79,9 @@ const websiteLdJson = buildWebsiteJsonLd(siteMetadata)
 <meta name="theme-color" content="#f4edf8" media="(prefers-color-scheme: light)" />
 <meta name="theme-color" content="#222222" media="(prefers-color-scheme: dark)" />
 {metaTags.map((entry) => <meta {...entry} />)}
-<script is:inline type="application/ld+json" set:html={JSON.stringify(websiteLdJson)} />
+<script is:inline type="application/ld+json" set:html={serializeJsonLd(websiteLdJson)} />
 {structuredData.map((entry) => (
-  <script is:inline type="application/ld+json" set:html={JSON.stringify(entry)} />
+  <script is:inline type="application/ld+json" set:html={serializeJsonLd(entry)} />
 ))}
 {
   turnstile ? (

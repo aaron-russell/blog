@@ -59,6 +59,7 @@
     "contentful:sync-editorial": "node --import tsx ./bin/contentful-sync-editorial-overrides.js --dry-run",
     "contentful:sync-editorial:write": "node --import tsx ./bin/contentful-sync-editorial-overrides.js --write",
     "contentful:sync-editorial:drafts": "node --import tsx ./bin/contentful-sync-editorial-overrides.js --write --draft-only",
+    "deploy:contact-rate-limiter": "wrangler deploy --config wrangler.contact-rate-limiter.toml",
     "serve": "ASTRO_TELEMETRY_DISABLED=1 astro preview",
     "lint": "eslint astro.config.mjs bin functions src test",
     "setup": "node ./bin/setup.js",

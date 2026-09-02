@@ -10,6 +10,7 @@ import {
 import { htmlToMarkdown, isHtmlResponse, requestsMarkdown } from './markdown-converter'
 
 interface Env {
+  CONTACT_RATE_LIMITER: DurableObjectNamespace
   NAMESPACE: KVNamespace
   SENTRY_DSN: string
   TURNSTILE_SECRET: string
@@ -19,7 +20,7 @@ type TurnstileResponse = {
   success: boolean
 }
 
-const RATE_LIMIT_TTL_SECONDS = 300
+const CONTACT_RETENTION_TTL_SECONDS = 30 * 24 * 60 * 60
 const estimateTokens = (value: string) => Math.max(1, Math.ceil(value.trim().length / 4))
 export const CONTENT_SECURITY_POLICY = [
   "default-src 'self'",
@@ -140,13 +141,6 @@ export const handleContactFormSubmission = async (
       return redirect(context.request.url, { error: validation })
     }
 
-    const rateLimitKey = `contact:${ip}`
-    const existingSubmission = await context.env.NAMESPACE.get(rateLimitKey)
-
-    if (existingSubmission) {
-      return redirect(context.request.url, { error: 'rate_limited' })
-    }
-
     if (typeof token !== 'string' || token.trim().length === 0) {
       return redirect(context.request.url, { error: 'verification' })
     }
@@ -168,17 +162,18 @@ export const handleContactFormSubmission = async (
       return redirect(context.request.url, { error: 'verification' })
     }
 
-    await context.env.NAMESPACE.put(
-      rateLimitKey,
-      new Date().toISOString(),
-      {
-        expirationTtl: RATE_LIMIT_TTL_SECONDS,
-      }
+    const limiterId = context.env.CONTACT_RATE_LIMITER.idFromName(ip)
+    const reservation = await context.env.CONTACT_RATE_LIMITER.get(limiterId).fetch(
+      'https://contact-rate-limiter/reserve',
+      { method: 'POST' }
     )
+
+    if (!reservation.ok) return redirect(context.request.url, { error: 'rate_limited' })
 
     await context.env.NAMESPACE.put(
       crypto.randomUUID(),
-      JSON.stringify(buildContactSubmission(fields))
+      JSON.stringify(buildContactSubmission(fields)),
+      { expirationTtl: CONTACT_RETENTION_TTL_SECONDS }
     )
 
     return redirect(context.request.url, { submitted: 'success' })

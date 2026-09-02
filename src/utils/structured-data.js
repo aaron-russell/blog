@@ -1,4 +1,12 @@
 export const CONTENTFUL_PERSON_ID = '4Ff1pPPUTdU7JI822TLc7O'
+
+export const serializeJsonLd = (value) =>
+  JSON.stringify(value)
+    .replaceAll('<', '\\u003c')
+    .replaceAll('>', '\\u003e')
+    .replaceAll('&', '\\u0026')
+    .replaceAll('\u2028', '\\u2028')
+    .replaceAll('\u2029', '\\u2029')
 export const PERSON_SCHEMA_ID = '#person'
 export const ORGANIZATION_SCHEMA_ID = '#organization'
 
@@ -262,6 +270,7 @@ export default {
   buildFAQPageJsonLd,
   buildOrganizationJsonLd,
   CONTENTFUL_PERSON_ID,
+  serializeJsonLd,
   ORGANIZATION_SCHEMA_ID,
   PERSON_SCHEMA_ID,
   absoluteUrl,

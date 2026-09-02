@@ -5,6 +5,7 @@ import { formatBlogDate, formatHomeDate } from './date'
 import { createContentfulImage } from './contentful-images'
 import { renderRichText, richTextToPlainText } from './contentful-rich-text'
 import { getEditorialOverride, type ContentGroup, type EditorialStatus } from './editorial-content'
+import { sanitizeUrl } from './safe-url'
 
 type ContentfulAuthor = {
   affiliatedWith?: Array<{ companyName?: string; website?: string }>
@@ -74,8 +75,21 @@ const client = createClient(getContentfulConfig())
 const mapLinkedCompany = (items: any[] | undefined) =>
   items?.map((item) => ({
     companyName: item?.fields?.companyName,
-    website: item?.fields?.website,
+    website: sanitizeUrl(item?.fields?.website),
   })) || []
+
+const PROFILE_URLS = {
+  facebook: 'https://www.facebook.com/',
+  linkedIn: 'https://www.linkedin.com/in/',
+  twitter: 'https://x.com/',
+}
+
+const sanitizeProfileUrl = (field: keyof typeof PROFILE_URLS, value: unknown) => {
+  const safeUrl = sanitizeUrl(value)
+  if (safeUrl) return safeUrl
+  if (typeof value !== 'string' || !value.trim() || value.includes(':')) return undefined
+  return `${PROFILE_URLS[field]}${value.trim().replace(/^@/, '')}`
+}
 
 const mapAuthor = async (entry: any): Promise<ContentfulAuthor> => ({
   affiliatedWith: mapLinkedCompany(entry?.fields?.affiliatedWith),
@@ -85,18 +99,18 @@ const mapAuthor = async (entry: any): Promise<ContentfulAuthor> => ({
   description: {
     description: entry?.fields?.description,
   },
-  facebook: entry?.fields?.facebook,
-  github: entry?.fields?.github || 'https://github.com/aaron-russell',
+  facebook: sanitizeProfileUrl('facebook', entry?.fields?.facebook),
+  github: sanitizeUrl(entry?.fields?.github) || 'https://github.com/aaron-russell',
   heroImage: createContentfulImage(entry?.fields?.image),
   jobTitle: entry?.fields?.jobTitle,
-  linkedIn: entry?.fields?.linkedIn,
+  linkedIn: sanitizeProfileUrl('linkedIn', entry?.fields?.linkedIn),
   name: entry?.fields?.name || '',
   nationality: entry?.fields?.nationality,
   profilePhoto: createContentfulImage(entry?.fields?.profilePhoto),
   shortBioHtml: await renderRichText(entry?.fields?.shortBio),
   stackOverflow: 'https://stackoverflow.com/users/1774043/aaron-russell',
-  twitter: entry?.fields?.twitter,
-  website: entry?.fields?.website || '',
+  twitter: sanitizeProfileUrl('twitter', entry?.fields?.twitter),
+  website: sanitizeUrl(entry?.fields?.website) || 'https://aaron-russell.co.uk',
   worksFor: mapLinkedCompany(entry?.fields?.worksFor),
 })
 
@@ -116,12 +130,12 @@ const mapBlogPost = async (entry: any): Promise<BlogPostSummary> => {
     author: entry?.fields?.author
       ? {
           name: entry.fields.author.fields?.name,
-          website: entry.fields.author.fields?.website,
+          website: sanitizeUrl(entry.fields.author.fields?.website),
         }
       : undefined,
     bodyHtml: await renderRichText(entry?.fields?.body),
     bodyPlainText: richTextToPlainText(entry?.fields?.body),
-    canonical: entry?.fields?.canonical,
+    canonical: sanitizeUrl(entry?.fields?.canonical),
     category: editorial.category || entry?.fields?.category,
     contentGroup: editorial.contentGroup,
     descriptionHtml: await renderRichText(entry?.fields?.description),

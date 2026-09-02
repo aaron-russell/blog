@@ -39,6 +39,8 @@ const FORMAT_MIME_TYPES: Record<ImageFormat, string> = {
   webp: 'image/webp',
 }
 
+const CONTENTFUL_IMAGE_HOSTS = new Set(['images.contentful.com', 'images.ctfassets.net'])
+
 export const CONTENTFUL_SOCIAL_IMAGE_TYPE = FORMAT_MIME_TYPES.jpg
 
 export const normalizeContentfulUrl = (value?: string) => {
@@ -46,7 +48,16 @@ export const normalizeContentfulUrl = (value?: string) => {
     return undefined
   }
 
-  return value.startsWith('//') ? `https:${value}` : value
+  const normalized = value.startsWith('//') ? `https:${value}` : value
+
+  try {
+    const url = new URL(normalized)
+    return url.protocol === 'https:' && CONTENTFUL_IMAGE_HOSTS.has(url.hostname)
+      ? url.toString()
+      : undefined
+  } catch {
+    return undefined
+  }
 }
 
 export const buildContentfulImageUrl = (

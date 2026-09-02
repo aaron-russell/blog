@@ -28,6 +28,20 @@ test('structured data helpers build absolute URLs and social links', async () =>
   ])
 })
 
+test('structured data serialization cannot close its script element', async () => {
+  const { serializeJsonLd } = await import('../src/utils/structured-data.js')
+  const serialized = serializeJsonLd({
+    description: '</script><script>alert(1)</script>',
+    value: 'a&b',
+  })
+
+  assert.doesNotMatch(serialized, /<\/script>/i)
+  assert.deepEqual(JSON.parse(serialized), {
+    description: '</script><script>alert(1)</script>',
+    value: 'a&b',
+  })
+})
+
 test('structured data helpers normalize profile handles into valid URLs', async () => {
   const { default: structuredData } = await import('../src/utils/structured-data.js')
 

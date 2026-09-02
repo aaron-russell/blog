@@ -116,6 +116,15 @@ Required Cloudflare bindings and secrets:
 - `SENTRY_DSN`
 - `TURNSTILE_SECRET`
 
+The contact form also requires a separately deployed Durable Object Worker for
+strongly consistent per-IP rate-limit reservations. Deploy
+`wrangler.contact-rate-limiter.toml` before the Pages deployment, then bind the
+`CONTACT_RATE_LIMITER` Durable Object to the Pages project using the same
+binding name.
+Records written before the retention TTL was introduced are not removed by a
+new deployment; purge those legacy keys once through the protected Cloudflare
+KV administration workflow.
+
 ## Open Graph images
 
 The site now emits branded 1200x630 PNGs for:
